@@ -1,18 +1,15 @@
+
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <login> this is a DOOOOR </login>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import login from './components/login.vue'
+
 
 export default {
-  name: 'App',
-  components: {
-    login
-  }
+  name: 'Hellometa',
 }
 </script>
 
@@ -23,6 +20,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

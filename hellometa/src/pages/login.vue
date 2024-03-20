@@ -1,10 +1,10 @@
 <template>
   <div class="login-container">
-    <h2>Hellllll000000!!!!!</h2>
+    <h2>HelloMeta</h2>
     <form @submit.prevent="login">
-      <input type="text" v-model="username" placeholder="Username" required>
+      <input type="text" v-model="username"  placeholder="Username" required>
       <input type="password" v-model="password" placeholder="Password" required>
-      <button type="submit">Login</button>
+      <button type="submit">登录</button>
     </form>
     <p v-if="error" class="error-message">{{ error }}</p>
   </div>
@@ -14,8 +14,8 @@
 export default {
   data() {
     return {
-      username: '',
-      password: '',
+      username: 'admin',
+      password: 'password',
       error: ''
     };
   },
@@ -24,7 +24,7 @@ export default {
       // 在这里可以添加登录逻辑，比如验证用户名密码等
       if (this.username === 'admin' && this.password === 'password') {
         // 登录成功，可以做一些跳转操作或者发起网络请求
-        alert('登录成功');
+        this.$router.push('/home/upload');
       } else {
         // 登录失败，显示错误信息
         this.error = '用户名或密码错误';
