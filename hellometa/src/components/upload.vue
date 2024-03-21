@@ -5,7 +5,7 @@
       <el-form ref="form" :model="form" label-width="80px"  >
           <div class = "message">
             <div class = "subtitle"> 数据信息</div>
-            <div class = "intro">填写数据信息有助于您查看和管理您上传的数据。</div>
+            <div class = "intro">填写数据信息有助于您查看和管理上传的数据。</div>
             <div style = "display: flex;">
             <el-form-item style="flex: 1; margin-right:35px;" required label="数据名称" >
               <el-input v-model="form.name" placeholder="请填写数据名称"></el-input>
