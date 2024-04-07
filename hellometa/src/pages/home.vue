@@ -2,22 +2,33 @@
   <div class = "container">
   <el-container>
     <!-- ele在标签里藏了样式，优先级比css高，所以布局的高度宽度这种参数只能写在标签里，写在css样式里不生效，有哪些可以看说明文档 -->
-  <el-header height="70px">
+  <el-header height="50px">
+    <i class = "el-icon-user-solid" style = "font-size:40px;margin-top:6px; margin-right:10px;"></i>
     <el-button class = "logoutBT" @click = "logout" 
-    type="info" style="background-color:#dbaa9b;border-color: #d09c8c; color:#39414d; margin-top:23px;height:40px;">退出登录</el-button>
+    type="primary" style="margin-top:6px;height:37px;">退出登录</el-button>
   </el-header>
   <el-container>
-    <el-aside width="250px">
-      <el-menu @select = "selectMenu"
+    <el-aside width="330px">
+      <div class = "aside_navigator">
+        <el-menu @select = "selectMenu"
       default-active="1"
-      class="menu_left"
-      text-color="#fff"
-      active-text-color="#fff">
-          <el-menu-item index = "1">增添凭证</el-menu-item>
-          <el-menu-item index = "2">查看记录</el-menu-item>
+      class="menu_left">
+          <el-menu-item index = "1">
+            <i style = "font-size:25px; margin: 10px;" class="el-icon-location"></i>
+            <span style = "font-size:14px">增添凭证</span>
+          </el-menu-item>
+          <el-menu-item index = "2">
+            <i style = "font-size:25px; margin: 10px;" class="el-icon-location"></i>
+            <span style = "font-size:14px">查看记录</span>
+          </el-menu-item>
+          <el-menu-item index = "3">
+            <i style = "font-size:25px; margin: 10px;" class="el-icon-location"></i>
+            <span style = "font-size:14px">资产浏览器</span>
+          </el-menu-item>
     </el-menu>
+      </div>
+
     </el-aside>
-    
     <el-main>
       <router-view>
       Main
@@ -43,6 +54,8 @@ export default {
         targetRoute = '/home/upload';
       } else if (index === '2') {
         targetRoute = '/home/record';
+      } else if (index === '3'){
+        targetRoute = '/home/record';
       }
       // 检查目标路由是否与当前路由相同
       if (this.$route.path !== targetRoute) {
@@ -58,7 +71,8 @@ export default {
     height:100vh;
   }
   .el-header{
-    background-color: #39414d;
+    background-color:#f5f5f5;
+    border-bottom: 1px solid #dfe1e6;
     color: #333;
     text-align: center;
     line-height: 60px;
@@ -71,7 +85,7 @@ export default {
   }
   
   .el-aside {
-    background-color: #4b566e;
+    background-color:#ffffff;
     color: #333;
     padding: 0;
     position: fixed;
@@ -79,30 +93,44 @@ export default {
     margin-top:70px;
     z-index: 998; 
     top:0;
+    border-right:1px solid #dcdfe6;
     /* border:1px solid red; */
+  }
+  .aside_navigator{
+    display:flex;
+    flex-direction: column;
+    margin-top:100px;
+    margin-left:50px;
+    background-color: #ffffff;
+    width: 200px;
+  }
+  .el-menu{
+    box-shadow: 0px 0px 3px rgb(180, 180, 180);
+  }
+  .el-menu-item{
+    height:90px;
+    /* margin:10px 0; */
+    padding: 17px 0;
+    padding-right:35px;
+    flex:1;
+    border-bottom: 1px solid lightgray;
+  }
+  .el-menu-item.is-active{
+    background-color: #ecf5ff;
+  }
+  .el-menu-item:hover {
+    background-color:#ecf5ff; 
   }
   .menu_left{
     font-size:25px;
     margin:0;
     /* border:1px solid red; */
   }
-  .el-menu-item{
-    background-color: #4b566e;
-    text-align: center;
-    font-size:16px;
-  }
-  .el-menu-item:hover {
-    background-color:#d09c8c; 
-  }
-  .el-menu-item.is-active {
-    background-color:#d09c8c;
-  }
   .el-main {
-    background-color: #E9EEF3;
+    background-color:#ffffff;
     color: #333;
     text-align: center;
-    line-height: 160px;
-    margin-left: 250px;
+    margin-left: 370px;
     margin-top:60px;
   }
   

@@ -4,7 +4,7 @@
       <div class = "title"> 增添凭证 </div> 
       <el-form ref="form" :model="form" label-width="80px"  >
           <div class = "message">
-            <div class = "subtitle"> 数据信息</div>
+            <div class = "subtitle"> 数据信息</div>                        
             <div class = "intro">填写数据信息有助于您查看和管理上传的数据。</div>
             <div style = "display: flex;">
             <el-form-item style="flex: 1; margin-right:35px;" required label="数据名称" >
@@ -34,6 +34,21 @@
                   <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
               </el-upload>
             </div>
+            <div class = "message">
+            <div class = "subtitle"> 封面上传（可选择） </div>
+            <div class = "intro">上传的封面将展示在历史记录中，若选择不上传则使用默认图片。</div>
+            <el-upload
+                action="https://jsonplaceholder.typicode.com/posts/"
+                list-type="picture-card"
+             
+               :limit="1">
+                <i class="el-icon-plus"></i>
+                </el-upload>
+                  <el-dialog >
+                <img width="100%"  alt="">
+                </el-dialog>
+            </div>
+            
     </el-form>
     </div>
     <div class = "form_right">
@@ -86,9 +101,9 @@
     background-color: #ffffff; 
     padding: 50px; 
     padding-top: 20px; 
-    border-radius: 10px;
     margin:15px;
     margin-bottom:30px;
+    box-shadow: 0px 0px 4px silver;
   }
   /* element组件的样式写的还不错，但是文档写得也太烂了吧！！！里面封装了什么是一点也不知道，
   文档里已说明的可调整参数极少，还得自己去翻网页源码看它在里面装了啥，
@@ -99,10 +114,11 @@
   }
   .container{
     display: flex;
-    /* justify-items: flex-end; */
+    overflow-y: hidden;
+    height:100%
   }
   .form_left{
-    flex:3;
+    flex:7;
   }
   .form_right{
     flex:1;
@@ -116,4 +132,5 @@
   .el-input:is-active{
     border-color: #4b566e;
   }
+
   </style>

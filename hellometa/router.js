@@ -6,6 +6,7 @@ import login from './src/pages/login'
 import home from './src/pages/home'
 import upload from './src/components/upload'
 import record from './src/components/record'
+import details from './src/components/details'
 
 Vue.use(VueRouter)
 
@@ -24,7 +25,11 @@ const router = new VueRouter({
       },
       {
         path: 'record',
-        component: record
+        component: record,
+      },
+      {
+        path:'details',
+        component:details
       }
     ]
   },{
