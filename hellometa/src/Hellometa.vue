@@ -21,7 +21,7 @@ export default {
   text-align: center;
   color: #2c3e50;
    /* 设置背景图片的URL */
-   background-image: url('assets/background.png');
+   /* background-image: url('assets/background.png'); */
   
   /* 设置背景图片的大小 */
   background-size: cover;

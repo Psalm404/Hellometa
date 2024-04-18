@@ -1,6 +1,7 @@
 <template>
-  <div class="container">
-    <div class="record_message">
+  <div class="record-container">
+    <transition name="el-fade-in-linear">
+    <div class="record_message" v-show = "show">
       <div class="message_box">
         <div class="search_box">
           <div style="margin:0 10px; flex:1; font-size:16px;">搜索：</div>
@@ -8,7 +9,7 @@
           <Select filterable placeholder="选择类型" style="margin:0 10px; flex:6;" v-model = "searchType">
             <Option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" ></Option>
           </Select>
-          <el-button class="searchBT" type="primary" @click = "search">搜索</el-button>
+          <button class="searchBT" type="primary" @click = "search">搜索</button>
         </div>
         <div class="message_list" v-for="(item, index) in data" :key="index">
           <div v-if="index >= beginId && index <= endId" class="message_item">
@@ -28,14 +29,16 @@
             </div>
             <div class="message_item_mid">
               <div style="flex:1; line-height:50px; padding:10px;">{{item.data_originalName}}</div>
-              <div style="flex:1; line-height:50px;"> <el-button  type="primary" @click = "details">查看详细凭证</el-button></div>
+              <div style="flex:1; line-height:50px;"> <button  type="primary" @click = "details">查看详细凭证</button></div>
             </div>
             <div class="message_item_right" style="flex:2;"></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="block" style = "flex:1">
+  </transition>
+  <transition name="el-fade-in-linear">
+    <div class="block" style = "flex:1" v-show = "show">
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -45,6 +48,7 @@
       background>
     </el-pagination>
   </div>
+</transition>
   </div>
 </template>
 
@@ -53,6 +57,11 @@
   import axios from 'axios'
   export default {
     name: 'record',
+    mounted(){
+      setTimeout(()=>{
+        this.show = true;
+      },200)
+    },
     beforeMount(){
         axios.post('http://127.0.0.1:4523/m1/4236807-0-default/data/record', { token: 'test'})
         .then(res => {
@@ -67,6 +76,7 @@
       },
     data(){
       return{
+        show: false,
         data:[],
         dataLength:0,
         options:[{
@@ -128,45 +138,75 @@
     flex-direction:column
   }
   .search_box{
+    color:white;
     flex: 1;
-    height:60px;
+    height:80px;
     align-items: center;
-    background-color: white;
+    background-color: rgb(24, 24, 24);
     display:flex;
     padding:10px;
     margin:10px;
-    box-shadow: 0px 0px 2px rgb(180, 180, 180);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    margin-bottom:20px;
+  }
+  .search_box input{
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-size:1em;
+    color:white;
+    border:1px solid gray;
+  }
+  .search_box .ivu-select div, span{
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-size:1em;
+    color:white;
+  }
+  .search_box .ivu-select li{
+    background-color: rgb(31, 31, 31);
+    border: none;
+    outline: none;
+    font-size:1em;
+    color:white;
+    border:1px solid gray;
   }
   .record_message{
+    color:white;
     display:flex;
     padding:0;
     overflow-y: hidden;
     flex:40;
-    background-color:#ffffff;
+    background-color:rgb(31, 31, 31);
   }
   .message_box{
     flex:5;
+    height:1300px;
   }
   .change_pages{
     flex:1;
   } 
   .message_list{
+
     overflow-y: hidden;
     }
   .message_item{
+    color:white;
     padding:10px;
-    margin:7px;
-    background-color: white; 
-    box-shadow: 0px 0px 2px rgb(180, 180, 180);
+    margin:15px;
+    background-color: rgb(24, 24, 24); 
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    /* box-shadow: 0px 0px 2px rgb(180, 180, 180); */
     display:flex;
     height:210px;
   }
   .message_item:hover{
-    box-shadow: 0px 0px 6px rgb(180, 180, 180);
+    box-shadow: 0px 0px 6px rgb(233, 233, 233);
   }
   .message_item_left{
     display: flex;  
-    border-right:1.5px solid #cdcdcd; 
+    border-right:1.5px solid  rgba(255, 255, 255, 0.5);; 
     flex:1;
     padding-right:10px;
     margin-left:14px;
@@ -188,7 +228,6 @@
     flex:1;
     font-size:15px; 
     font-weight:bold; 
-    color:gray; 
     border-bottom:1.5px solid #cdcdcd; 
     line-height:50px; 
     margin:5px;
@@ -197,14 +236,13 @@
    flex:1; 
    font-size:13px; 
    line-height:18px; 
-   color:gray; 
    margin:5px;
   }
   .message_item_mid{
     flex:2; 
     display: flex; 
     flex-direction: column;
-    border-right:1px solid #cdcdcd; 
+    border-right: 2px solid rgba(255, 255, 255, 0.5);
   }
   .message_item.right{
 
@@ -216,13 +254,32 @@
     overflow: hidden;
     flex:2; 
     font-size:13px; 
-    line-height:21px;  
-    color:gray; margin:5px;
+    line-height:23px;  
+    color:white; margin:5px;
 }
-.searchBT{
+
+.record-container .message_item_mid button{
+  width:160px;
+  height:50px;
+  text-align: center;
+  justify-content: center;
+  padding-bottom:5px;
+  background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color:white;
+  cursor:pointer;
+  border-radius: 10px;
+  outline: none;
+}
+
+.record-container .searchBT{
   flex:1;
-  padding:10px;
-  margin-right:15px;
+  height:40px;
+  padding:0 10px;
+  margin-right: 15px;
+  border-radius: 5px;
+  cursor:pointer;
+  color:black;
 }
 .block{
   padding:30px;

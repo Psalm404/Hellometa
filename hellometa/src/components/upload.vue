@@ -1,23 +1,24 @@
 <template>
   <div class = "container">
-    <div class = "form_left">
+    <transition name="el-fade-in-linear">
+    <div class = "form_left" v-show = "show1">
       <div class = "title"> 增添凭证 </div> 
       <el-form ref="form" :model="form" label-width="80px"  >
           <div class = "message">
             <div class = "subtitle"> 数据信息</div>                        
             <div class = "intro">填写数据信息有助于您查看和管理上传的数据。</div>
             <div style = "display: flex;">
-            <el-form-item style="flex: 1; margin-right:35px;" required label="数据名称" >
+            <el-form-item style="flex: 1; margin-right:35px;" required label="数据名称" class = "upload-form-item">
               <el-input v-model="form.name" placeholder="请填写数据名称"></el-input>
            </el-form-item>
-           <el-form-item style="flex: 1" required label="数据类别">
-            <el-select style="width: 100%;" v-model="form.region" placeholder="请选择数据类别">
+           <el-form-item style="flex: 1" required label="数据类别" class = "upload-form-item">
+            <el-select style="width: 100%;" v-model="form.region" placeholder="请选择数据类别"class = "upload-form-item">
               <el-option  el-option label="文本" value="txt"></el-option>
               <el-option label="图片" value="pic"></el-option>
              </el-select>
            </el-form-item>
            </div>
-           <el-form-item required label="数据介绍">
+           <el-form-item class = "upload-form-item" required label="数据介绍">
               <el-input type="textarea" :rows="5" v-model="form.desc" placeholder="请简要介绍您的数据信息，将会展示在上传记录中"></el-input>
             </el-form-item>
           </div>
@@ -51,17 +52,21 @@
             
     </el-form>
     </div>
-    <div class = "form_right">
-      
-      </div>
+    </transition>
   </div>
 </template>
 
   <script>
   export default {
     name: 'upload',
+    mounted(){
+      setTimeout(() => {
+          this.show1 = true;
+        },  200); 
+    },
     data(){
       return {
+        show1: false,
         form: {
           name: '',
           region: '',
@@ -84,31 +89,47 @@
     margin: 30px; 
     margin-bottom: 40px; 
     text-align: left;
+    color:white;
   }
   .subtitle{
     line-height: 30px; 
     margin-top: 30px;
     text-align: left;
+    color:white;
   }
   .intro{
     line-height: 35px; 
     margin-bottom: 30px; 
     font-size: 13px; 
     text-align: left; 
-    color:gray;
+    color:white;
   }
   .message{
-    background-color: #ffffff; 
+    color:white;
+    background-color: rgb(31, 31, 31);
+    border-radius: 10px;
+    min-height:400px;
     padding: 50px; 
     padding-top: 20px; 
     margin:15px;
     margin-bottom:30px;
-    box-shadow: 0px 0px 4px silver;
+    border: 2px solid rgba(255, 255, 255, 0.5);
   }
-  /* element组件的样式写的还不错，但是文档写得也太烂了吧！！！里面封装了什么是一点也不知道，
-  文档里已说明的可调整参数极少，还得自己去翻网页源码看它在里面装了啥，
-  如果不看源码，谁知道它还往里面装了↓这个类啊？？？组件标签也没有，说明文档也没有，想要调整的参数半天找不到，你搁这藏啥呢？？OvO */
+  .upload-form-item label{
+    color:white;
+  }
+  .upload-form-item .el-input input{
+    color:white;
+    background: transparent;
+    border:1px solid gray;
+  }
+  .upload-form-item .el-textarea textarea{
+    color:white;
+    background: transparent;
+    border:1px solid gray;
+  }
   .el-upload-dragger{
+    background-color:transparent;
     padding:40px;
     line-height:30px;
   }
@@ -132,5 +153,8 @@
   .el-input:is-active{
     border-color: #4b566e;
   }
+  .el-upload__text{
+    color:white;
 
+  }
   </style>

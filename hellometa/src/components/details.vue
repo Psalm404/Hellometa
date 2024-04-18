@@ -1,6 +1,10 @@
 <template>
   <div class = "detail-container">
-      <div class = "top"> 
+    <transition name="el-fade-in-linear" >
+      <a  class = "el-icon-back back-login" @click = "backLogin" v-show = "show"> 返回</a>
+    </transition>
+       <transition name="el-fade-in-linear" >
+      <div class = "top" v-show = "show"> 
         <div class = "top-left">
           <img v-if = "detail_data.data_type === 1" src="../assets/txt_default.png" alt="加载失败" style="object-fit:cover;margin:20px;">
           <img v-if = "detail_data.data_type === 2" src="../assets/pic_default.png" alt="加载失败" style="object-fit:cover;margin:20px;">
@@ -11,7 +15,9 @@
           <div class = "intro-box"><strong>作品介绍:</strong> &emsp;{{detail_data.data_introduction}}</div>
         </div>
       </div>
-      <div class = "bottom">
+      </transition>
+      <transition name="el-fade-in-linear">
+      <div class = "bottom" v-show = "show">
         <div class = "bottom-left">
           <div class = "file-name bottom-left-box">文件名: {{ detail_data.data_originalName }}</div>
           <div class = "file-size bottom-left-box">文件大小: {{ detail_data.data_size }}</div>
@@ -25,6 +31,7 @@
           </div>
         </div> 
       </div>
+      </transition>
     </div>
   </template>
   <script>
@@ -32,6 +39,9 @@
   export default{
     name:'details',
     mounted(){
+      setTimeout(()=>{
+        this.show = true;
+      },200)
       axios.post('http://127.0.0.1:4523/m1/4236807-0-default/data/details', { token: 'test', data_id:1})
         .then(res => {
           console.log(res.data); // 返回的数据
@@ -43,6 +53,7 @@
     },
     data(){
       return{
+        show:false,
         detail_data:{
           data_picture:null,
           data_name:null,
@@ -58,23 +69,27 @@
       }
     },
     methods:{
-
+      backLogin(){
+        this.$router.push('/home/record');
+      }
     }
   }
   </script>
   <style>
   .detail-container{
-    height:90vh;
+    min-height:100vh;
     display:flex;
-    margin-top:35px;
     margin-right:20px;
     flex-direction:column;
     /* box-shadow: 0px 0px 4px silver; */
   }
+  .detail-container .back-login{
+    align-self: flex-start;
+  }
   .top{
     display:flex;
     flex:1;
-    box-shadow: 0px 0px 4px silver;
+    border: 2px solid rgba(255, 255, 255, 0.5);
     margin-bottom:30px;
     padding:20px;
   }
@@ -82,7 +97,7 @@
     flex:2;
     margin:20px 25px;
     padding:30px;
-    box-shadow:0px 0px 2px silver;
+    border: 2px solid rgba(255, 255, 255, 0.5);
   }
   .top-right{
     display:flex;
@@ -92,7 +107,7 @@
     margin:10px 20px;
     margin-left:70px;
     padding-left:30px;
-    color:#808080;
+    color:white;
   }
   .top-right-box{
     flex:1;
@@ -117,14 +132,14 @@
   .bottom{
     display: flex;
     flex:1;
-    box-shadow: 0px 0px 4px silver;
+    border: 2px solid rgba(255, 255, 255, 0.5);
     padding:20px;
   }
   .bottom-left{
     display: flex;
     flex-direction: column;
     flex:1;
-    border-right:2px solid #e4e4e4;
+    border-right:1px solid rgba(255, 255, 255, 0.5);
     /* border:1px solid red; */
   }
   .bottom-right{
@@ -142,7 +157,7 @@
     margin:20px;
     border-bottom: 1px solid #e4e4e4;
     flex:1;
-    color:#808080
+    color:white;
   }
   .file-download{
     display:flex;
