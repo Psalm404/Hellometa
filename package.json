@@ -9,8 +9,10 @@
   },
   "dependencies": {
     "axios": "^1.6.8",
+    "babel-eslint": "^10.1.0",
     "core-js": "^3.8.3",
     "element-ui": "^2.15.14",
+    "ethers": "^6.12.1",
     "node-sass": "^9.0.0",
     "sass": "^1.72.0",
     "sass-loader": "^14.1.1",
@@ -18,11 +20,13 @@
     "view-ui-plus": "^1.3.16",
     "vue": "^2.6.14",
     "vue-router": "^3.6.5",
-    "vuex":"^3.6.2"
+    "vuex": "^3.6.2",
+    "web3": "^4.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@babel/plugin-transform-private-methods": "^7.24.1",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
@@ -40,7 +44,7 @@
       "eslint:recommended"
     ],
     "parserOptions": {
-      "parser": "@babel/eslint-parser"
+      "parser": "babel-eslint"
     },
     "rules": {}
   },
