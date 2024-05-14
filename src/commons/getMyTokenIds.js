@@ -14,7 +14,7 @@ async function getMyTokenIds() {
         }
 
         // 调用合约的getMyTokenIds函数
-        const tokenIds = await contract.methods.getMyTokenIds().call();
+        const tokenIds = await contract.methods.getMyTokenIds();
         return tokenIds;
     } catch (error) {
         console.error('获取当前Token ID列表失败', error);

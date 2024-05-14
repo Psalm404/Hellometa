@@ -13,7 +13,7 @@ async function getBalanceOf(address) {
         }
 
         // 调用只能合约中的balanceOf函数
-        const balance = await contract.methods.balanceOf(address).call();
+        const balance = await contract.methods.balanceOf(address);
         return balance;
     } catch (error) {
         console.error('余额查询失败', error);

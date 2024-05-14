@@ -14,7 +14,7 @@ async function getAllURLs() {
         }
 
         // 调用合约的getAllURLs函数
-        const URLs = await contract.methods.getAllURLs().call();
+        const URLs = await contract.methods.getAllURLs();
         return URLs;
     } catch (error) {
         console.error('获取所有Token URL列表失败', error);

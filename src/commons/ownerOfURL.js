@@ -14,7 +14,7 @@ async function ownerOfURL(tokenURI) {
         }
 
         // 调用合约的ownerOfURL函数
-        const owner = await contract.methods.ownerOfURL(tokenURI).call();
+        const owner = await contract.methods.ownerOfURL(tokenURI);
         return owner;
     } catch (error) {
         console.error('根据URL查询代币所有者地址失败', error);
