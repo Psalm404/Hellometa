@@ -1,8 +1,13 @@
 <template>
 <div class="container">
     <transition name="el-fade-in-linear">
+<<<<<<< HEAD
         <div class="content" v-show="show">
             <el-form ref="form" :model="form" label-width="100px" :rules="rules">
+=======
+        <div class="content" v-show = "show">
+            <el-form ref="form" :model="form" label-width="100px">
+>>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
                 <div class="upload-box">
                     <div class="upload-box-top">
                         <div class="upload-box-top-left" style="color:white">
@@ -11,12 +16,20 @@
                         <div class="upload-box-top-right">
                             <div class="line1">
                                 <div class="data-name">
+<<<<<<< HEAD
                                     <el-form-item required label="作品名称" class="upload-form-item" prop="name">
+=======
+                                    <el-form-item required label="作品名称" class="upload-form-item">
+>>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
                                         <el-input v-model="form.name"></el-input>
                                     </el-form-item>
                                 </div>
                                 <div class="data-type">
+<<<<<<< HEAD
                                     <el-form-item style="flex: 1" required label="作品类别" prop="type">
+=======
+                                    <el-form-item style="flex: 1" required label="作品类别">
+>>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
                                         <Select style="width: 100%;" size="large" v-model="form.region">
                                             <Option el-option label="文本" value="txt"></Option>
                                             <Option label="图片" value="pic"></Option>
@@ -37,7 +50,11 @@
                             </div>
 
                             <div class="data-select">
+<<<<<<< HEAD
                                 <el-upload class="upload-demo" ref="upload" multiple:false limit:1 action="https://jsonplaceholder.typicode.com/posts/" :auto-upload="false">
+=======
+                                <el-upload class="upload-demo" ref="upload" multiple:false limit:1 action="https://jsonplaceholder.typicode.com/posts/"  :auto-upload="false">
+>>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
                                     <button slot="trigger" size="small" type="primary">选取文件</button>
                                 </el-upload>
                             </div>
@@ -45,7 +62,11 @@
                     </div>
                     <div class="upload-box-bottom">
                         <div class="submitt-button">
+<<<<<<< HEAD
                             <button @click="submit('form')"> 提交 </button>
+=======
+                            <button> 提交 </button>
+>>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
                         </div>
                     </div>
                 </div>
@@ -58,6 +79,7 @@
 
 <script>
 export default {
+<<<<<<< HEAD
     mounted() {
         setTimeout(() => {
             this.show = true;
@@ -105,6 +127,31 @@ export default {
             })
         }
     }
+=======
+    mounted(){
+      setTimeout(()=>{
+        this.show = true;
+      },100)
+    },
+    data() {
+        return {
+            show:false,
+            //  表单验证用，还没写
+            form: {
+                name: '',
+                region: '',
+                date1: '',
+                date2: '',
+                delivery: false,
+                type: [],
+                resource: '',
+                desc: '',
+                creator: ' ',
+            }
+        }
+    },
+    methods: {}
+>>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
 }
 </script>
 
