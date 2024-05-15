@@ -5,7 +5,7 @@ getBalanceOf.js提供获取一个账户address的拥有的NFT的数量的方法
 */
 import contract from "./contract";
 
-async function getBalanceOf(address) {
+async function balanceOf(address) {
     try {
         if (!contract) {
             console.error('合约实例尚未初始化');
@@ -13,7 +13,7 @@ async function getBalanceOf(address) {
         }
 
         // 调用只能合约中的balanceOf函数
-        const balance = await contract.methods.balanceOf(address);
+        const balance = await contract.methods.balanceOf(address).call();
         return balance;
     } catch (error) {
         console.error('余额查询失败', error);
@@ -21,4 +21,4 @@ async function getBalanceOf(address) {
     }
 }
 
-export default getBalanceOf;
+export default balanceOf;

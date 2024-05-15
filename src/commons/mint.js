@@ -15,7 +15,7 @@ async function mint(to, tokenURI) {
         }
         
         // 合约调用者的地址
-        const addr = getAccountAddr();
+        const addr = await getAccountAddr();
         // 调用合约的mint函数
         await contract.methods.mint(to, tokenURI).send({ from: addr }); 
         console.log('代币铸造成功');

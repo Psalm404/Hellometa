@@ -14,7 +14,7 @@ async function getOwnedTokenIds(address) {
         }
 
         // 调用合约的getOwnedTokenIds函数
-        const tokenIds = await contract.methods.getOwnedTokenIds(address);
+        const tokenIds = await contract.methods.getOwnedTokenIds(address).call();
         return tokenIds;
     } catch (error) {
         console.error('获取指定账户的Token ID列表失败', error);

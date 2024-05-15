@@ -13,7 +13,7 @@ async function getOwnedURLs(address) {
             return null;
         }
 
-        const URLs = await contract.methods.getOwnedURLs(address);
+        const URLs = await contract.methods.getOwnedURLs(address).call();
         return URLs;
     } catch (error) {
         console.error('获取当前Token URL列表失败', error);

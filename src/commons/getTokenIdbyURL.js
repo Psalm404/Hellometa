@@ -14,7 +14,7 @@ async function getTokenIdbyURL(tokenURI) {
         }
 
         // 调用合约的getTokenIdbyURL函数
-        const tokenId = await contract.methods.getTokenIdbyURL(tokenURI);
+        const tokenId = await contract.methods.getTokenIdbyURL(tokenURI).call();
         return tokenId;
     } catch (error) {
         console.error('根据URL查询代币ID失败', error);

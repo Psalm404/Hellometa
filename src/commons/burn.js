@@ -5,8 +5,9 @@ burn.js 提供销毁代币的方法
 */
 
 import contract from './contract';
+import { getAccountAddr } from './getAccountAddr';
 
-async function burnToken(tokenId) {
+async function burn(tokenId) {
     try {
         if (!contract) {
             console.error('合约实例尚未初始化');
@@ -14,7 +15,8 @@ async function burnToken(tokenId) {
         }
 
         // 合约调用者的地址
-        const addr = getAccountAddr();
+        const addr = await getAccountAddr();
+        console.log(addr)
         // 调用合约的burn函数
         await contract.methods.burn(tokenId).send({ from: addr });
         console.log('代币销毁成功');
@@ -23,4 +25,4 @@ async function burnToken(tokenId) {
     }
 }
 
-export default burnToken;
+export default burn;

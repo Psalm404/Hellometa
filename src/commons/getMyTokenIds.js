@@ -5,6 +5,7 @@ getMyTokenIds.js提供获取当前账户已经成功上链的NFT的TokenID方法
 */
 
 import contract from "./contract";  
+import { getAccountAddr } from "./getAccountAddr";
 
 async function getMyTokenIds() {
     try {
@@ -12,9 +13,11 @@ async function getMyTokenIds() {
             console.error('合约实例未初始化');
             return null;
         }
-
+        
+        // 获取当前调用者的地址
+        const addr = await getAccountAddr()
         // 调用合约的getMyTokenIds函数
-        const tokenIds = await contract.methods.getMyTokenIds();
+        const tokenIds = await contract.methods.getMyTokenIds().call({ from: addr });
         return tokenIds;
     } catch (error) {
         console.error('获取当前Token ID列表失败', error);
