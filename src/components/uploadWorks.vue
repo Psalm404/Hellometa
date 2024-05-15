@@ -1,8 +1,8 @@
 <template>
 <div class="container">
     <transition name="el-fade-in-linear">
-        <div class="content" v-show = "show">
-            <el-form ref="form" :model="form" label-width="100px">
+        <div class="content" v-show="show">
+            <el-form ref="form" :model="form" label-width="100px" :rules="rules">
                 <div class="upload-box">
                     <div class="upload-box-top">
                         <div class="upload-box-top-left" style="color:white">
@@ -11,12 +11,12 @@
                         <div class="upload-box-top-right">
                             <div class="line1">
                                 <div class="data-name">
-                                    <el-form-item required label="作品名称" class="upload-form-item">
+                                    <el-form-item required label="作品名称" class="upload-form-item" prop="name">
                                         <el-input v-model="form.name"></el-input>
                                     </el-form-item>
                                 </div>
                                 <div class="data-type">
-                                    <el-form-item style="flex: 1" required label="作品类别">
+                                    <el-form-item style="flex: 1" required label="作品类别" prop="type">
                                         <Select style="width: 100%;" size="large" v-model="form.region">
                                             <Option el-option label="文本" value="txt"></Option>
                                             <Option label="图片" value="pic"></Option>
@@ -37,7 +37,7 @@
                             </div>
 
                             <div class="data-select">
-                                <el-upload class="upload-demo" ref="upload" multiple:false limit:1 action="https://jsonplaceholder.typicode.com/posts/"  :auto-upload="false">
+                                <el-upload class="upload-demo" ref="upload" multiple:false limit:1 action="https://jsonplaceholder.typicode.com/posts/" :auto-upload="false">
                                     <button slot="trigger" size="small" type="primary">选取文件</button>
                                 </el-upload>
                             </div>
@@ -45,7 +45,7 @@
                     </div>
                     <div class="upload-box-bottom">
                         <div class="submitt-button">
-                            <button> 提交 </button>
+                            <button @click="submit('form')"> 提交 </button>
                         </div>
                     </div>
                 </div>
@@ -58,29 +58,53 @@
 
 <script>
 export default {
-    mounted(){
-      setTimeout(()=>{
-        this.show = true;
-      },100)
+    mounted() {
+        setTimeout(() => {
+            this.show = true;
+        }, 100)
     },
     data() {
         return {
-            show:false,
-            //  表单验证用，还没写
+            show: false,
             form: {
                 name: '',
-                region: '',
-                date1: '',
-                date2: '',
-                delivery: false,
-                type: [],
-                resource: '',
+                time: '',
+                type: '',
                 desc: '',
                 creator: ' ',
-            }
+            },
+            rules: {
+                name: [{
+                        required: true,
+                        message: '请输入用户名',
+                    },
+                    {
+                        max: 12,
+                        message: '用户名不能超过12个字符',
+                    },
+                ],
+                type: [{
+                    required: true,
+                    message: '请选择类别',
+                }, ],
+            },
         }
+
     },
-    methods: {}
+
+    methods: {
+        submit(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.$message({
+                        showClose: true,
+                        message: '验证通过',
+                        type: 'success'
+                    });
+                }
+            })
+        }
+    }
 }
 </script>
 
