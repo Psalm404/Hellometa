@@ -71,6 +71,14 @@ import {
     uploadJSONToIPFS,
 } from '../commons/pinata';
 
+import {
+    getAccountAddr
+} from '../commons/getAccountAddr';
+
+import mint from '@/commons/mint';
+
+import getAllURLs from '@/commons/getAllURLs';
+
 export default {
     mounted(){
       setTimeout(()=>{
@@ -94,6 +102,8 @@ export default {
     methods: {
         async onChangeFile(file){
             try{
+                let array = await getAllURLs()
+                alert(array);
                 this.disableButton();
                 this.file = file;
                 if(this.file==null){ 
@@ -122,6 +132,9 @@ export default {
                     this.$message.info('metadataURL=-1!');
                     return;
                 }
+                const addr = await getAccountAddr();
+                alert(addr);
+                mint(addr, metadataURL);
             }
             catch(e) {
                 alert( "Upload error"+e )
