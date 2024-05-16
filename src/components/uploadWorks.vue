@@ -1,36 +1,23 @@
 <template>
 <div class="container">
     <transition name="el-fade-in-linear">
-<<<<<<< HEAD
-        <div class="content" v-show="show">
-            <el-form ref="form" :model="form" label-width="100px" :rules="rules">
-=======
         <div class="content" v-show = "show">
             <el-form ref="form" :model="form" label-width="100px">
->>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
                 <div class="upload-box">
                     <div class="upload-box-top">
                         <div class="upload-box-top-left" style="color:white">
-                            这里会有一个头像上传
+                            <!-- 这里会有一个头像上传 -->
                         </div>
                         <div class="upload-box-top-right">
                             <div class="line1">
                                 <div class="data-name">
-<<<<<<< HEAD
-                                    <el-form-item required label="作品名称" class="upload-form-item" prop="name">
-=======
                                     <el-form-item required label="作品名称" class="upload-form-item">
->>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
                                         <el-input v-model="form.name"></el-input>
                                     </el-form-item>
                                 </div>
                                 <div class="data-type">
-<<<<<<< HEAD
-                                    <el-form-item style="flex: 1" required label="作品类别" prop="type">
-=======
                                     <el-form-item style="flex: 1" required label="作品类别">
->>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
-                                        <Select style="width: 100%;" size="large" v-model="form.region">
+                                        <Select style="width: 100%;" size="large" v-model="form.type">
                                             <Option el-option label="文本" value="txt"></Option>
                                             <Option label="图片" value="pic"></Option>
                                         </Select>
@@ -50,23 +37,22 @@
                             </div>
 
                             <div class="data-select">
-<<<<<<< HEAD
-                                <el-upload class="upload-demo" ref="upload" multiple:false limit:1 action="https://jsonplaceholder.typicode.com/posts/" :auto-upload="false">
-=======
-                                <el-upload class="upload-demo" ref="upload" multiple:false limit:1 action="https://jsonplaceholder.typicode.com/posts/"  :auto-upload="false">
->>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
-                                    <button slot="trigger" size="small" type="primary">选取文件</button>
+                                <el-upload 
+                                    class="upload-demo" 
+                                    ref="upload" 
+                                    multiple:false 
+                                    limit:1 
+                                    :auto-upload="false"
+                                    :on-change="onChangeFile"
+                                >
+                                    <button slot="trigger" size="small" id="list-button" @click.prevent type="primary">选取文件</button>
                                 </el-upload>
                             </div>
                         </div>
                     </div>
                     <div class="upload-box-bottom">
                         <div class="submitt-button">
-<<<<<<< HEAD
-                            <button @click="submit('form')"> 提交 </button>
-=======
-                            <button> 提交 </button>
->>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
+                            <button type="primary" @click.prevent="mintNFT">mintNFT</button>
                         </div>
                     </div>
                 </div>
@@ -78,56 +64,14 @@
 </template>
 
 <script>
+// import axios from 'axios';  // 引入axios库用于发送HTTP请求
+
+import {
+    uploadFileToIPFS,
+    uploadJSONToIPFS,
+} from '../commons/pinata';
+
 export default {
-<<<<<<< HEAD
-    mounted() {
-        setTimeout(() => {
-            this.show = true;
-        }, 100)
-    },
-    data() {
-        return {
-            show: false,
-            form: {
-                name: '',
-                time: '',
-                type: '',
-                desc: '',
-                creator: ' ',
-            },
-            rules: {
-                name: [{
-                        required: true,
-                        message: '请输入用户名',
-                    },
-                    {
-                        max: 12,
-                        message: '用户名不能超过12个字符',
-                    },
-                ],
-                type: [{
-                    required: true,
-                    message: '请选择类别',
-                }, ],
-            },
-        }
-
-    },
-
-    methods: {
-        submit(formName) {
-            this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    this.$message({
-                        showClose: true,
-                        message: '验证通过',
-                        type: 'success'
-                    });
-                }
-            })
-        }
-    }
-=======
     mounted(){
       setTimeout(()=>{
         this.show = true;
@@ -139,19 +83,93 @@ export default {
             //  表单验证用，还没写
             form: {
                 name: '',
-                region: '',
-                date1: '',
-                date2: '',
-                delivery: false,
-                type: [],
-                resource: '',
+                type: '',
+                creator: ' ',                
                 desc: '',
-                creator: ' ',
-            }
+            },
+            uploadedStatus:'',
+            fileURL: null,
         }
     },
-    methods: {}
->>>>>>> 9633f9128941749de620a797008ad4fe608c29cf
+    methods: {
+        async onChangeFile(file){
+            try{
+                this.disableButton();
+                this.file = file;
+                if(this.file==null){ 
+                    return this.$message.error("请先选取文件！"); 
+                } 
+                alert(file.name);
+                const response = await uploadFileToIPFS(this.file);
+                if(response.success === true) {
+                    this.enableButton();
+                    // this.$refs.upload.clearFiles(); // 清除已选取的文件
+                    this.fileURL = response.pinataURL;
+                    alert(this.fileURL);
+                }else{
+                    alert(response.message);
+                }    
+            } catch(e) {
+                console.log("Error during file upload", e);
+            }
+        
+        },
+        async mintNFT(){
+            //Upload data to IPFS
+            try {
+                const metadataURL = await this.uploadMetadataToIPFS();
+                if(metadataURL === -1){
+                    this.$message.info('metadataURL=-1!');
+                    return;
+                }
+            }
+            catch(e) {
+                alert( "Upload error"+e )
+            }
+        },
+        async uploadMetadataToIPFS(){
+            const {name, type, creator, desc} = this.form;
+            if( !name || !type || !creator || !desc || !this.fileURL)
+            {
+                this.$message.info("Please fill all the fields!");
+                return -1;
+            }
+
+            const nftJSON = {
+                name, type, creator,desc, image: this.fileURL
+            }
+
+            try {
+                //upload the metadata JSON to IPFS
+                const response = await uploadJSONToIPFS(nftJSON);
+                if(response.success === true){
+                    console.log("Uploaded JSON to Pinata: ", response)
+                    // return response.pinataURL;
+                    alert("Uploaded JSON to Pinata: "+ response.pinataURL)
+                    return response.pinataURL;
+                }
+            }
+            catch(e) {
+                console.log("error uploading JSON metadata:", e)
+            }
+        },
+        async disableButton() {
+            const listButton = document.getElementById('list-button');
+            if (listButton) {
+                listButton.disabled = true;
+                listButton.style.backgroundColor = 'grey';
+                listButton.style.opacity = 0.3;
+            }
+        },
+        async enableButton() {
+            const listButton = document.getElementById('list-button');
+            if (listButton) {
+                listButton.disabled = false;
+                listButton.style.backgroundColor = 'transparent';
+                listButton.style.opacity = 1;
+            }
+        },
+    }
 }
 </script>
 
