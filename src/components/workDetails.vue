@@ -30,7 +30,7 @@
                         </div>
                         <div class="work-createtime">
                             <span style="font-weight: bolder;">
-                                创建时间:
+                                铸造时间:
                             </span>
                             <span style="display: block">{{ workCreateTime }}</span>
                         </div>
@@ -69,6 +69,7 @@ export default {
         console.log('jsonURL', this.jsonURL);
         this.fetchJson(jsonURL);
     },
+
     data() {
         return {
             show: false,
