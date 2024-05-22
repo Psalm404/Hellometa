@@ -35,7 +35,7 @@
                                     <el-input type="textarea" :rows="9" v-model="form.desc" resize="none"></el-input>
                                 </el-form-item>
                             </div>
-
+                            <!-- 上传文件 -->
                             <div class="data-select">
                                 <el-upload 
                                     class="upload-demo" 
@@ -43,11 +43,12 @@
                                     multiple:false 
                                     limit:1 
                                     :auto-upload="false"
-                                    :on-change="onChangeFile"
+                                    :on-change="onChangeFile" 
                                 >
                                     <button slot="trigger" size="small" id="list-button" @click.prevent type="primary">选取文件</button>
                                 </el-upload>
                             </div>
+                            <!-- 上传文件 -->
                         </div>
                     </div>
                     <div class="upload-box-bottom">
@@ -64,7 +65,6 @@
 </template>
 
 <script>
-// import axios from 'axios';  // 引入axios库用于发送HTTP请求
 
 import {
     uploadFileToIPFS,
@@ -100,17 +100,18 @@ export default {
         }
     },
     methods: {
+        //选择文件，选择即上传IPFS
         async onChangeFile(file){
             try{
                 let array = await getAllURLs()
-                alert(array);
+                alert("现在上链的NFT的json链接：\n"+array);
                 this.disableButton();
                 this.file = file;
                 if(this.file==null){ 
                     return this.$message.error("请先选取文件！"); 
                 } 
                 alert(file.name);
-                const response = await uploadFileToIPFS(this.file);
+                const response = await uploadFileToIPFS(this.file);  //目前选取文件，就上传到了IPFS，且可多次上传
                 if(response.success === true) {
                     this.enableButton();
                     // this.$refs.upload.clearFiles(); // 清除已选取的文件
@@ -125,13 +126,14 @@ export default {
         
         },
         async mintNFT(){
-            //Upload data to IPFS
             try {
+                //Upload metadata to IPFS
                 const metadataURL = await this.uploadMetadataToIPFS();
                 if(metadataURL === -1){
                     this.$message.info('metadataURL=-1!');
                     return;
                 }
+                //mint metadata to the chain
                 const addr = await getAccountAddr();
                 alert(addr);
                 mint(addr, metadataURL);
@@ -148,8 +150,14 @@ export default {
                 return -1;
             }
 
+            // 5.22 要加时间戳字段，记得（要有铸造时间）
             const nftJSON = {
-                name, type, creator,desc, image: this.fileURL
+                name, 
+                type, 
+                creator,
+                desc, 
+                image: this.fileURL,
+                timestamp: Date.now(), // 添加当前时间戳
             }
 
             try {
@@ -157,7 +165,6 @@ export default {
                 const response = await uploadJSONToIPFS(nftJSON);
                 if(response.success === true){
                     console.log("Uploaded JSON to Pinata: ", response)
-                    // return response.pinataURL;
                     alert("Uploaded JSON to Pinata: "+ response.pinataURL)
                     return response.pinataURL;
                 }
@@ -166,6 +173,7 @@ export default {
                 console.log("error uploading JSON metadata:", e)
             }
         },
+        //用来使能/禁止选择文件按钮的两个函数
         async disableButton() {
             const listButton = document.getElementById('list-button');
             if (listButton) {
