@@ -30,13 +30,13 @@
                         </div>
                         <div class="work-createtime">
                             <span style="font-weight: bolder;">
-                                创建时间:
+                                铸造时间:
                             </span>
                             <span style="display: block">{{ workCreateTime }}</span>
                         </div>
                         <div class="work-hashvalue">
                             <span style="font-weight: bolder;">
-                                文件哈希:
+                                TokenID:
                             </span>
                             <span style="display: block">{{ workHashValue }}</span>
                         </div>
@@ -55,12 +55,14 @@
 </template>
 
 <script>
-export default {
+export default { 
+    name: 'ChildComponent',
     mounted(){
       setTimeout(()=>{
         this.show = true;
       },100)
     },
+
     data() {
         return {
             show:false,
@@ -68,15 +70,22 @@ export default {
             workHashValue: '1111111111122222222222222333333333344444444555555555555',
             workCreateTime: new Date(),
             workName: "一只猫猫的照片",
-            workType: "图片",
-            workDesc: "一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片"
+            workType: "",
+            workDesc: ""
         }
     },
     methods: {
+        /*该方法用于接收值,并处理父组件穿过来的值*/
+        hangleProp(data) {
+            // 这是通过方式 1 实现的传值,
+            console.log('父组件通过 $refs 穿过来的值是 : ',data);
+        },
         backToRecord() {
             this.$router.push('/recordWorks');
         },
-        deleteWork() {}
+        deleteWork() {
+
+        },
     }
 }
 </script>
