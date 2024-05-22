@@ -1,6 +1,5 @@
 <template>
 <div class="container">
-    <child-component ref="child"/>
     <transition name="el-fade-in-linear">
         <div class="content" v-show = "show">
             <div class="cool-text">RECORD</div>
@@ -27,9 +26,6 @@
                                 </div>
                                 <div class="record-type">
                                     <span>作品类别：{{ recordType }}</span>
-                                    <!-- 父向子 workDetails传参 -->
-                                    <workDetails :workType="recordType" :workName="recordName" :workDesc="recordDesc"/>
-                                    <!-- 父向子 workDetails传参 -->
                                 </div>
                             </div>
                         </div>
@@ -54,12 +50,8 @@
 </template>
 
 <script>
-import workDetails from './workDetails.vue';
 
 export default {
-    components(){
-        workDetails
-    },
     mounted(){
       setTimeout(()=>{
         this.show = true;
@@ -79,7 +71,6 @@ export default {
     },
     methods: {
         toDetails() {
-            this.$refs.child.hangleProp(this.recordName);
             this.$router.push('/workDetails');
         }
     }

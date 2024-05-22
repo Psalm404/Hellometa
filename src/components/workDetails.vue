@@ -56,15 +56,17 @@
 
 <script>
 export default { 
-    name: 'ChildComponent',
     mounted(){
       setTimeout(()=>{
         this.show = true;
+        // call those show func
+        this.resolveJSONUrl();
       },100)
     },
 
     data() {
         return {
+            testURL:"https://brown-urban-hornet-311.mypinata.cloud/ipfs/QmWmafznaX9FfyWvBKLTmMgMZCffz5rscqM6VhzwyXqyEK",
             show:false,
             picUrl: require('../assets/image.png'),
             workHashValue: '1111111111122222222222222333333333344444444555555555555',
@@ -75,17 +77,47 @@ export default {
         }
     },
     methods: {
-        /*该方法用于接收值,并处理父组件穿过来的值*/
-        hangleProp(data) {
-            // 这是通过方式 1 实现的传值,
-            console.log('父组件通过 $refs 穿过来的值是 : ',data);
+        //解析传过来的URL并赋值表单
+            //?:文件哈希？交易哈希？TokenID? TID的意义是什么？——先放置
+        resolveJSONUrl(){
+            fetch(this.testURL)
+                .then(response => {
+                    // 检查响应状态
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    // 解析 JSON 数据
+                     return response.json();
+                })
+                .then(data => {
+                    // log整个 JSON 数据
+                    console.log(data); 
+                    // 赋值于details
+                    this.picUrl = data.image;
+                    // this.workHashValue = "11"
+                    this.workName = data.name;
+                    this.workType = data.type;
+                    this.workDesc = data.desc;
+                    this.workCreateTime = new Date(data.timestamp);
+            })
+            .catch(error => {
+                // 处理错误
+                console.error('There has been a problem with your fetch operation:', error);
+            });
         },
+        //删除nft
+        deleteWork() {
+
+        },  
+        //下载nft源文件
+        downloadFile(){
+            //写完这个记得调窗口使得窗口适应图片大小
+        },      
+        //返回我的交易记录列表
         backToRecord() {
             this.$router.push('/recordWorks');
         },
-        deleteWork() {
 
-        },
     }
 }
 </script>
