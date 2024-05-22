@@ -70,7 +70,6 @@ import {
     uploadFileToIPFS,
     uploadJSONToIPFS,
 } from '../commons/pinata';
-
 import {
     getAccountAddr
 } from '../commons/getAccountAddr';
@@ -104,21 +103,21 @@ export default {
         async onChangeFile(file){
             try{
                 let array = await getAllURLs()
-                alert("现在上链的NFT的json链接：\n"+array);
+                console.log("已上链的NFT的json链接：\n"+array);
                 this.disableButton();
                 this.file = file;
                 if(this.file==null){ 
                     return this.$message.error("请先选取文件！"); 
                 } 
-                alert(file.name);
+                console.log(file.name);
                 const response = await uploadFileToIPFS(this.file);  //目前选取文件，就上传到了IPFS，且可多次上传
                 if(response.success === true) {
                     this.enableButton();
                     // this.$refs.upload.clearFiles(); // 清除已选取的文件
                     this.fileURL = response.pinataURL;
-                    alert(this.fileURL);
+                    console.log('该文件的url', this.fileURL);
                 }else{
-                    alert(response.message);
+                    console.log(response.message);
                 }    
             } catch(e) {
                 console.log("Error during file upload", e);
@@ -135,11 +134,11 @@ export default {
                 }
                 //mint metadata to the chain
                 const addr = await getAccountAddr();
-                alert(addr);
+                console.log('用户地址',addr);
                 mint(addr, metadataURL);
             }
             catch(e) {
-                alert( "Upload error"+e )
+                console.log( "Upload error"+e )
             }
         },
         async uploadMetadataToIPFS(){
@@ -164,8 +163,8 @@ export default {
                 //upload the metadata JSON to IPFS
                 const response = await uploadJSONToIPFS(nftJSON);
                 if(response.success === true){
-                    console.log("Uploaded JSON to Pinata: ", response)
-                    alert("Uploaded JSON to Pinata: "+ response.pinataURL)
+                    // console.log("Uploaded JSON to Pinata: ", response)
+                   console.log("Uploaded JSON to Pinata: "+ response.pinataURL)
                     return response.pinataURL;
                 }
             }

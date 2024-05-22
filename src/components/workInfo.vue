@@ -1,7 +1,7 @@
 <template>
 <div class="container">
     <transition name="el-fade-in-linear">
-        <div class="content" v-show = "show">
+        <div class="content" v-show="show">
             <div class="detail-box">
                 <div class="detail-box-top">
                     <div class="detail-box-top-left">
@@ -38,9 +38,9 @@
                         </div>
                         <div class="work-hashvalue">
                             <span style="font-weight: bolder;">
-                                文件哈希:
+                                tokenId:
                             </span>
-                            <span style="display: block">{{ workHashValue }}</span>
+                            <span style="display: block">{{ workTokenId }}</span>
                         </div>
                     </div>
                 </div>
@@ -57,25 +57,49 @@
 </template>
 
 <script>
+import axios from 'axios'
+import getTokenIdbyURL from '@/commons/getTokenIdbyURL';
+import {
+    formatTime
+} from '@/commons/formatTime';
 export default {
-    mounted(){
-      setTimeout(()=>{
-        this.show = true;
-      },100)
+    mounted() {
+        setTimeout(() => {
+            this.show = true;
+        }, 100)
+        const jsonURL = this.$route.query.jsonURL; // 拿到路由参数
+        console.log('jsonURL', this.jsonURL);
+        this.fetchJson(jsonURL);
     },
     data() {
         return {
-            show:false,
-            picUrl: require('../assets/image.png'),
-            workHashValue: '1111111111122222222222222333333333344444444555555555555',
-            workCreateTime: new Date(),
-            workCreator: "式波明日香兰格雷",
-            workName: "一只猫猫的照片",
-            workType: "图片",
-            workDesc: "一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片"
+            show: false,
+            picUrl: "",
+            workHashValue: '',
+            workCreateTime: "",
+            workCreator: "",
+            workName: "",
+            workType: "",
+            workDesc: ""
         }
     },
     methods: {
+        async fetchJson(jsonURL) {
+            try {
+                let response = await axios.get(jsonURL)
+                let jsonData = response.data
+                this.workCreateTime = formatTime(jsonData.timestamp)
+                this.workName = jsonData.name
+                this.workType = jsonData.type
+                this.workDesc = jsonData.desc
+                this.workTokenId = await getTokenIdbyURL(jsonURL)
+                console.log(this.workTokenId)
+                this.picUrl = jsonData.image
+            } catch (e) {
+                console.log(e)
+            }
+
+        },
         backToRecord() {
             this.$router.push('/exhibitWorks');
         }

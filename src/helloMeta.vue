@@ -55,7 +55,6 @@ export default {
                         this.textColor = 'transparent';
                         this.show = true;
                     }, 0);
-
                 }
             });
             getAccountAddr().then(address => {

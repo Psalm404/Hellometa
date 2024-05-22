@@ -4,6 +4,7 @@ burn.js 提供销毁代币的方法
 无返回值
 */
 
+
 import contract from './contract';
 import { getAccountAddr } from './getAccountAddr';
 
@@ -19,9 +20,9 @@ async function burn(tokenId) {
         console.log(addr)
         // 调用合约的burn函数
         await contract.methods.burn(tokenId).send({ from: addr });
-        console.log('代币销毁成功');
+        return true
     } catch (error) {
-        console.error('代币销毁失败', error);
+        return false
     }
 }
 
