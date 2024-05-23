@@ -104,7 +104,7 @@ export default {
         async onChangeFile(file){
             try{
                 let array = await getAllURLs()
-                alert("现在上链的NFT的json链接：\n"+array);
+                alert("现在上链的NFT的json链接数：\n"+array.length);
                 this.disableButton();
                 this.file = file;
                 if(this.file==null){ 

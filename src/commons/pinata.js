@@ -108,3 +108,26 @@ export async function uploadJSONToIPFS(JSONbody) {
     }
 }
 
+export async function deletePinFromPinata(metadataURL) {
+    const parts = metadataURL.split('/');
+    const hashCID = parts[parts.length - 1];
+
+    console.log(hashCID);
+
+    try {
+        const response = await fetch(
+          `https://api.pinata.cloud/pinning/unpin/${hashCID}`,
+          {
+            method: "DELETE",
+            headers: {
+              accept: "application/json",
+              Authorization: `Bearer ${JWT}`,
+            },
+          }
+        );
+        console.log("Pin deleted"+response)
+      } catch (error) {
+        console.log(error);
+      }
+}
+

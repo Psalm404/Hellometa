@@ -1,5 +1,11 @@
 <template>
 <div class="container">
+    <!-- NFT原文件从Pinata删除的加载窗口 -->
+    <div id="loading-overlay" style="display: none;">
+      <div class="spinner"></div>
+      <div class="loading-message">正在从Pinata上删除MetaData&Original File，请稍候...</div>
+    </div>
+
     <transition name="el-fade-in-linear">
         <div class="content" v-show = "show">
             <div class="detail-box">
@@ -11,7 +17,7 @@
                         <div class="record-picture">
                             <el-avatar shape="square" :size="220" :src="picUrl"></el-avatar>
                         </div>
-                        <div class="work-download"> <button>下载文件</button> </div>
+                        <div class="work-download"> <button @click="downloadFile">下载文件</button> </div>
                     </div>
                     <div class="detail-box-top-right">
                         <div class="work-name">
@@ -38,7 +44,7 @@
                             <span style="font-weight: bolder;">
                                 TokenID:
                             </span>
-                            <span style="display: block">{{ workHashValue }}</span>
+                            <span style="display: block">{{ workTokenID }}</span>
                         </div>
                     </div>
                 </div>
@@ -55,6 +61,10 @@
 </template>
 
 <script>
+import burn from '@/commons/burn';
+import getTokenIdbyURL from '@/commons/getTokenIdbyURL';
+import { deletePinFromPinata } from '@/commons/pinata';
+
 export default { 
     mounted(){
       setTimeout(()=>{
@@ -66,10 +76,10 @@ export default {
 
     data() {
         return {
-            testURL:"https://brown-urban-hornet-311.mypinata.cloud/ipfs/QmWmafznaX9FfyWvBKLTmMgMZCffz5rscqM6VhzwyXqyEK",
+            testURL:"https://brown-urban-hornet-311.mypinata.cloud/ipfs/Qmd9P18RyQWTJNyr29vq9HBJxinKsHb5XhVcpEDwGWUHDU",
             show:false,
             picUrl: require('../assets/image.png'),
-            workHashValue: '1111111111122222222222222333333333344444444555555555555',
+            workTokenID: '',
             workCreateTime: new Date(),
             workName: "一只猫猫的照片",
             workType: "",
@@ -78,42 +88,108 @@ export default {
     },
     methods: {
         //解析传过来的URL并赋值表单
-            //?:文件哈希？交易哈希？TokenID? TID的意义是什么？——先放置
-        resolveJSONUrl(){
-            fetch(this.testURL)
-                .then(response => {
-                    // 检查响应状态
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok ' + response.statusText);
-                    }
-                    // 解析 JSON 数据
-                     return response.json();
+            //?:文件哈希？交易哈希？TokenID? TID的意义是什么？——先设置成TokenID了,opensea标了TokenID
+        async resolveJSONUrl(){
+            this.workTokenID = await getTokenIdbyURL(this.testURL);
+            if(this.workTokenID != null){
+                fetch(this.testURL)
+                    .then(response => {
+                        // 检查响应状态
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok ' + response.statusText);
+                        }
+                        // 解析 JSON 数据
+                        return response.json();
+                    })
+                    .then(async data => {
+                        // log整个 JSON 数据
+                        console.log(data); 
+                        // 赋值于details
+                        this.picUrl = data.image;
+                        // this.workHashValue = "11"
+                        this.workName = data.name;
+                        this.workType = data.type;
+                        this.workDesc = data.desc;
+                        this.workCreateTime = new Date(data.timestamp);
+                        // this.workTokenID = await getTokenIdbyURL(this.testURL);
+                        
                 })
-                .then(data => {
-                    // log整个 JSON 数据
-                    console.log(data); 
-                    // 赋值于details
-                    this.picUrl = data.image;
-                    // this.workHashValue = "11"
-                    this.workName = data.name;
-                    this.workType = data.type;
-                    this.workDesc = data.desc;
-                    this.workCreateTime = new Date(data.timestamp);
-            })
-            .catch(error => {
-                // 处理错误
-                console.error('There has been a problem with your fetch operation:', error);
-            });
+                .catch(error => {
+                    // 处理错误
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+            }else{
+                alert("fail to fetch tokenID from url")
+            }
+
+
         },
         //删除nft
-        deleteWork() {
+        async deleteWork() {
+            // 弹出确认框
+            const userConfirmed = confirm("Are you sure you want to burn this NFT?");
+            if (!userConfirmed) {
+                // 用户取消，返回凭证界面
+                this.backToRecord();
+                return;
+            }
 
+            if (this.workTokenID != null) {
+                try {
+                    // 调用 burn 方法销毁 NFT
+                    const transaction = await burn(this.workTokenID);
+
+                    // 等待交易完成
+                    const receipt = transaction; // Web3.js send() 方法直接返回交易收据
+
+                    if (receipt.status) {
+                        alert("NFT has been burnt successfully");
+
+                        // 显示加载窗口
+                        document.getElementById('loading-overlay').style.display = 'flex';
+
+                        // 删除元数据和文件
+                        await deletePinFromPinata(this.testURL);
+                        await deletePinFromPinata(this.picUrl);
+
+                    } else {
+                        alert("Failed to burn NFT. Transaction was reverted.");
+                    }
+                } catch (error) {
+                    console.error("Error during NFT burn:", error);
+                    alert("An error occurred while burning the NFT: " + error.message);
+                } finally {
+                    // 成功删除原文件
+                    alert("Successfully unpinned!");
+                    // 隐藏加载窗口
+                    document.getElementById('loading-overlay').style.display = 'none';
+                    // 返回凭证界面
+                    this.backToRecord();                    
+                }
+            }
         },  
         //下载nft源文件
-        downloadFile(){
-            //写完这个记得调窗口使得窗口适应图片大小
+        async downloadFile(){
+            try {
+                const response = await fetch(this.picUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = this.workName || 'download';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
         },      
-        //返回我的交易记录列表
+        //返回到我的交易记录列表路由
         backToRecord() {
             this.$router.push('/recordWorks');
         },
@@ -250,5 +326,39 @@ export default {
 
 .delete-work a:hover {
     color: rgba(255, 87, 51, 1);
+}
+
+/* 加载窗口样式 */
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.spinner {
+  border: 8px solid rgba(255, 255, 255, 0.3);
+  border-top: 8px solid #fff;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+.loading-message {
+  margin-top: 20px;
+  color: white;
+  font-size: 18px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
