@@ -7,7 +7,7 @@
     </div>
 
     <transition name="el-fade-in-linear">
-        <div class="content" v-show = "show">
+        <div class="content" v-show="show">
             <div class="detail-box">
                 <div class="delete-work">
                     <a @click="deleteWork"> <i class="el-icon-delete"></i> 删除作品</a>
@@ -42,7 +42,7 @@
                         </div>
                         <div class="work-hashvalue">
                             <span style="font-weight: bolder;">
-                                TokenID:
+                                tokenId:
                             </span>
                             <span style="display: block">{{ workTokenID }}</span>
                         </div>
@@ -67,32 +67,34 @@ import { deletePinFromPinata } from '@/commons/pinata';
 
 export default { 
     mounted(){
-      setTimeout(()=>{
-        this.show = true;
-        // call those show func
-        this.resolveJSONUrl();
-      },100)
+        // 在组件创建时获取路由参数
+        this.fileURL = this.$route.query.jsonURL;
+        setTimeout(()=>{
+            this.show = true;
+            // call those show func
+            this.resolveJSONUrl();
+        },100)
     },
-
     data() {
         return {
-            testURL:"https://brown-urban-hornet-311.mypinata.cloud/ipfs/Qmd9P18RyQWTJNyr29vq9HBJxinKsHb5XhVcpEDwGWUHDU",
+            fileURL:"",
+            testURL:"https://brown-urban-hornet-311.mypinata.cloud/ipfs/QmPeyXWXmwEFWL8LusARGZZsQtgf4K8ZrmDu3taavNtVGY",
             show:false,
             picUrl: require('../assets/image.png'),
             workTokenID: '',
             workCreateTime: new Date(),
             workName: "一只猫猫的照片",
             workType: "",
-            workDesc: ""
+            workDesc: "",
         }
     },
     methods: {
         //解析传过来的URL并赋值表单
             //?:文件哈希？交易哈希？TokenID? TID的意义是什么？——先设置成TokenID了,opensea标了TokenID
         async resolveJSONUrl(){
-            this.workTokenID = await getTokenIdbyURL(this.testURL);
+            this.workTokenID = await getTokenIdbyURL(this.fileURL);
             if(this.workTokenID != null){
-                fetch(this.testURL)
+                fetch(this.fileURL)
                     .then(response => {
                         // 检查响应状态
                         if (!response.ok) {
@@ -135,6 +137,9 @@ export default {
             }
 
             if (this.workTokenID != null) {
+                let delete_meta_res;
+                let delete_file_res;
+                
                 try {
                     // 调用 burn 方法销毁 NFT
                     const transaction = await burn(this.workTokenID);
@@ -149,8 +154,8 @@ export default {
                         document.getElementById('loading-overlay').style.display = 'flex';
 
                         // 删除元数据和文件
-                        await deletePinFromPinata(this.testURL);
-                        await deletePinFromPinata(this.picUrl);
+                        delete_meta_res = await deletePinFromPinata(this.fileURL);
+                        delete_file_res = await deletePinFromPinata(this.picUrl);
 
                     } else {
                         alert("Failed to burn NFT. Transaction was reverted.");
@@ -160,7 +165,16 @@ export default {
                     alert("An error occurred while burning the NFT: " + error.message);
                 } finally {
                     // 成功删除原文件
-                    alert("Successfully unpinned!");
+                    if(delete_meta_res == 200 & delete_file_res == 200){
+                        alert("Successfully unpinned!");
+                    }else{
+                        if(delete_meta_res != 200){
+                            alert("MetaData unpinned Error, status code: "+ delete_meta_res);
+                        }
+                        if(delete_file_res != 200){
+                            alert("Original file unpinned Error, status code: "+ delete_file_res);
+                        }                        
+                    }
                     // 隐藏加载窗口
                     document.getElementById('loading-overlay').style.display = 'none';
                     // 返回凭证界面
@@ -193,7 +207,6 @@ export default {
         backToRecord() {
             this.$router.push('/recordWorks');
         },
-
     }
 }
 </script>

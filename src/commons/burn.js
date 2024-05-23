@@ -4,6 +4,7 @@ burn.js 提供销毁代币的方法
 无返回值
 */
 
+
 import contract from './contract';
 import { getAccountAddr } from './getAccountAddr';
 

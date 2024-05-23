@@ -5,7 +5,7 @@ export async function uploadFileToIPFS(file) {
         const formData = new FormData();
         formData.append('file',file.raw);
         console.log(file.raw);  //debug
-        alert(JWT);  //debug
+        console.log('JWT:', JWT);  //debug
 
         const pinataMetadata = JSON.stringify({
             name: file.name,
@@ -55,7 +55,7 @@ export async function uploadFileToIPFS(file) {
 
 export async function uploadJSONToIPFS(JSONbody) {
     try{
-        alert(JSON.stringify(JSONbody, null, 2));
+        console.log(JSON.stringify(JSONbody, null, 2));
         // Convert JSON to a string and then to a Blob
         const jsonBlob = new Blob([JSON.stringify(JSONbody, null, 2)], { type: 'application/json' });
         const formData = new FormData();
@@ -111,23 +111,32 @@ export async function uploadJSONToIPFS(JSONbody) {
 export async function deletePinFromPinata(metadataURL) {
     const parts = metadataURL.split('/');
     const hashCID = parts[parts.length - 1];
-
+  
     console.log(hashCID);
-
+  
     try {
-        const response = await fetch(
-          `https://api.pinata.cloud/pinning/unpin/${hashCID}`,
-          {
-            method: "DELETE",
-            headers: {
-              accept: "application/json",
-              Authorization: `Bearer ${JWT}`,
-            },
-          }
-        );
-        console.log("Pin deleted"+response)
-      } catch (error) {
-        console.log(error);
+      const response = await fetch(
+        `https://api.pinata.cloud/pinning/unpin/${hashCID}`,
+        {
+          method: "DELETE",
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${JWT}`,
+          },
+        }
+      );
+  
+      if (response.ok) {
+        console.log("Pin deleted successfully");
+      } else {
+        console.log(`Failed to delete pin: ${response.status}`);
       }
+      
+      return response.status;
+    } catch (error) {
+      console.log("Error:", error);
+      return error.response ? error.response.status : 500; // 返回错误的响应状态码，如果没有响应，则返回 500（服务器错误）
+    }
 }
+  
 

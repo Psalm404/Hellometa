@@ -1,7 +1,7 @@
 <template>
 <div class="container">
     <transition name="el-fade-in-linear">
-        <div class="content" v-show = "show">
+        <div class="content" v-show="show">
             <div class="detail-box">
                 <div class="detail-box-top">
                     <div class="detail-box-top-left">
@@ -36,9 +36,15 @@
                             </span>
                             <span style="display: block">{{ workCreateTime }}</span>
                         </div>
+                        <div class="work-tokenID">
+                            <span style="font-weight: bolder;">
+                                tokenId:
+                            </span>
+                            <span style="display: block">{{ workTokenID }}</span>
+                        </div>
                         <div class="work-hashvalue">
                             <span style="font-weight: bolder;">
-                                文件哈希:
+                                Transaction Hash:
                             </span>
                             <span style="display: block">{{ workHashValue }}</span>
                         </div>
@@ -57,27 +63,83 @@
 </template>
 
 <script>
+// 这里先从 exhibitWorks 中拿到当前 nft 的 url
+// 然后导入 pinata 的解析url函数，拿到一个 json 
+// 这个 json 文件包含了 picUrl、workCreateTime、workName、workType、workDesc
+// workCreator 可以通过调用 ownerOfURL 获取这个账户的地址
+
+// 引入 axios 用于 HTTP 请求
+import axios from 'axios';
+import getTransactionHash from '@/commons/getTransactionHash';
+import getTokenIdbyURL from '@/commons/getTokenIdbyURL';
+
 export default {
     mounted(){
-      setTimeout(()=>{
-        this.show = true;
-      },100)
+        // 在组件创建时获取路由参数
+        this.fileURL = this.$route.query.jsonURL;
+        setTimeout(()=>{
+          this.show = true;
+          this.fetchNFTData();
+        },100)
     },
     data() {
         return {
             show:false,
-            picUrl: require('../assets/image.png'),
-            workHashValue: '1111111111122222222222222333333333344444444555555555555',
-            workCreateTime: new Date(),
-            workCreator: "式波明日香兰格雷",
-            workName: "一只猫猫的照片",
-            workType: "图片",
-            workDesc: "一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片"
+            fileURL:"",
+            picUrl: require('../assets/image.png'), // 默认图片，加载完成后会被替换
+            workHashValue: '', // 哈希值是从 exhibitWorks 中获取的
+            workCreateTime: '',
+            workCreator: '',
+            workName: '',
+            workType: '',
+            workDesc: '',
+            workTokenID: '',
         }
     },
     methods: {
+        async fetchJson(jsonURL) {
+            try {
+                let response = await axios.get(jsonURL)
+                let jsonData = response.data
+                this.workCreateTime = new Date(jsonData.timestamp)
+                this.workName = jsonData.name
+                this.workType = jsonData.type
+                this.workDesc = jsonData.desc
+                this.workTokenId = await getTokenIdbyURL(jsonURL)
+                console.log(this.workTokenId)
+                this.picUrl = jsonData.image
+            } catch (e) {
+                console.log(e)
+            }
+
+        },
         backToRecord() {
             this.$router.push('/exhibitWorks');
+        },
+        async fetchNFTData() {
+            //先加一下，每家error判断
+            this.workTokenID = await getTokenIdbyURL(this.fileURL);
+            
+            try {
+                // const nftUrl = 'https://brown-urban-hornet-311.mypinata.cloud/ipfs/QmXwfXkjs4sFXBN5yXeokSAVJFR6PCVBd2KoNH1gBFK6oP'; // 从 exhibitWorks 中拿到的当前 NFT 的 URL
+                const nftData = await this.fetchFromPinata(this.fileURL);
+
+                this.picUrl = nftData.image;
+                this.workCreateTime = new Date().toLocaleString();
+                this.workName = nftData.name;
+                this.workType = nftData.type;
+                this.workDesc = nftData.desc;
+                this.workCreator = nftData.creator;
+                this.workHashValue = await getTransactionHash(this.fileURLUrl);
+
+            } catch (error) {
+                console.error('Error fetching NFT data:', error);
+            }
+        },
+        async fetchFromPinata(url) {
+            // 使用 axios 获取 JSON 数据
+            const response = await axios.get(url);
+            return response.data;
         }
     }
 }
@@ -117,6 +179,7 @@ export default {
 .work-type,
 .work-describe,
 .work-createtime,
+.work-tokenID,
 .work-hashvalue,
 .work-creator {
     text-align: left;
