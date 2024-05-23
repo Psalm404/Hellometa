@@ -6,6 +6,7 @@ mint.js 提供创建代币的方法
 
 import contract from './contract';
 import { getAccountAddr } from './getAccountAddr';
+import setTransactionHash from '@/commons/setTransactionHash'
 
 async function mint(to, tokenURI) {
     try {
@@ -16,9 +17,17 @@ async function mint(to, tokenURI) {
         
         // 合约调用者的地址
         const addr = await getAccountAddr();
+
         // 调用合约的mint函数
-        await contract.methods.mint(to, tokenURI).send({ from: addr }); 
+        await contract.methods.mint(to, tokenURI).send({ from: addr })
+        .on('receipt', function(receipt){
+            setTransactionHash(tokenURI, receipt.transactionHash);
+        })
+        .on('error', function(error) { 
+            console.log(error);
+        });
         console.log('代币铸造成功');
+
     } catch (error) {
         console.error('代币铸造失败', error);
     }
