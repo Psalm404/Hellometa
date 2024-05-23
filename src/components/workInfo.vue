@@ -1,7 +1,7 @@
 <template>
 <div class="container">
     <transition name="el-fade-in-linear">
-        <div class="content" v-show = "show">
+        <div class="content" v-show="show">
             <div class="detail-box">
                 <div class="detail-box-top">
                     <div class="detail-box-top-left">
@@ -38,9 +38,13 @@
                         </div>
                         <div class="work-hashvalue">
                             <span style="font-weight: bolder;">
+<<<<<<< HEAD
                                 交易哈希:
+=======
+                                tokenId:
+>>>>>>> abd2c88e70be6a32a3eaa44be2a15b52eff57833
                             </span>
-                            <span style="display: block">{{ workHashValue }}</span>
+                            <span style="display: block">{{ workTokenId }}</span>
                         </div>
                     </div>
                 </div>
@@ -85,6 +89,22 @@ export default {
         }
     },
     methods: {
+        async fetchJson(jsonURL) {
+            try {
+                let response = await axios.get(jsonURL)
+                let jsonData = response.data
+                this.workCreateTime = formatTime(jsonData.timestamp)
+                this.workName = jsonData.name
+                this.workType = jsonData.type
+                this.workDesc = jsonData.desc
+                this.workTokenId = await getTokenIdbyURL(jsonURL)
+                console.log(this.workTokenId)
+                this.picUrl = jsonData.image
+            } catch (e) {
+                console.log(e)
+            }
+
+        },
         backToRecord() {
             this.$router.push('/exhibitWorks');
         },

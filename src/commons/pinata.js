@@ -5,7 +5,7 @@ export async function uploadFileToIPFS(file) {
         const formData = new FormData();
         formData.append('file',file.raw);
         console.log(file.raw);  //debug
-        alert(JWT);  //debug
+        console.log('JWT:', JWT);  //debug
 
         const pinataMetadata = JSON.stringify({
             name: file.name,
@@ -55,7 +55,7 @@ export async function uploadFileToIPFS(file) {
 
 export async function uploadJSONToIPFS(JSONbody) {
     try{
-        alert(JSON.stringify(JSONbody, null, 2));
+        console.log(JSON.stringify(JSONbody, null, 2));
         // Convert JSON to a string and then to a Blob
         const jsonBlob = new Blob([JSON.stringify(JSONbody, null, 2)], { type: 'application/json' });
         const formData = new FormData();

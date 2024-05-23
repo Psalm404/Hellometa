@@ -7,15 +7,19 @@
                     <div class="upload-box-top">
                         <div class="upload-box-top-left" style="color:white">
                             <!-- 这里会有一个头像上传 -->
+                            <!-- 这里会有一个头像上传 -->
                         </div>
                         <div class="upload-box-top-right">
                             <div class="line1">
                                 <div class="data-name">
                                     <el-form-item required label="作品名称" class="upload-form-item">
+                                    <el-form-item required label="作品名称" class="upload-form-item">
                                         <el-input v-model="form.name"></el-input>
                                     </el-form-item>
                                 </div>
                                 <div class="data-type">
+                                    <el-form-item style="flex: 1" required label="作品类别">
+                                        <Select style="width: 100%;" size="large" v-model="form.type">
                                     <el-form-item style="flex: 1" required label="作品类别">
                                         <Select style="width: 100%;" size="large" v-model="form.type">
                                             <Option el-option label="文本" value="txt"></Option>
@@ -35,8 +39,17 @@
                                     <el-input type="textarea" :rows="9" v-model="form.desc" resize="none"></el-input>
                                 </el-form-item>
                             </div>
-
+                            <!-- 上传文件 -->
                             <div class="data-select">
+                                <el-upload 
+                                    class="upload-demo" 
+                                    ref="upload" 
+                                    multiple:false 
+                                    limit:1 
+                                    :auto-upload="false"
+                                    :on-change="onChangeFile" 
+                                >
+                                    <button slot="trigger" size="small" id="list-button" @click.prevent type="primary">选取文件</button>
                                 <el-upload 
                                     class="upload-demo" 
                                     ref="upload" 
@@ -48,10 +61,12 @@
                                     <button slot="trigger" size="small" id="list-button" @click.prevent type="primary">选取文件</button>
                                 </el-upload>
                             </div>
+                            <!-- 上传文件 -->
                         </div>
                     </div>
                     <div class="upload-box-bottom">
                         <div class="submitt-button">
+                            <button type="primary" @click.prevent="mintNFT">mintNFT</button>
                             <button type="primary" @click.prevent="mintNFT">mintNFT</button>
                         </div>
                     </div>
@@ -64,6 +79,19 @@
 </template>
 
 <script>
+
+import {
+    uploadFileToIPFS,
+    uploadJSONToIPFS,
+} from '../commons/pinata';
+import {
+    getAccountAddr
+} from '../commons/getAccountAddr';
+
+import mint from '@/commons/mint';
+
+import getAllURLs from '@/commons/getAllURLs';
+
 // import axios from 'axios';  // 引入axios库用于发送HTTP请求
 
 import {
@@ -84,14 +112,21 @@ export default {
       setTimeout(()=>{
         this.show = true;
       },100)
+    mounted(){
+      setTimeout(()=>{
+        this.show = true;
+      },100)
     },
     data() {
         return {
             show:false,
             //  表单验证用，还没写
+            show:false,
+            //  表单验证用，还没写
             form: {
                 name: '',
                 type: '',
+                creator: ' ',                
                 creator: ' ',                
                 desc: '',
             },
@@ -99,25 +134,31 @@ export default {
             fileURL: null,
         }
     },
+            },
+            uploadedStatus:'',
+            fileURL: null,
+        }
+    },
     methods: {
+        //选择文件，选择即上传IPFS
         async onChangeFile(file){
             try{
-                // let array = await getAllURLs()
-                // alert(array);
+                let array = await getAllURLs()
+                console.log("已上链的NFT的json链接：\n"+array);
                 this.disableButton();
                 this.file = file;
                 if(this.file==null){ 
                     return this.$message.error("请先选取文件！"); 
                 } 
-                alert(file.name);
-                const response = await uploadFileToIPFS(this.file);
+                console.log(file.name);
+                const response = await uploadFileToIPFS(this.file);  //目前选取文件，就上传到了IPFS，且可多次上传
                 if(response.success === true) {
                     this.enableButton();
                     // this.$refs.upload.clearFiles(); // 清除已选取的文件
                     this.fileURL = response.pinataURL;
-                    alert(this.fileURL);
+                    console.log('该文件的url', this.fileURL);
                 }else{
-                    alert(response.message);
+                    console.log(response.message);
                 }    
             } catch(e) {
                 console.log("Error during file upload", e);
@@ -125,25 +166,20 @@ export default {
         
         },
         async mintNFT(){
-            //Upload data to IPFS
             try {
+                //Upload metadata to IPFS
                 const metadataURL = await this.uploadMetadataToIPFS();
                 if(metadataURL === -1){
                     this.$message.info('metadataURL=-1!');
                     return;
                 }
+                //mint metadata to the chain
                 const addr = await getAccountAddr();
-                alert(addr);
-                
-                // 调用智能合约的 mint 函数
-                await mint(addr, metadataURL);
-
-                const txhash = await getTransactionHash(metadataURL);
-                
-                alert(txhash);
+                console.log('用户地址',addr);
+                mint(addr, metadataURL);
             }
             catch(e) {
-                alert( "Upload error"+e )
+                console.log( "Upload error"+e )
             }
         },
         async uploadMetadataToIPFS(){
@@ -154,17 +190,22 @@ export default {
                 return -1;
             }
 
+            // 5.22 要加时间戳字段，记得（要有铸造时间）
             const nftJSON = {
-                name, type, creator,desc, image: this.fileURL
+                name, 
+                type, 
+                creator,
+                desc, 
+                image: this.fileURL,
+                timestamp: Date.now(), // 添加当前时间戳
             }
 
             try {
                 //upload the metadata JSON to IPFS
                 const response = await uploadJSONToIPFS(nftJSON);
                 if(response.success === true){
-                    console.log("Uploaded JSON to Pinata: ", response)
-                    // return response.pinataURL;
-                    alert("Uploaded JSON to Pinata: "+ response.pinataURL)
+                    // console.log("Uploaded JSON to Pinata: ", response)
+                   console.log("Uploaded JSON to Pinata: "+ response.pinataURL)
                     return response.pinataURL;
                 }
             }
@@ -172,6 +213,7 @@ export default {
                 console.log("error uploading JSON metadata:", e)
             }
         },
+        //用来使能/禁止选择文件按钮的两个函数
         async disableButton() {
             const listButton = document.getElementById('list-button');
             if (listButton) {

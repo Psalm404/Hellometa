@@ -1,7 +1,7 @@
 <template>
 <div class="container">
     <transition name="el-fade-in-linear">
-        <div class="content" v-show = "show">
+        <div class="content" v-show="show">
             <div class="detail-box">
                 <div class="delete-work">
                     <a @click="deleteWork"> <i class="el-icon-delete"></i> 删除作品</a>
@@ -30,15 +30,15 @@
                         </div>
                         <div class="work-createtime">
                             <span style="font-weight: bolder;">
-                                创建时间:
+                                铸造时间:
                             </span>
                             <span style="display: block">{{ workCreateTime }}</span>
                         </div>
                         <div class="work-hashvalue">
                             <span style="font-weight: bolder;">
-                                文件哈希:
+                                tokenId:
                             </span>
-                            <span style="display: block">{{ workHashValue }}</span>
+                            <span style="display: block">{{ workTokenId }}</span>
                         </div>
                     </div>
                 </div>
@@ -55,28 +55,76 @@
 </template>
 
 <script>
+import axios from 'axios'
+import getTokenIdbyURL from '@/commons/getTokenIdbyURL';
+import burn from '@/commons/burn';
+import { formatTime } from '@/commons/formatTime';
 export default {
-    mounted(){
-      setTimeout(()=>{
-        this.show = true;
-      },100)
+    props: ['jsonURL'],
+    mounted() {
+        setTimeout(() => {
+            this.show = true;
+        }, 100)
+        const jsonURL = this.$route.query.jsonURL; // 拿到路由参数
+        console.log('jsonURL', this.jsonURL);
+        this.fetchJson(jsonURL);
     },
+
     data() {
         return {
-            show:false,
-            picUrl: require('../assets/image.png'),
-            workHashValue: '1111111111122222222222222333333333344444444555555555555',
-            workCreateTime: new Date(),
-            workName: "一只猫猫的照片",
-            workType: "图片",
-            workDesc: "一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片一只猫猫的照片"
+            show: false,
+            picUrl: "",
+            workTokenId: '', // 暂时改成tokenId
+            workCreateTime: "",
+            workName: "",
+            workType: "",
+            workDesc: "",
         }
     },
     methods: {
+        async fetchJson(jsonURL) {
+            try {
+                let response = await axios.get(jsonURL)
+                let jsonData = response.data
+                this.workCreateTime = formatTime(jsonData.timestamp)
+                this.workName = jsonData.name
+                this.workType = jsonData.type
+                this.workDesc = jsonData.desc
+                this.workTokenId = await getTokenIdbyURL(jsonURL)
+                console.log(this.workTokenId)
+                this.picUrl = jsonData.image
+            } catch (e) {
+                console.log(e)
+            }
+
+        },
+
         backToRecord() {
             this.$router.push('/recordWorks');
         },
-        deleteWork() {}
+        async deleteWork() {
+            try {
+
+                let isBurn = await burn(this.workTokenId)
+                console.log(isBurn)
+                if (isBurn) {
+                    this.$message({
+                        message: '作品删除成功，即将跳转回记录页...',
+                        type: 'success'
+                    });
+                    setTimeout(() => {
+                        this.$router.push('/recordWorks');
+                    }, 2500)
+                } else {
+                    this.$message({
+                        message: '作品删除失败',
+                        type: 'error'
+                    });
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
     }
 }
 </script>
@@ -210,4 +258,5 @@ export default {
 .delete-work a:hover {
     color: rgba(255, 87, 51, 1);
 }
+
 </style>
