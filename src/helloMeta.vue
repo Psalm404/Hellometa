@@ -34,6 +34,7 @@
 import {
     getAccountAddr
 } from './commons/getAccountAddr';
+import getRecentBlocks from '@/commons/getRecentBlocks';
 export default {
     name: 'HellometaComponent',
     data() {
@@ -70,11 +71,19 @@ export default {
                         this.textColor = 'transparent';
                         this.show = true;
                     }, 0);
-
+                    
+                    // 调用 getBlocks 函数获取区块信息
+                    getRecentBlocks().then(blocks => {
+                        console.log("Received blocks:", blocks);
+                        // 在此处处理 blocks 数组
+                    }).catch(error => {
+                        console.error("Error fetching blocks:", error);
+                    });
                 }
             }).catch(error => {
                 console.error('发生错误：', error);
             });
+            
         } else {
             this.guideText = '未检测到钱包，请先下载';
         }
