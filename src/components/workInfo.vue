@@ -130,7 +130,7 @@ export default {
                 this.workType = nftData.type;
                 this.workDesc = nftData.desc;
                 this.workCreator = nftData.creator;
-                this.workHashValue = await getTransactionHash(this.fileURLUrl);
+                this.workHashValue = await getTransactionHash(this.fileURL);
 
             } catch (error) {
                 console.error('Error fetching NFT data:', error);

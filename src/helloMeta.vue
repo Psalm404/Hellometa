@@ -6,6 +6,9 @@
         <div v-show="show" class="main-page">
             <div class="side-navigator">
                 <div class='index-list'>
+                    <div class="navi-home" :class="{ 'active': activeButton === 'home' }">
+                        <button @click="select('home')"> 主页 </button>
+                    </div>
                     <div class='navi-exhibit' :class="{ 'active': activeButton === 'exhibit' }">
                         <button @click="select('exhibit') " > 作品展示</button>
                     </div>
@@ -90,6 +93,8 @@ export default {
                 targetRoute = '/recordWorks';
             } else if (index === 'exhibit') {
                 targetRoute = '/exhibitWorks';
+            } else if (index === 'home') {
+                targetRoute = '/home'
             }
             if (targetRoute && this.$route.path !== targetRoute)
                 this.$router.push(targetRoute);

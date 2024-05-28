@@ -7,11 +7,20 @@ import recordWorks from './components/recordWorks.vue'
 import exhibitWorks from './components/exhibitWorks.vue'
 import workDetails from './components/workDetails.vue'
 import workInfo from './components/workInfo.vue'
+import homePage from './components/homePage.vue'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
  routes:[
-    {
+      {
+        path: '/',
+        redirect: '/home'
+      },
+      {
+        path: '/home',
+        component: homePage
+      },
+      {
         path:'/uploadWorks',
         component:uploadWorks
       },
