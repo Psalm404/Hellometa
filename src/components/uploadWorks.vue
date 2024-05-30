@@ -1,12 +1,122 @@
 <template>
 <div class="container">
+    <div id="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <div class="loading-message">正在上传文件，请稍候...</div>
+    </div>
+    <div class="content">
+        <el-form ref="form" :model="form" :rules="rules">
+            <transition name="el-fade-in-linear">
+                <div class="upload-box" v-show="show[1]">
+                    <el-steps :active="0" align-center>
+                        <el-step title="步骤1" description="填写公司名称"></el-step>
+                        <el-step title="步骤2" description="选择作品类别"></el-step>
+                        <el-step title="步骤3" description="上传作品"></el-step>
+                        <el-step title="步骤4" description="填写作品信息"></el-step>
+                    </el-steps>
+                    <div class="upload-text1">请填写公司名称:</div>
+                    <div class="data-creator">
+                        <el-form-item prop="creator">
+                            <el-input v-model="form.creator" resize="none"></el-input>
+                        </el-form-item>
+                    </div>
+                    <div class="arrow-box">
+                        <a></a>
+                        <div style="width:90%; display:inline-block"> </div>
+                        <a class="el-icon-right" @click="toUpload(1, 2, 'creator')"></a>
+                    </div>
+                </div>
+            </transition>
+
+            <transition name="el-fade-in-linear">
+                <div class="upload-box" v-show="show[2]">
+                    <el-steps :active="1" align-center>
+                        <el-step title="步骤1" description="填写公司名称"></el-step>
+                        <el-step title="步骤2" description="选择作品类别"></el-step>
+                        <el-step title="步骤3" description="上传作品"></el-step>
+                        <el-step title="步骤4" description="填写作品信息"></el-step>
+                    </el-steps>
+                    <div class="upload-text1">请选择作品类别:</div>
+                    <div class="data-type">
+                        <el-form-item prop="type" required>
+                            <Select style="width: 100%;" size="large" v-model="form.type">
+                                <Option el-option label="文本" value="txt"></Option>
+                                <Option label="图片" value="pic"></Option>
+                            </Select>
+                        </el-form-item>
+                    </div>
+                    <div class="arrow-box">
+                        <a class="el-icon-back" @click="toUpload(2, 1,'')"></a>
+                        <div style="width:90%; display:inline-block"> </div>
+                        <a class="el-icon-right" @click="toUpload(2, 3,'type')"></a>
+                    </div>
+                </div>
+            </transition>
+
+            <transition name="el-fade-in-linear">
+                <div class="upload-box" v-show="show[3]">
+                    <el-steps :active="3" align-center>
+                        <el-step title="步骤1" description="填写公司名称"></el-step>
+                        <el-step title="步骤2" description="选择作品类别"></el-step>
+                        <el-step title="步骤3" description="上传作品"></el-step>
+                        <el-step title="步骤4" description="填写作品信息"></el-step>
+                    </el-steps>
+                    <div class="upload-text1">请填写作品信息:</div>
+                    <div class="data-message" style="width:70%;height:100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <div class="data-creator">
+                            <el-form-item label="作品名称" prop="name">
+                                <el-input v-model="form.name"></el-input>
+                            </el-form-item>
+                        </div>
+                        <div class="data-describe">
+                            <el-form-item label="作品介绍" prop="desc">
+                                <el-input type="textarea" :rows="6" v-model="form.desc" resize="none"></el-input>
+                            </el-form-item>
+                        </div>
+                    </div>
+                    <div class="arrow-box">
+                        <a class="el-icon-back" @click="toUpload(3, 2,'')"></a>
+                        <div style="width:90%; display:inline-block"> </div>
+                        <a class="el-icon-right" @click="toUpload(3, 4,'name')"></a>
+                    </div>
+                </div>
+            </transition>
+
+            <transition name="el-fade-in-linear">
+                <div class="upload-box" v-show="show[4]">
+                    <el-steps :active="2" align-center>
+                        <el-step title="步骤1" description="填写公司名称"></el-step>
+                        <el-step title="步骤2" description="选择作品类别"></el-step>
+                        <el-step title="步骤3" description="上传作品"></el-step>
+                        <el-step title="步骤4" description="填写作品信息"></el-step>
+                    </el-steps>
+                    <div class="upload-text1">请上传作品:</div>
+                    <div class="data-select">
+                        <el-upload class="upload-demo" ref="upload" multiple:false limit:1 :auto-upload="false" :on-change="onChangeFile">
+                            <button slot="trigger" size="small" id="list-button" @click.prevent type="primary" style="color:#9C9C9C">选取文件</button>
+                        </el-upload>
+                    </div>
+                    <div class="arrow-box">
+                        <a class="el-icon-back disabled" style="color:transparent"></a>
+                        <div style="width:90%; display:inline-block"> </div>
+                        <a style="font-size:17px" @click="mintNFT()">铸造 </a>
+
+                    </div>
+                </div>
+            </transition>
+
+        </el-form>
+        <div class="cool-text">UPLOAD</div>
+    </div>
+
+</div>
+<!-- <div class="container">
     <transition name="el-fade-in-linear">
         <div class="content" v-show = "show">
             <el-form ref="form" :model="form" label-width="100px">
                 <div class="upload-box">
                     <div class="upload-box-top">
                         <div class="upload-box-top-left" style="color:white">
-                            <!-- 这里会有一个头像上传 -->
                         </div>
                         <div class="upload-box-top-right">
                             <div class="line1">
@@ -35,7 +145,7 @@
                                     <el-input type="textarea" :rows="9" v-model="form.desc" resize="none"></el-input>
                                 </el-form-item>
                             </div>
-                            <!-- 上传文件 -->
+
                             <div class="data-select">
                                 <el-upload 
                                     class="upload-demo" 
@@ -48,7 +158,7 @@
                                     <button slot="trigger" size="small" id="list-button" @click.prevent type="primary">选取文件</button>
                                 </el-upload>
                             </div>
-                            <!-- 上传文件 -->
+
                         </div>
                     </div>
                     <div class="upload-box-bottom">
@@ -61,7 +171,7 @@
             <div class="cool-text">UPLOAD</div>
         </div>
     </transition>
-</div>
+</div> -->
 </template>
 
 <script>
@@ -79,82 +189,169 @@ import mint from '@/commons/mint';
 import getAllURLs from '@/commons/getAllURLs';
 
 export default {
-    mounted(){
-      setTimeout(()=>{
-        this.show = true;
-      },100)
+    mounted() {
+        setTimeout(() => {
+            this.$set(this.show, 1, true);
+            console.log('show1', this.show[1])
+        }, 200)
     },
     data() {
         return {
-            show:false,
-            //  表单验证用，还没写
+            show: [false, false, false, false, false],
             form: {
                 name: '',
                 type: '',
-                creator: ' ',                             
+                creator: '',
                 desc: '',
             },
-            uploadedStatus:'',
+            uploadedStatus: '',
             fileURL: null,
+            rules: {
+                name: [{
+                        required: true,
+                        message: '请输入数据名称',
+                        trigger: 'blur'
+                    },
+                    {
+                        max: 15,
+                        message: '长度不超过15个字符',
+                        trigger: 'blur'
+                    }
+                ],
+                type: [{
+                    required: true,
+                    message: '请选择类型',
+                }],
+                creator: [{
+                        required: true,
+                        message: '请输入公司名称',
+                        trigger: 'blur'
+                    },
+                    {
+                        max: 15,
+                        message: '长度不超过15个字符',
+                        trigger: 'blur'
+                    }
+                ],
+                desc: [{
+                        required: true,
+                        message: '请输入作品描述',
+                        trigger: 'blur'
+                    },
+                    {
+                        max: 50,
+                        message: '长度不超过120个字符',
+                        trigger: 'blur'
+                    }
+                ]
+            }
         }
     },
     methods: {
+        toUpload(from, to, field) {
+            let isPass = false;
+            if (!field) {
+                isPass = true;
+            }
+            if (from != 3 && field) {
+                this.$refs.form.validateField(field, (valid) => {
+                    console.log('valid：', valid)
+                    if (!valid) {
+                        isPass = true;
+                        console.log('field:', this.form.creator)
+                    }
+                });
+            } else if (from == 3 && field) {
+                this.$refs.form.validate((valid) => {
+                    if (valid) {
+                        isPass = true;
+                    } else {
+                        this.$message.error('提交失败，请检查表单项');
+                        return false;
+                    }
+                });
+            }
+            if (isPass) {
+                console.log(this.form.type)
+                console.log('switch')
+                this.$set(this.show, from, false);
+                setTimeout(() => {
+                    this.$set(this.show, to, true);
+                }, 400);
+            }
+
+        },
         //选择文件，选择即上传IPFS
-        async onChangeFile(file){
-            try{
+        async onChangeFile(file) {
+            try {
                 let array = await getAllURLs()
-                alert("现在上链的NFT的json链接数：\n"+array.length);
+                if (array == null) {
+                    alert("获取合约失败");
+                }
+                // alert("现在上链的NFT的json链接数：\n" + array.length);
                 this.disableButton();
                 this.file = file;
-                if(this.file==null){ 
-                    return this.$message.error("请先选取文件！"); 
-                } 
+                if (this.file == null) {
+                    return this.$message.error("请先选取文件！");
+                }
                 console.log(file.name);
-                const response = await uploadFileToIPFS(this.file);  //目前选取文件，就上传到了IPFS，且可多次上传
-                if(response.success === true) {
+                const response = await uploadFileToIPFS(this.file); //目前选取文件，就上传到了IPFS，且可多次上传
+                if (response.success === true) {
                     this.enableButton();
                     // this.$refs.upload.clearFiles(); // 清除已选取的文件
                     this.fileURL = response.pinataURL;
                     console.log('该文件的url', this.fileURL);
-                }else{
+                } else {
                     console.log(response.message);
-                }    
-            } catch(e) {
+                }
+            } catch (e) {
                 console.log("Error during file upload", e);
             }
-        
+
         },
-        async mintNFT(){
+        async mintNFT() {
             try {
                 //Upload metadata to IPFS
                 const metadataURL = await this.uploadMetadataToIPFS();
-                if(metadataURL === -1){
-                    this.$message.info('metadataURL=-1!');
+                if (metadataURL === -1) {
+                    this.$message.error('文件上传未完成');
                     return;
                 }
                 //mint metadata to the chain
                 const addr = await getAccountAddr();
-                console.log('用户地址',addr);
-                mint(addr, metadataURL);
-            }
-            catch(e) {
-                console.log( "Upload error"+e )
+                console.log('用户地址', addr);
+                let isSuccess = await mint(addr, metadataURL);
+                if (isSuccess) {
+                    this.$message.success('铸造成功');
+                    setTimeout(() => {
+                        this.$router.push('/recordWorks');
+                    }, 1000)
+
+                } else {
+                    this.$message.error('铸造失败');
+                }
+            } catch (e) {
+                console.log("Upload error" + e)
             }
         },
-        async uploadMetadataToIPFS(){
-            const {name, type, creator, desc} = this.form;
-            if( !name || !type || !creator || !desc || !this.fileURL)
-            {
-                this.$message.info("Please fill all the fields!");
+        async uploadMetadataToIPFS() {
+            const {
+                name,
+                type,
+                creator,
+                desc
+            } = this.form;
+            if (!name || !type || !creator || !desc || !this.fileURL) {
+                // this.$message.info("Please fill all the fields!");
                 return -1;
             }
 
             // 5.22 要加时间戳字段，记得（要有铸造时间）
             const nftJSON = {
-                name, 
-                type, 
+                name,
+                type,
                 creator,
-                desc, 
+                desc,
                 image: this.fileURL,
                 timestamp: Date.now(), // 添加当前时间戳
             }
@@ -162,18 +359,18 @@ export default {
             try {
                 //upload the metadata JSON to IPFS
                 const response = await uploadJSONToIPFS(nftJSON);
-                if(response.success === true){
+                if (response.success === true) {
                     // console.log("Uploaded JSON to Pinata: ", response)
-                   console.log("Uploaded JSON to Pinata: "+ response.pinataURL)
+                    console.log("Uploaded JSON to Pinata: " + response.pinataURL)
                     return response.pinataURL;
                 }
-            }
-            catch(e) {
+            } catch (e) {
                 console.log("error uploading JSON metadata:", e)
             }
         },
         //用来使能/禁止选择文件按钮的两个函数
         async disableButton() {
+            document.getElementById('loading-overlay').style.display = 'flex';
             const listButton = document.getElementById('list-button');
             if (listButton) {
                 listButton.disabled = true;
@@ -182,6 +379,7 @@ export default {
             }
         },
         async enableButton() {
+            document.getElementById('loading-overlay').style.display = 'none';
             const listButton = document.getElementById('list-button');
             if (listButton) {
                 listButton.disabled = false;
@@ -200,17 +398,72 @@ export default {
     width: 100vw;
 }
 
+.el-steps {
+    width: 100%;
+    margin-top: 60px;
+    margin-bottom: 40px;
+}
+
 .content {
     max-width: 90%;
-    height: 100%;
+    height: 80vh;
+    border: 1px solid rex;
     margin-left: 10%;
     position: relative;
     display: flex;
     flex-direction: column;
 }
 
-.el-form-item label {
-    color: white;
+.el-step__head.is-finish,
+.el-step__title.is-finish,
+.el-step__description.is-finish {
+    color: rgba(255, 87, 51, 1);
+    border-color: rgba(255, 87, 51, 1);
+}
+
+.el-step__head.is-process,
+.el-step__title.is-process,
+.el-step__description.is-process {
+    color: rgba(255, 87, 51, 1);
+    border-color: rgba(255, 87, 51, 1);
+}
+
+.el-step__icon.is-text {
+    background-color: rgb(41, 41, 41);
+}
+
+.arrow-box {
+    position: absolute;
+    align-self: center;
+    top: 40vh;
+    width: 100%;
+    z-index: -1;
+}
+
+.arrow-box a {
+    font-size: 40px;
+    color: #9C9C9C;
+
+}
+
+.arrow-box a:hover {
+    font-size: 40px;
+    color: rgba(255, 87, 51, 1);
+}
+
+.arrow-box a.disabled {
+    pointer-events: none;
+
+    opacity: 0.5;
+}
+
+.upload-text1 {
+    font-size: 25px;
+    color: #9C9C9C;
+}
+
+.data-type {
+    width: 30%;
 }
 
 .el-input input,
@@ -255,7 +508,7 @@ span {
 
 .cool-text {
     position: absolute;
-    z-index: 0;
+    z-index: 999;
     font-size: 4.5em;
     top: 0;
     left: 75px;
@@ -264,72 +517,21 @@ span {
 
 .upload-box {
     margin: 60px 60px;
-    background-color: #303030;
-    box-shadow: 0px 4px 15px #000000;
+    background-color: transparent;
     height: 80vh;
-    justify-content: center;
     align-items: center;
     position: relative;
-    z-index: 1;
-    border-radius: 10px;
+    z-index: 3;
     display: flex;
     flex-direction: column;
+    gap: 30px;
+
 }
 
-.upload-box-top {
-    flex: 9;
-    width: 100%;
-    display: flex;
-    margin-top: 30px;
-}
-
-.upload-box-top-left {
-    flex: 1;
-}
-
-.upload-box-top-right {
-
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.upload-box-top-right .line1 {
-
-    flex: 1;
-    display: flex;
-    gap: 10px;
-}
-
-.line1 .data-name {
-    justify-content: center;
-    flex: 1;
-}
-
-.line1 .el-form-item {
-    flex: 1;
-    margin-top: 15px;
-}
-
-.line1 .data-type {
-
-    flex: 1;
-    margin-right: 30px;
-}
-
-.data-creator {
-    width: 45%;
-}
-
-.upload-box-top-right .data-describe {
-    flex: 6;
-    margin-right: 30px;
-}
-
-.upload-box-top-right .data-select {
-    flex: 2;
-
+.data-creator,
+.data-describe {
+    width: 50%;
+    align-items: center;
 }
 
 .data-select button {
@@ -340,28 +542,5 @@ span {
     border-radius: 5px;
     color: white;
     height: 35px;
-}
-
-.upload-box-bottom {
-    flex: 2;
-
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.upload-box-bottom button {
-    margin: auto;
-    flex: 1;
-    border: 1px solid rgba(255, 87, 51, 1);
-    cursor: pointer;
-    width: 180px;
-    color: rgba(255, 87, 51, 0.8);
-    background-color: transparent;
-    border-radius: 5px;
-    height: 30px;
-    line-height: 30px;
 }
 </style>

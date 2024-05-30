@@ -86,7 +86,7 @@ export default {
         return {
             show:false,
             fileURL:"",
-            picUrl: require('../assets/image.png'), // 默认图片，加载完成后会被替换
+            picUrl: "", // 默认图片，加载完成后会被替换
             workHashValue: '', // 哈希值是从 exhibitWorks 中获取的
             workCreateTime: '',
             workCreator: '',
@@ -130,7 +130,7 @@ export default {
                 this.workType = nftData.type;
                 this.workDesc = nftData.desc;
                 this.workCreator = nftData.creator;
-                this.workHashValue = await getTransactionHash(this.fileURLUrl);
+                this.workHashValue = await getTransactionHash(this.fileURL);
 
             } catch (error) {
                 console.error('Error fetching NFT data:', error);
