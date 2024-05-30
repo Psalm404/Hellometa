@@ -80,10 +80,10 @@ export default {
             fileURL:"",
             testURL:"https://brown-urban-hornet-311.mypinata.cloud/ipfs/QmPeyXWXmwEFWL8LusARGZZsQtgf4K8ZrmDu3taavNtVGY",
             show:false,
-            picUrl: require('../assets/image.png'),
+            picUrl: '',
             workTokenID: '',
-            workCreateTime: new Date(),
-            workName: "一只猫猫的照片",
+            workCreateTime: '',
+            workName: "",
             workType: "",
             workDesc: "",
         }
@@ -362,6 +362,7 @@ export default {
   width: 60px;
   height: 60px;
   animation: spin 1s linear infinite;
+  margin-right: 30px;
 }
 
 .loading-message {

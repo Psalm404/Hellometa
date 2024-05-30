@@ -1,7 +1,7 @@
 /*
 mint.js 提供创建代币的方法
 需要两个传参：to 创建NFT的账户地址；tokenURI 图片等数据的URL
-无返回值
+无返回值  ->成功返回true，失败返回false
 */
 
 import contract from './contract';
@@ -27,9 +27,11 @@ async function mint(to, tokenURI) {
             console.log(error);
         });
         console.log('代币铸造成功');
+        return true
 
     } catch (error) {
         console.error('代币铸造失败', error);
+        return false
     }
 }
 
