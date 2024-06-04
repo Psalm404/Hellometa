@@ -13,12 +13,12 @@
                             <li><a href="#/uploadWorks">Upload</a></li>
                             <li><a href="#/recordWorks">Records</a></li>
                         </ul>
-                        <form class="home-navbar-search">
+                        <div class="home-navbar-search">
                             <div class="home-search-icon">
                                 <input type="text" class="home-search-input" v-model="navSearchQuery"
                                     @keyup.enter="navSearch" placeholder="Search...">
                             </div>
-                        </form>
+                        </div>
                         <div>
                             <button class="home-navbar-button" @click="connWallet">Connect Wallet</button>
                         </div>
@@ -47,11 +47,13 @@
                     </div>
                 </div>
                 <el-divider><i class="el-icon-menu"></i></el-divider>
-                <h1 style="color: aliceblue;">区块浏览器</h1>
+                <a href="#/blockBrowser">
+                    <h1 class="home-block-browser" @click="gotoBrowser">区块浏览器</h1>
+                </a>
                 <div class="chain-search-container">
                     <div class="chain-search-box">
                         <h3 style="color: aliceblue; margin: 10px;">搜索</h3>
-                        <input type="text" v-model="searchQuery" @keyup.enter="bkSearch" placeholder="搜索地址/交易/区块/代币">
+                        <input type="text" v-model="bkSearchQuery" @keyup.enter="bkSearch" placeholder="搜索地址/交易/区块/代币">
                         <button @click="bkSearch">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -108,7 +110,7 @@ export default {
                 },
             ],
             navSearchQuery: '',
-            searchQuery: '',
+            bkSearchQuery: '',
         };
     },
     watch: {
@@ -125,16 +127,23 @@ export default {
             this.navSearchQuery = '';
         },
         bkSearch() {
-            if (this.searchQuery.trim() === '') {
+            if (this.bkSearchQuery.trim() === '') {
                 return;
             }
             alert('bkSearch button clicked');
             // 清空搜索框
-            this.searchQuery = '';
+            let tmp = this.bkSearchQuery;
+            this.bkSearchQuery = '';
+            // 跳转到区块浏览器界面
+            this.$router.push({ path: '/blockBrowser', query: { bkSearchQuery: tmp } });
+        },
+        gotoBrowser() {
+            this.$router.push({ path: '/blockBrowser'});
         },
         connWallet() {
-            alert('connect wallet')
-        }
+            alert("connWallet button clicked")
+        },
+
     }
 }
 </script>
@@ -297,7 +306,9 @@ export default {
     max-width: 600px;
     margin: 50px auto;
 }
-
+.home-block-browser {
+    color: aliceblue;
+}
 .chain-search-box {
     display: flex;
     align-items: center;

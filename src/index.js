@@ -8,6 +8,7 @@ import exhibitWorks from './components/exhibitWorks.vue'
 import workDetails from './components/workDetails.vue'
 import workInfo from './components/workInfo.vue'
 import homePage from './components/homePage.vue'
+import blockBrowser from './components/blockBrowser.vue'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -39,6 +40,10 @@ const router = new VueRouter({
       {
         path:'/workInfo',
         component:workInfo
+      },
+      {
+        path: '/blockBrowser',
+        component:blockBrowser
       },
  ]
 })
