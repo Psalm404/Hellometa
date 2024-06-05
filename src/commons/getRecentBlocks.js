@@ -19,7 +19,7 @@ async function getBlocks() {
         const batchSize = 10;
 
         // 获取前100个区块信息
-        const end = Math.max(Number(latestBlockNumber) - 5, 0);
+        const end = Math.max(Number(latestBlockNumber) - 99, 0);
         for (let i = Number(latestBlockNumber); i >= end; i -= batchSize) {
             const start = Math.max(i - batchSize + 1, end);
             const batchBlocks = await Promise.all(
