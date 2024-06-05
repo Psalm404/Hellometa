@@ -138,7 +138,7 @@ export default {
             this.$router.push({ path: '/blockBrowser', query: { bkSearchQuery: tmp } });
         },
         gotoBrowser() {
-            this.$router.push({ path: '/blockBrowser'});
+            this.$router.push({ path: '/blockBrowser', query: { bkSearchQuery: '' }});
         },
         connWallet() {
             alert("connWallet button clicked")

@@ -40,34 +40,47 @@
                         v-model="searchData" @keyup.enter="blockSearch">
                     <button class="block-browser-search-button" @click="blockSearch">搜索</button>
                 </div>
-                <div v-for="(item, index) in searchResult" :key="index" class="block-result-card">
-                    <h1>查询结果</h1>
-                    <div class="block-result-card-content">
-                        <el-divider><i class="el-icon-bottom"></i></el-divider>
-                        <div>
-                            <div v-for="(title, n) in blockTitle" :key="n" class="result-card-context">
-                                <p v-if="(n === 18 || n === 19)"></p>
-                                <p v-else>{{ title }}: {{ item[title] }}</p>
-                            </div>
+                <div v-if="show" class="block-result-card-box">
+                    <div v-for="(item, index) in searchResult" :key="index" class="block-result-card">
+                        <h2>区块{{ index }}</h2>
+                        <div class="block-result-card-content">
+                            <el-divider><i class="el-icon-bottom"></i></el-divider>
                             <div>
-                                <el-collapse v-model="activeNames" @change="handleChange">
-                                    <el-collapse-item title="交易列表" :name="index" class="result-card-context">
-                                        <p>transactions: {{ item['transactions'] }}</p>
-                                        <p class="transaction-Tx-link" @click="drawer = true">transactionsRoot: {{
-                                            item['transactionsRoot'] }}
-                                        </p>
-                                    </el-collapse-item>
-                                </el-collapse>
+                                <div v-for="(title, n) in blockTitle" :key="n" class="result-card-context">
+                                    <p v-if="(n === 18 || n === 19)"></p>
+                                    <p v-else>{{ title }}: {{ item[title] }}</p>
+                                </div>
+                                <div>
+                                    <el-collapse v-model="activeNames" @change="handleChange">
+                                        <el-collapse-item title="交易列表" :name="index" class="result-card-context">
+                                            <p>transactions: {{ item['transactions'] }}</p>
+                                            <p class="transaction-Tx-link" @click="showTransactionDetail(index)">
+                                                transactionsRoot: {{
+                                                    item['transactionsRoot'] }}
+                                            </p>
+                                        </el-collapse-item>
+                                    </el-collapse>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <el-drawer title="交易详情" :visible.sync="drawer" :direction="direction" :before-close="handleClose">
-                    <div class="copy-container">
-                        <pre id="copy-text" class="copy-text">这是一个可以复制的文本示例。</pre>
-                        <span class="copy-icon" @click="copyToClipboard">📋</span>
+                <div v-else class="block-result-card-box">
+                    <div class="block-result-card">
+                        <h2>查询结果</h2>
+                        <div class="block-result-card-content">
+                            <el-divider><i class="el-icon-bottom"></i></el-divider>
+                            <div>
+                                <p v-for="(item, index) in transactions_detail_title" :key="index"
+                                    class="result-card-context">{{ item }}: {{ transactionResult[index] }}</p>
+                                <!-- <div v-for="(item, index) in transactionResult" :key="index" class="result-card-context">
+                                    <p v-for="(item, index) in transactionResult" :key="index">{{ index }}: {{ item }}</p>
+                                </div> -->
+                            </div>
+                        </div>
                     </div>
-                </el-drawer>
+                </div>
+
             </div>
         </transition>
     </div>
@@ -82,7 +95,7 @@ import debounce from 'lodash/debounce';
 
 export default {
     mounted() {
-        this.searchData = this.$route.query.bkSearchQuery;
+        this.searchData = this.$route.query.bkSearchQuery.toString();
         this.blockSearch();
         this.activeNames = Array.from({ length: 100 }, (_, index) => index);
     },
@@ -91,25 +104,37 @@ export default {
     },
     data() {
         return {
+            show: true,
             navSearchQuery: '',
-            searchData: [],
+            searchData: '',
             activeNames: [],
-            drawer: false,
             searchResult: [],
+            showDetail: false,
             blockTitle: [
                 'baseFeePerGas', 'difficulty', 'extraData', 'gasLimit', 'gasUsed',
                 'hash', 'logsBloom', 'miner', 'mixHash', 'nonce', 'number', 'parentHash',
                 'receiptsRoot', 'sha3Uncles', 'size', 'stateRoot', 'timestamp',
                 'totalDifficulty', 'transactions', 'transactionsRoot', 'uncles'
             ],
-            transactions_detail_title: [],
+            transactionResult: [],
+            transactions_detail_title: [
+                'accessList', 'blockHash', 'blockNumber', 'chainId',
+                'data', 'from', 'gas', 'gasPrice', 'hash', 'input', 'maxFeePerGas',
+                'maxPriorityFeePerGas', 'nonce', 'r', 's', 'to', 'transactionIndex', 'type',
+                'v', 'value'
+            ],
+
         }
     },
     methods: {
         navSearch() { },
-        connWallet() { },
+        connWallet() {
+            alert("connWallet button clicked")
+        },
         blockSearch() {
             if (this.searchData === '') {
+                this.show = true;
+                console.log('search for all')
                 getRecentBlocks().then(blocks => {
                     for (let i = 0; i < blocks.length; i++) {
                         let tmp = {}
@@ -126,13 +151,17 @@ export default {
                 });
             }
             else {
-                if (this.searchByUrl(this.searchData)) {
-                    console.log('searchByUrl')
+                this.show = false;
+                if (this.searchData.startsWith('0x')) {
+                    console.log('search by hashText')
+                    this.searchByTH(this.searchData)
+                } else if (this.searchData.startsWith('http')) {
+                    console.log('search by url')
+                    this.searchByUrl(this.searchData)
+                } else {
+                    console.log('search by token id')
+                    this.searchByTokenId(this.searchData)
                 }
-                else if (this.searchByTokenId(this.searchData)) {
-                    console.log('searchByTokenId')
-                }
-                else this.searchByTH(this.searchData)
             }
             this.$nextTick(() => {
                 // DOM更新后执行的操作
@@ -141,15 +170,10 @@ export default {
             this.searchData = ''
         },
         async searchByUrl(url) {
-            let hastTx = await getTransactionHash(url);
-            if (hastTx === null) return false;
-
-            let res = await getTransaction(hastTx);
-
+            let hashTx = await getTransactionHash(url);
+            if (hashTx === null) return false;
             // 后续处理
-            alert(res)
-
-            return true;
+            return this.searchByTH(hashTx);
         },
         async searchByTokenId(tokenId) {
             let url = await getURLbyTokenId(tokenId)
@@ -160,42 +184,22 @@ export default {
             if (res === 'error') return false;
 
             // 后续处理
-            alert(res)
+            console.log(res)
+            for (let i = 0; i < this.transactions_detail_title.length; i++) {
+                this.transactionResult.push(res[this.transactions_detail_title[i]]);
+            }
+            console.log(this.transactionResult);
             return true
+        },
+        showTransactionDetail(index) {
+            let tmp = this.searchResult[index]['transactions']
+            this.$router.push({
+                path: '/blockBrowser/transactionDetail',
+                query: { hash: tmp }
+            })
         },
         handleChange(val) {
             console.log(val);
-        },
-        handleClose(done) {
-            this.$confirm('确认关闭？')
-                .then(() => {
-                    done();
-                })
-                .catch(() => { });
-        },
-        displayTransaction() {
-            alert("clicked")
-        },
-        copyToClipboard() {
-            const copyText = this.$refs.copyText;
-
-            // 创建一个隐藏的文本域
-            const textArea = document.createElement("textarea");
-            textArea.value = copyText.textContent;
-            document.body.appendChild(textArea);
-
-            // 选择文本域内容
-            textArea.select();
-            textArea.setSelectionRange(0, 99999); // 适用于移动设备
-
-            // 复制文本到剪贴板
-            document.execCommand("copy");
-
-            // 移除临时文本域
-            document.body.removeChild(textArea);
-
-            // 可选：提示用户已复制
-            alert("文本已复制到剪贴板！");
         },
     },
 
@@ -264,7 +268,14 @@ export default {
     background-color: #0056b3;
 }
 
+.block-result-card-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .block-result-card {
+    max-width: 80%;
     margin-bottom: 50px;
     background-color: #fff;
     border-radius: 8px;
@@ -272,7 +283,7 @@ export default {
     /* overflow: hidden; */
     transition: transform 0.3s;
     width: 80%;
-    align-self: center
+    align-self: center;
 }
 
 .block-result-card:hover {
@@ -295,33 +306,5 @@ export default {
 
 .transaction-Tx-link:hover {
     cursor: pointer;
-}
-
-.copy-container {
-    position: relative;
-    display: inline-block;
-    margin: 20px;
-}
-
-.copy-text {
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-    user-select: all;
-    /* 允许用户选择文本 */
-}
-
-.copy-icon {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    cursor: pointer;
-    opacity: 0.5;
-    transition: opacity 0.3s;
-}
-
-.copy-icon:hover {
-    opacity: 1;
 }
 </style>
