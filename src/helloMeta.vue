@@ -10,13 +10,13 @@
                         <button @click="select('home')"> 主页 </button>
                     </div>
                     <div class='navi-exhibit' :class="{ 'active': activeButton === 'exhibit' }">
-                        <button @click="select('exhibit') " > 作品展示</button>
+                        <button @click="select('exhibit') " > 数据资产凭证展示</button>
                     </div>
                     <div class='navi-uplord' :class="{ 'active': activeButton === 'upload' }">
-                        <button @click="select('upload')" > 上传作品 </button>
+                        <button @click="select('upload')" > 上传你的凭证 </button>
                     </div>
                     <div class='navi-record' :class="{ 'active': activeButton === 'record' }">
-                        <button @click="select('record')" > 查看记录 </button>
+                        <button @click="select('record')" > 你的凭证记录 </button>
                     </div>
                 </div>
             </div>

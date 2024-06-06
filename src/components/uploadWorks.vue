@@ -10,9 +10,9 @@
                 <div class="upload-box" v-show="show[1]">
                     <el-steps :active="0" align-center>
                         <el-step title="步骤1" description="填写公司名称"></el-step>
-                        <el-step title="步骤2" description="选择作品类别"></el-step>
-                        <el-step title="步骤3" description="上传作品"></el-step>
-                        <el-step title="步骤4" description="填写作品信息"></el-step>
+                        <el-step title="步骤2" description="选择资产类别"></el-step>
+                        <el-step title="步骤3" description="填写资产信息"></el-step>
+                        <el-step title="步骤4" description="上传资产"></el-step>
                     </el-steps>
                     <div class="upload-text1">请填写公司名称:</div>
                     <div class="data-creator">
@@ -32,16 +32,16 @@
                 <div class="upload-box" v-show="show[2]">
                     <el-steps :active="1" align-center>
                         <el-step title="步骤1" description="填写公司名称"></el-step>
-                        <el-step title="步骤2" description="选择作品类别"></el-step>
-                        <el-step title="步骤3" description="上传作品"></el-step>
-                        <el-step title="步骤4" description="填写作品信息"></el-step>
+                        <el-step title="步骤2" description="选择资产类别"></el-step>
+                        <el-step title="步骤3" description="填写资产信息"></el-step>
+                        <el-step title="步骤4" description="上传资产"></el-step>
                     </el-steps>
-                    <div class="upload-text1">请选择作品类别:</div>
+                    <div class="upload-text1">请选择资产类别:</div>
                     <div class="data-type">
                         <el-form-item prop="type" required>
                             <Select style="width: 100%;" size="large" v-model="form.type">
-                                <Option el-option label="文本" value="txt"></Option>
-                                <Option label="图片" value="pic"></Option>
+                                <Option el-option label="文本(.txt/.md/.doc/.docx)" value="txt"></Option>
+                                <Option label="图片(.jpg/.jpeg/.png)" value="pic"></Option>
                             </Select>
                         </el-form-item>
                     </div>
@@ -57,19 +57,19 @@
                 <div class="upload-box" v-show="show[3]">
                     <el-steps :active="3" align-center>
                         <el-step title="步骤1" description="填写公司名称"></el-step>
-                        <el-step title="步骤2" description="选择作品类别"></el-step>
-                        <el-step title="步骤3" description="上传作品"></el-step>
-                        <el-step title="步骤4" description="填写作品信息"></el-step>
+                        <el-step title="步骤2" description="选择资产类别"></el-step>
+                        <el-step title="步骤3" description="填写资产信息"></el-step>
+                        <el-step title="步骤4" description="上传资产"></el-step>
                     </el-steps>
-                    <div class="upload-text1">请填写作品信息:</div>
+                    <div class="upload-text1">请填写资产信息:</div>
                     <div class="data-message" style="width:70%;height:100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                         <div class="data-creator">
-                            <el-form-item label="作品名称" prop="name">
+                            <el-form-item label="资产名称" prop="name">
                                 <el-input v-model="form.name"></el-input>
                             </el-form-item>
                         </div>
                         <div class="data-describe">
-                            <el-form-item label="作品介绍" prop="desc">
+                            <el-form-item label="资产介绍" prop="desc">
                                 <el-input type="textarea" :rows="6" v-model="form.desc" resize="none"></el-input>
                             </el-form-item>
                         </div>
@@ -86,13 +86,13 @@
                 <div class="upload-box" v-show="show[4]">
                     <el-steps :active="2" align-center>
                         <el-step title="步骤1" description="填写公司名称"></el-step>
-                        <el-step title="步骤2" description="选择作品类别"></el-step>
-                        <el-step title="步骤3" description="上传作品"></el-step>
-                        <el-step title="步骤4" description="填写作品信息"></el-step>
+                        <el-step title="步骤2" description="选择资产类别"></el-step>
+                        <el-step title="步骤3" description="填写资产信息"></el-step>
+                        <el-step title="步骤4" description="上传资产"></el-step>
                     </el-steps>
-                    <div class="upload-text1">请上传作品:</div>
+                    <div class="upload-text1">请上传资产:</div>
                     <div class="data-select">
-                        <el-upload class="upload-demo" ref="upload" multiple:false limit:1 :auto-upload="false" :on-change="onChangeFile">
+                        <el-upload class="upload-demo" ref="upload" multiple:false limit:1 :auto-upload="false" :on-change="onChangeFile" :before-remove="() => false">
                             <button slot="trigger" size="small" id="list-button" @click.prevent type="primary" style="color:#9C9C9C">选取文件</button>
                         </el-upload>
                     </div>
@@ -178,6 +178,7 @@
 import {
     uploadFileToIPFS,
     uploadJSONToIPFS,
+    deletePinFromPinata,
 } from '@/commons/pinata';
 
 import {
@@ -185,8 +186,6 @@ import {
 } from '@/commons/getAccountAddr';
 
 import mint from '@/commons/mint';
-
-import getAllURLs from '@/commons/getAllURLs';
 
 export default {
     mounted() {
@@ -284,24 +283,32 @@ export default {
         //选择文件，选择即上传IPFS
         async onChangeFile(file) {
             try {
-                let array = await getAllURLs()
-                if (array == null) {
-                    alert("获取合约失败");
-                }
-                // alert("现在上链的NFT的json链接数：\n" + array.length);
-                this.disableButton();
-                this.file = file;
-                if (this.file == null) {
+                const validTextTypes = ['txt', 'md', 'doc','docx'];
+                const validImgTypes = ['jpg','jpeg','png'];
+                const isValidText = validTextTypes.includes(file.name.split('.').pop().toLowerCase());
+                const isValidImg = validImgTypes.includes(file.name.split('.').pop().toLowerCase());
+
+                if (file == null) {
                     return this.$message.error("请先选取文件！");
                 }
+                if((this.form.type == 'txt' && !isValidText) || (this.form.type == 'pic' && !isValidImg)){
+                    this.$message.error("请选择符合资产类别的文件")
+                    this.$refs.upload.clearFiles(); // 清除已选取的文件
+                    return;
+                }
+
+                this.disableButton();
+                this.file = file;
                 console.log(file.name);
-                const response = await uploadFileToIPFS(this.file); //目前选取文件，就上传到了IPFS，且可多次上传
+                const response = await uploadFileToIPFS(this.file); //上传IPFS
                 if (response.success === true) {
-                    this.enableButton();
-                    // this.$refs.upload.clearFiles(); // 清除已选取的文件
+                    this.$message.success("文件成功上传至pinata")
+                    document.getElementById('loading-overlay').style.display = 'none';
                     this.fileURL = response.pinataURL;
                     console.log('该文件的url', this.fileURL);
                 } else {
+                    this.$message.error("文件在上传至Pinata失败")
+                    this.enableButton();
                     console.log(response.message);
                 }
             } catch (e) {
@@ -318,17 +325,43 @@ export default {
                     return;
                 }
                 //mint metadata to the chain
+                document.querySelector('#loading-overlay .loading-message').textContent = '资产凭证铸造中，请稍后......';
+                document.getElementById('loading-overlay').style.display = 'flex';
                 const addr = await getAccountAddr();
                 console.log('用户地址', addr);
                 let isSuccess = await mint(addr, metadataURL);
                 if (isSuccess) {
-                    this.$message.success('铸造成功');
+                    document.querySelector('#loading-overlay .loading-message').textContent = '资产凭证铸造成功！\n即将跳转至您的凭证记录界面......';
+                    document.getElementById('loading-overlay').style.display = 'none';
                     setTimeout(() => {
                         this.$router.push('/recordWorks');
-                    }, 1000)
+                    }, 500)
 
                 } else {
-                    this.$message.error('铸造失败');
+                    let delete_meta_res;
+                    let delete_file_res;
+
+                    document.querySelector('#loading-overlay .loading-message').textContent = '资产凭证铸造失败！\n开始将文件与文件源数据从Pinata删除......';
+                    // 从pinata删除刚上传的文件
+                    delete_meta_res = await deletePinFromPinata(metadataURL);
+                    delete_file_res = await deletePinFromPinata(this.fileURL);
+                    // 成功删除原文件
+                    if(delete_meta_res == 200 & delete_file_res == 200){
+                        document.querySelector('#loading-overlay .loading-message').textContent = '删除完成，即将刷新界面......';
+                        this.$router.go(0);
+                    }else{
+                        if(delete_meta_res != 200){
+                            document.querySelector('#loading-overlay .loading-message').textContent = "删除元数据错误\nMetaData unpinned Error, status code: "+ delete_meta_res + "\n即将跳转至错误报告界面......";
+                        }
+                        if(delete_file_res != 200){
+                            document.querySelector('#loading-overlay .loading-message').textContent = "删除源文件错误\nOriginal file unpinned Error, status code: "+ delete_file_res + "\n即将跳转至错误报告界面......";
+                        }         
+                        setTimeout(() => {
+                            document.getElementById('loading-overlay').style.display = 'none';
+                            //设置一个错误报告界面？连接开发人员什么的
+                            this.$router.push('/home');
+                        }, 500)               
+                    }
                 }
             } catch (e) {
                 console.log("Upload error" + e)
@@ -346,7 +379,6 @@ export default {
                 return -1;
             }
 
-            // 5.22 要加时间戳字段，记得（要有铸造时间）
             const nftJSON = {
                 name,
                 type,

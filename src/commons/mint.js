@@ -20,6 +20,10 @@ async function mint(to, tokenURI) {
 
         // 调用合约的mint函数
         await contract.methods.mint(to, tokenURI).send({ from: addr })
+        .on('transactionHash', (hash) => {
+            console.log('Transaction hash:', hash);
+            alert('Transaction sent! Hash: ' + hash);
+        })
         .on('receipt', function(receipt){
             setTransactionHash(tokenURI, receipt.transactionHash);
         })
