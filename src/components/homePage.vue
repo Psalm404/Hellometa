@@ -130,7 +130,7 @@ export default {
             if (this.bkSearchQuery.trim() === '') {
                 return;
             }
-            alert('bkSearch button clicked');
+            // alert('bkSearch button clicked');
             // 清空搜索框
             let tmp = this.bkSearchQuery;
             this.bkSearchQuery = '';
@@ -138,7 +138,7 @@ export default {
             this.$router.push({ path: '/blockBrowser', query: { bkSearchQuery: tmp } });
         },
         gotoBrowser() {
-            this.$router.push({ path: '/blockBrowser', query: { bkSearchQuery: '' }});
+            this.$router.push({ path: '/blockBrowser', query: { bkSearchQuery: this.bkSearchQuery }});
         },
         connWallet() {
             alert("connWallet button clicked")

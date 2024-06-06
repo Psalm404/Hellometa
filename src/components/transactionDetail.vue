@@ -95,6 +95,9 @@ export default {
             this.$router.back();
         },
         searchDetails() {
+            if (this.transactionDetail.length > 0) {
+                this.transactionDetail = []
+            }
             getTransaction(this.transactionHash).then((result) => {
                 console.log(result)
                 for (let i = 0; i < this.transactionDetail_title.length; i++) {

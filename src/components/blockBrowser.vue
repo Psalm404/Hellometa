@@ -96,8 +96,8 @@ import debounce from 'lodash/debounce';
 export default {
     mounted() {
         this.searchData = this.$route.query.bkSearchQuery.toString();
-        this.blockSearch();
         this.activeNames = Array.from({ length: 100 }, (_, index) => index);
+        this.blockSearch();
     },
     created() {
         this.blockSearch = debounce(this.blockSearch, 300)
@@ -184,7 +184,11 @@ export default {
             if (res === 'error') return false;
 
             // 后续处理
-            console.log(res)
+            console.log(this.transactionResult)
+            if (this.transactionResult.length > 0) {
+                this.transactionResult = []
+            }
+            console.log(this.transactionResult)
             for (let i = 0; i < this.transactions_detail_title.length; i++) {
                 this.transactionResult.push(res[this.transactions_detail_title[i]]);
             }
