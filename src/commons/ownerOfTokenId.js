@@ -14,7 +14,7 @@ async function ownerOfTokenId(tokenId) {
         }
 
         // 调用合约的ownerOfTokenId函数
-        const owner = await contract.methods.ownerOfTokenId(tokenId).call();
+        const owner = await contract.methods.ownerOf(tokenId).call();
         return owner;
     } catch (error) {
         console.error('查询代币所有者地址失败', error);

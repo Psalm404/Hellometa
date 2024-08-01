@@ -8,7 +8,7 @@ import contract from './contract';
 import { getAccountAddr } from './getAccountAddr';
 import setTransactionHash from '@/commons/setTransactionHash'
 
-async function mint(to, tokenURI) {
+async function mint(to, tokenURI, price) {
     try {
         if (!contract) {
             console.error('合约实例尚未初始化');
@@ -19,7 +19,7 @@ async function mint(to, tokenURI) {
         const addr = await getAccountAddr();
 
         // 调用合约的mint函数
-        await contract.methods.mint(to, tokenURI).send({ from: addr })
+        await contract.methods.mint(to, tokenURI, price).send({ from: addr })
         .on('transactionHash', (hash) => {
             console.log('Transaction hash:', hash);
             alert('Transaction sent! Hash: ' + hash);
