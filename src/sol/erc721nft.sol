@@ -50,6 +50,8 @@ contract ERC721 is IERC721 {
 
     event TokenURLSet(uint256 indexed tokenId, string url);
     event TokenPriceSet(uint256 indexed tokenId, uint256 price);
+    // 事件来通知价格更改
+    event TokenPriceUpdated(uint256 indexed tokenId, uint256 newPrice);
 
     function supportsInterface(bytes4 interfaceId) public pure override returns (bool) {
         return interfaceId == type(IERC721).interfaceId;
@@ -117,6 +119,15 @@ contract ERC721 is IERC721 {
     function getTokenPrice(uint256 tokenId) public view returns (uint256) {
         require(_exists(tokenId), "Price query for nonexistent token");
         return _tokenPrices[tokenId];
+    }
+
+    // 更改NFT价格的函数
+    function updateTokenPrice(uint256 tokenId, uint256 newPrice) external {
+        require(_exists(tokenId), "Token does not exist");
+        require(_isApprovedOrOwner(msg.sender, tokenId), "Not owner nor approved");
+
+        _tokenPrices[tokenId] = newPrice;
+        emit TokenPriceUpdated(tokenId, newPrice);
     }
 
     function getURLbyTokenId(uint256 tokenId) public view returns (string memory) {
