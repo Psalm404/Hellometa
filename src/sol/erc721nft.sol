@@ -121,6 +121,64 @@ contract ERC721 is IERC721 {
         return _tokenPrices[tokenId];
     }
 
+     // 新增一个函数来返回所有price不为0的nft的url
+    function getActiveNFTsURLs() public view returns (string[] memory) {
+        uint256 totalSupply = _allTokenIds.length;
+        uint256 activeCount = 0;
+
+        // 首先计算价格不为0的NFT的数量
+        for (uint256 i = 0; i < totalSupply; i++) {
+            uint256 tokenId = _allTokenIds[i];
+            if (_tokenPrices[tokenId] != 0) {
+                activeCount++;
+            }
+        }
+
+        // 创建一个新数组来存储价格不为0的NFT的URL
+        string[] memory activeNFTsURLs = new string[](activeCount);
+
+        // 填充数组
+        uint256 index = 0;
+        for (uint256 i = 0; i < totalSupply; i++) {
+            uint256 tokenId = _allTokenIds[i];
+            if (_tokenPrices[tokenId] != 0) {
+                activeNFTsURLs[index] = _tokenURLs[tokenId];
+                index++;
+            }
+        }
+
+        return activeNFTsURLs;
+    }
+
+    // 新增一个函数来返回所有price不为0的nft的tokenID
+    function getActiveNFTsTokenIds() public view returns (uint256[] memory) {
+        uint256 totalSupply = _allTokenIds.length;
+        uint256 activeCount = 0;
+
+        // 首先计算价格不为0的NFT的数量
+        for (uint256 i = 0; i < totalSupply; i++) {
+            uint256 tokenId = _allTokenIds[i];
+            if (_tokenPrices[tokenId] != 0) {
+                activeCount++;
+            }
+        }
+
+        // 创建一个新数组来存储价格不为0的NFT的tokenID
+        uint256[] memory activeNFTsTokenIds = new uint256[](activeCount);
+
+        // 填充数组
+        uint256 index = 0;
+        for (uint256 i = 0; i < totalSupply; i++) {
+            uint256 tokenId = _allTokenIds[i];
+            if (_tokenPrices[tokenId] != 0) {
+                activeNFTsTokenIds[index] = tokenId;
+                index++;
+            }
+        }
+
+        return activeNFTsTokenIds;
+    }
+
     // 更改NFT价格的函数
     function updateTokenPrice(uint256 tokenId, uint256 newPrice) external {
         require(_exists(tokenId), "Token does not exist");
