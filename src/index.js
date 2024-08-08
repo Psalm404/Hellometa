@@ -10,6 +10,8 @@ import workInfo from './components/workInfo.vue'
 import homePage from './components/homePage.vue'
 import blockBrowser from './components/blockBrowser.vue'
 import transactionDetail from './components/transactionDetail.vue'
+import loginPage from './components/loginPage.vue'
+import registerPage from './components/registerPage.vue'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -17,6 +19,14 @@ const router = new VueRouter({
       {
         path: '/',
         redirect: '/home'
+      },
+      {
+        path:'/register',
+        component: registerPage
+      },
+      {
+        path:'/login',
+        component: loginPage
       },
       {
         path: '/home',

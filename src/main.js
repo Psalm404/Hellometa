@@ -6,7 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
 import router from '@/index'
-
+import store from '@/store'
 
 Vue.config.productionTip = false
 
@@ -19,5 +19,6 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   render: h => h(helloMeta),
-  router:router
+  router:router,
+  store:store
 }).$mount('#app')

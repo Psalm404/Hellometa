@@ -73,8 +73,7 @@ export default {
     mounted() {
         setTimeout(() => {
             this.show = true;
-        }, 100),
-            this.getURLs();
+        }, 100)
     },
     data() {
         return {

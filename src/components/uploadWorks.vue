@@ -8,7 +8,7 @@
         <el-form ref="form" :model="form" :rules="rules">
             <transition name="el-fade-in-linear">
                 <div class="upload-box" v-show="show[1]">
-                    <el-steps :active="0" align-center>
+                    <el-steps :active="1" align-center>
                         <el-step title="步骤1" description="填写公司名称"></el-step>
                         <el-step title="步骤2" description="选择资产类别"></el-step>
                         <el-step title="步骤3" description="填写资产信息"></el-step>
@@ -30,7 +30,7 @@
 
             <transition name="el-fade-in-linear">
                 <div class="upload-box" v-show="show[2]">
-                    <el-steps :active="1" align-center>
+                    <el-steps :active="2" align-center>
                         <el-step title="步骤1" description="填写公司名称"></el-step>
                         <el-step title="步骤2" description="选择资产类别"></el-step>
                         <el-step title="步骤3" description="填写资产信息"></el-step>
@@ -45,6 +45,24 @@
                             </Select>
                         </el-form-item>
                     </div>
+                    <div style="display:flex; gap: 25px;">
+                        <div class="upload-text1">是否上架市场:</div>
+                        <div class="data-sell">
+                            <el-form-item required>
+                                <el-radio v-model="form.radio" label="1">是</el-radio>
+                                <el-radio v-model="form.radio" label="2">否</el-radio>
+                            </el-form-item>
+                        </div>
+                    </div>
+                    <div v-if="form.radio === '1'">
+                        <div style="display:flex; gap: 25px;">
+                            <div class="upload-text1">定价(单位:wei):</div>
+                            <el-form-item prop="price" required>
+                                <el-input v-model="form.price" resize="none" placeholder="请输入定价"></el-input>
+                            </el-form-item>
+                        </div>
+                    </div>
+
                     <div class="arrow-box">
                         <a class="el-icon-back" @click="toUpload(2, 1,'')"></a>
                         <div style="width:90%; display:inline-block"> </div>
@@ -84,7 +102,7 @@
 
             <transition name="el-fade-in-linear">
                 <div class="upload-box" v-show="show[4]">
-                    <el-steps :active="2" align-center>
+                    <el-steps :active="4" align-center>
                         <el-step title="步骤1" description="填写公司名称"></el-step>
                         <el-step title="步骤2" description="选择资产类别"></el-step>
                         <el-step title="步骤3" description="填写资产信息"></el-step>
@@ -202,6 +220,8 @@ export default {
                 type: '',
                 creator: '',
                 desc: '',
+                radio: '2',
+                price: 0,
             },
             uploadedStatus: '',
             fileURL: null,
@@ -220,6 +240,10 @@ export default {
                 type: [{
                     required: true,
                     message: '请选择类型',
+                }],
+                price:[{
+                    required: true,
+                    message: '请输入定价',
                 }],
                 creator: [{
                         required: true,
@@ -283,15 +307,15 @@ export default {
         //选择文件，选择即上传IPFS
         async onChangeFile(file) {
             try {
-                const validTextTypes = ['txt', 'md', 'doc','docx'];
-                const validImgTypes = ['jpg','jpeg','png'];
+                const validTextTypes = ['txt', 'md', 'doc', 'docx'];
+                const validImgTypes = ['jpg', 'jpeg', 'png'];
                 const isValidText = validTextTypes.includes(file.name.split('.').pop().toLowerCase());
                 const isValidImg = validImgTypes.includes(file.name.split('.').pop().toLowerCase());
 
                 if (file == null) {
                     return this.$message.error("请先选取文件！");
                 }
-                if((this.form.type == 'txt' && !isValidText) || (this.form.type == 'pic' && !isValidImg)){
+                if ((this.form.type == 'txt' && !isValidText) || (this.form.type == 'pic' && !isValidImg)) {
                     this.$message.error("请选择符合资产类别的文件")
                     this.$refs.upload.clearFiles(); // 清除已选取的文件
                     return;
@@ -329,7 +353,7 @@ export default {
                 document.getElementById('loading-overlay').style.display = 'flex';
                 const addr = await getAccountAddr();
                 console.log('用户地址', addr);
-                let isSuccess = await mint(addr, metadataURL);
+                let isSuccess = await mint(addr, metadataURL,this.form.price);
                 if (isSuccess) {
                     document.querySelector('#loading-overlay .loading-message').textContent = '资产凭证铸造成功！\n即将跳转至您的凭证记录界面......';
                     document.getElementById('loading-overlay').style.display = 'none';
@@ -346,21 +370,21 @@ export default {
                     delete_meta_res = await deletePinFromPinata(metadataURL);
                     delete_file_res = await deletePinFromPinata(this.fileURL);
                     // 成功删除原文件
-                    if(delete_meta_res == 200 & delete_file_res == 200){
+                    if (delete_meta_res == 200 & delete_file_res == 200) {
                         document.querySelector('#loading-overlay .loading-message').textContent = '删除完成，即将刷新界面......';
                         this.$router.go(0);
-                    }else{
-                        if(delete_meta_res != 200){
-                            document.querySelector('#loading-overlay .loading-message').textContent = "删除元数据错误\nMetaData unpinned Error, status code: "+ delete_meta_res + "\n即将跳转至错误报告界面......";
+                    } else {
+                        if (delete_meta_res != 200) {
+                            document.querySelector('#loading-overlay .loading-message').textContent = "删除元数据错误\nMetaData unpinned Error, status code: " + delete_meta_res + "\n即将跳转至错误报告界面......";
                         }
-                        if(delete_file_res != 200){
-                            document.querySelector('#loading-overlay .loading-message').textContent = "删除源文件错误\nOriginal file unpinned Error, status code: "+ delete_file_res + "\n即将跳转至错误报告界面......";
-                        }         
+                        if (delete_file_res != 200) {
+                            document.querySelector('#loading-overlay .loading-message').textContent = "删除源文件错误\nOriginal file unpinned Error, status code: " + delete_file_res + "\n即将跳转至错误报告界面......";
+                        }
                         setTimeout(() => {
                             document.getElementById('loading-overlay').style.display = 'none';
                             //设置一个错误报告界面？连接开发人员什么的
                             this.$router.push('/home');
-                        }, 500)               
+                        }, 500)
                     }
                 }
             } catch (e) {
@@ -372,7 +396,8 @@ export default {
                 name,
                 type,
                 creator,
-                desc
+                desc,
+                price,
             } = this.form;
             if (!name || !type || !creator || !desc || !this.fileURL) {
                 // this.$message.info("Please fill all the fields!");
@@ -385,6 +410,7 @@ export default {
                 creator,
                 desc,
                 image: this.fileURL,
+                price,
                 timestamp: Date.now(), // 添加当前时间戳
             }
 
