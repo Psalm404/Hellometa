@@ -1,4 +1,5 @@
 import contract from "./contract";  
+import Web3 from "web3";
 
 async function getTokenPrice(tokenId) {
     try {
@@ -7,8 +8,9 @@ async function getTokenPrice(tokenId) {
             return null;
         }
 
-        const price = await contract.methods.getTokenPrice(tokenId).call();
-        return price;
+        const priceWei = await contract.methods.getTokenPrice(tokenId).call();
+        const priceEth = Web3.utils.fromWei(priceWei, 'ether')
+        return priceEth;
     } catch (error) {
         console.error('获取当前Token price 失败', error);
         return null;

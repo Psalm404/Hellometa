@@ -1,4 +1,5 @@
 import contract from './contract';
+import Web3 from 'web3';
 import { getAccountAddr } from './getAccountAddr';
 
 async function updateTokenPrice(tokenId, newPrice) {
@@ -11,8 +12,9 @@ async function updateTokenPrice(tokenId, newPrice) {
         // 合约调用者的地址
         const addr = await getAccountAddr();
         console.log(addr);
-        // 调用合约的 burn 函数
-        const transaction = await contract.methods.updateTokenPrice(tokenId, newPrice).send({ from: addr });
+
+        const newPriceWei = Web3.utils.toWei(newPrice, 'ether')
+        const transaction = await contract.methods.updateTokenPrice(tokenId, newPriceWei).send({ from: addr });
         console.log('代币价格修改成功');
         return transaction;
     } catch (error) {

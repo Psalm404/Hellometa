@@ -1,5 +1,6 @@
 import contract from "./contract";
 import { getAccountAddr } from "./getAccountAddr";
+import Web3 from "web3";
 
 async function buyToken(tokenId, nftPrice) {
     try {
@@ -14,11 +15,12 @@ async function buyToken(tokenId, nftPrice) {
             return null;
         }
         
+        const nftPriceWei = Web3.utils.toWei(nftPrice, 'ether')
         const address = await getAccountAddr();
         // 调用合约的buyNFT函数
         const tx = await contract.methods.buyNFT(tokenId).send({
             from: address, // 交易发起者的地址
-            value: nftPrice // 发送wei的金额
+            value: nftPriceWei // 发送wei的金额
         });
 
         // 交易成功后，打印交易哈希
