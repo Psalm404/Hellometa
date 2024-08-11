@@ -1,15 +1,20 @@
-import contract from './contract';
+import axios from 'axios';
 
 async function getTransactionHash(tokenURI) {
     try {
-        if (!contract) {
-            console.error('合约实例尚未初始化');
+        // 调用后端接口获取交易哈希
+        const response = await axios.get('/api/getTxHashByTokenURI', {
+            params: {
+                tokenURI: tokenURI
+            }
+        });
+
+        if (response.status === 200 && response.data.txHash) {
+            return response.data.txHash;
+        } else {
+            console.error('未找到与该 tokenURI 关联的交易哈希');
             return null;
         }
-
-        // 调用合约的getTransactionHash函数
-        const txhash = await contract.methods.getTransactionHash(tokenURI).call();
-        return txhash;
     } catch (error) {
         console.error('根据URL查询交易哈希失败', error);
         return null;
