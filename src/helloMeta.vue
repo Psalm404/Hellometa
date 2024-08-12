@@ -1,6 +1,6 @@
 <template>
 <div id="app">
-    <div :class="{ 'guide-text-hidden': show }" class="guide-text" :style="{ color: textColor }">{{ guideText }}
+    <div :class="{ 'guide-text-hidden':show  }" class="guide-text" :style="{ color: textColor }">{{ guideText }}
     </div>
     <transition name="el-fade-in-linear">
         <div v-show="show" class="main-page">
@@ -10,17 +10,20 @@
                         <button @click="select('home')"> 主页 </button>
                     </div>
                     <div class='navi-exhibit' :class="{ 'active': activeButton === 'exhibit' }">
-                        <button @click="select('exhibit') " > 数据资产凭证展示</button>
+                        <button @click="select('exhibit') "> 交易市场 </button>
                     </div>
                     <div class='navi-uplord' :class="{ 'active': activeButton === 'upload' }">
-                        <button @click="select('upload')" > 上传你的凭证 </button>
+                        <button @click="select('upload')"> 上传我的凭证 </button>
                     </div>
                     <div class='navi-record' :class="{ 'active': activeButton === 'record' }">
-                        <button @click="select('record')" > 你的凭证记录 </button>
+                        <button @click="select('record')"> 我的凭证记录 </button>
+                    </div>
+                    <div class='navi-login' :class="{ 'active': activeButton === 'login' }" style = "position:absolute; bottom:30px; left:55px;">
+                        <a @click="select('login')"> 登录 </a>
                     </div>
                 </div>
             </div>
-            <div >
+            <div>
                 <router-view>
 
                 </router-view>
@@ -57,7 +60,7 @@ export default {
             account: '',
             guideText: '',
             textColor: 'transparent',
-            show: false,
+            hidden: false,
             activeButton: '',
         };
     },
@@ -74,6 +77,7 @@ export default {
                     setTimeout(() => {
                         this.textColor = 'transparent';
                         this.show = true;
+                        this.hidden = true;
                     }, 0);
                 }
             });
@@ -87,8 +91,9 @@ export default {
                     setTimeout(() => {
                         this.textColor = 'transparent';
                         this.show = true;
+                        this.hidden = true;
                     }, 0);
-                    
+
                     // 调用 getBlocks 函数获取区块信息
                     getRecentBlocks().then(blocks => {
                         console.log("Received blocks:", blocks);
@@ -100,7 +105,7 @@ export default {
             }).catch(error => {
                 console.error('发生错误：', error);
             });
-            
+
         } else {
             this.guideText = '未检测到钱包，请先下载';
         }
@@ -132,7 +137,7 @@ export default {
         select(index) {
             var targetRoute;
             console.log(index)
-            this.activeButton = index; 
+            this.activeButton = index;
             if (index === 'upload') {
                 targetRoute = '/uploadWorks';
             } else if (index === 'record') {
@@ -141,6 +146,8 @@ export default {
                 targetRoute = '/exhibitWorks';
             } else if (index === 'home') {
                 targetRoute = '/home'
+            } else if (index == 'login'){
+                targetRoute = '/login'
             }
             if (targetRoute && this.$route.path !== targetRoute)
                 this.$router.push(targetRoute);
@@ -235,15 +242,14 @@ export default {
 }
 
 .side-navigator {
-  background-color: #202020;
-  width: 10%;
-  height: 100vh;
-  position: absolute;
-  z-index:100;
-  top: 0;
-  left: 0;
+    background-color: #202020;
+    width: 10%;
+    height: 100vh;
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    left: 0;
 }
-
 
 .index-list {
     margin-top: 150px;
@@ -269,6 +275,7 @@ export default {
     color: #ff5733;
     border-color: #ff5733;
 }
+
 .active button {
     color: #ff5733;
     border-color: #ff5733;

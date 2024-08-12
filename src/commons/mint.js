@@ -6,9 +6,10 @@ mint.js 提供创建代币的方法
 
 import contract from './contract';
 import { getAccountAddr } from './getAccountAddr';
-import setTransactionHash from '@/commons/setTransactionHash'
+import saveTransactionHash from '@/commons/saveTransactionHash'
+import Web3 from 'web3';
 
-async function mint(to, tokenURI) {
+async function mint(to, tokenURI, price) {
     try {
         if (!contract) {
             console.error('合约实例尚未初始化');
@@ -18,14 +19,12 @@ async function mint(to, tokenURI) {
         // 合约调用者的地址
         const addr = await getAccountAddr();
 
+        const priceWei = Web3.utils.toWei(price, 'ether')
         // 调用合约的mint函数
-        await contract.methods.mint(to, tokenURI).send({ from: addr })
-        .on('transactionHash', (hash) => {
-            console.log('Transaction hash:', hash);
-            alert('Transaction sent! Hash: ' + hash);
-        })
+        await contract.methods.mint(to, tokenURI, priceWei).send({ from: addr })
         .on('receipt', function(receipt){
-            setTransactionHash(tokenURI, receipt.transactionHash);
+            saveTransactionHash(receipt.transactionHash, tokenURI);
+            alert('Transaction sent! Hash: ' + receipt.transactionHash);
         })
         .on('error', function(error) { 
             console.log(error);

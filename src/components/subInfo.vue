@@ -6,7 +6,7 @@
             <div class="grid-item-top-top">
                 <div class="grid-item-top-left">
                     <div class="record-picture">
-                        <el-avatar shape="square" :size="113" :src="picUrl"></el-avatar>
+                        <el-avatar shape="square" :size="115" :src="picUrl"></el-avatar>
                     </div>
                 </div>
                 <div class="grid-item-top-right">
@@ -16,6 +16,9 @@
                     </div>
                     <div class="record-type">
                         <span>作品类别：{{ recordType }}</span>
+                    </div>
+                    <div v-if = "recordPrice" class="record-price">
+                        <span>售价：{{ recordPrice }} wei</span>
                     </div>
                 </div>
             </div>
@@ -27,6 +30,7 @@
                     recordDesc }}</span>
                 </div>
             </div>
+            
         </div>
         <div class="grid-item-bottom">
             <button @click="toInfo">
@@ -40,6 +44,8 @@
 
 <script>
 import axios from 'axios'
+import getTokenIdbyURL from '@/commons/getTokenIdbyURL'
+import getTokenPrice from '@/commons/getTokenPrice'
 export default {
     name: 'subInfo',
     props: ["fileURL", "source"],
@@ -61,6 +67,8 @@ export default {
             recordName: "",
             recordDesc: "",
             recordType: "",
+            recordPrice:null,
+            tokenID:"",
         };
     },
     methods: {
@@ -68,9 +76,12 @@ export default {
             try {
                 let response = await axios.get(this.fileURL)
                 let jsonData = response.data
-                console.log(jsonData)
+                console.log("in subinfo", jsonData)
                 this.recordName = jsonData.name
                 this.recordDesc = jsonData.desc
+                let tokenID = await getTokenIdbyURL(this.fileURL) //从url拿一次tokenid，再从tokenid拿价格
+                this.recordPrice = await getTokenPrice(tokenID)
+               // this.recordPrice = jsonData.price
                 if (jsonData.type == 'pic') {
                     this.recordType = '图片'
                     this.picUrl = jsonData.image
@@ -134,6 +145,10 @@ export default {
 }
 
 .record-type {
+    flex: 1;
+    align-self: self-start;
+}
+.record-price {
     flex: 1;
     align-self: self-start;
 }

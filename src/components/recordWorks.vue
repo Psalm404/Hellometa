@@ -53,19 +53,35 @@ export default {
         async filterData() {
             console.log('searchName', this.searchName);
             if (this.searchName) {
-                const responses = await Promise.all(this.allData.map(item => axios.get(item)));//每次搜索都从url拉一遍，可优化
-                this.gridData = responses.filter(response => {
-                    const name = response.data.name;
-                    return name && name.toLowerCase().includes(this.searchName.toLowerCase());
-                }).map(response => response.config.url);
-                console.log('searchList', this.gridData)
+                try {
+                    const responses = await Promise.all(this.allData.map(async item => {
+                        try {
+                            return await axios.get(item);
+                        } catch (error) {
+                            console.error(`从 ${item} 获取数据时出错:`, error);
+                            return null; 
+                        }
+                    }));
+
+                    this.gridData = responses.filter(response => {
+                        if (!response) return false; // 过滤掉返回 null 的情况
+                        const name = response.data.name;
+                        return name && name.toLowerCase().includes(this.searchName.toLowerCase());
+                    }).map(response => response.config.url);
+
+                    console.log('searchList', this.gridData);
+                } catch (error) {
+                    console.error('处理 Promise.all 操作时出错:', error);
+                    // 处理整个 Promise.all 操作的错误
+                }
             } else {
-                this.gridData = this.allData
+                this.gridData = this.allData;
             }
         },
         async getURLs() {
             try {
                 this.allData = await getMyURLs();
+                print("hi",this.allData)
                 this.gridData = this.allData;
             } catch (e) {
                 console.log(e)

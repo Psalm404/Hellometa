@@ -22,7 +22,8 @@
 
 <script>
 import subInfo from '@/components/subInfo.vue'
-import getAllURLs from '@/commons/getAllURLs';
+//import getAllURLs from '@/commons/getAllURLs';
+import getActiveNFTsURLs from '@/commons/getActiveNFTsURLs';
 import axios from 'axios'
 export default {
     components: {
@@ -54,20 +55,35 @@ export default {
         async filterData() {
             console.log('searchName', this.searchName);
             if (this.searchName) {
-                const responses = await Promise.all(this.allData.map(item => axios.get(item)));//每次搜索都从url拉一遍，可优化
-                this.gridData = responses.filter(response => {
-                    const name = response.data.name;
-                    return name && name.toLowerCase().includes(this.searchName.toLowerCase());
-                }).map(response => response.config.url);
-                console.log('searchList', this.gridData)
+                try {
+                    const responses = await Promise.all(this.allData.map(async item => {
+                        try {
+                            return await axios.get(item);
+                        } catch (error) {
+                            console.error(`从 ${item} 获取数据时出错:`, error);
+                            return null; 
+                        }
+                    }));
+
+                    this.gridData = responses.filter(response => {
+                        if (!response) return false; // 过滤掉返回 null 的情况
+                        const name = response.data.name;
+                        return name && name.toLowerCase().includes(this.searchName.toLowerCase());
+                    }).map(response => response.config.url);
+
+                    console.log('searchList', this.gridData);
+                } catch (error) {
+                    console.error('处理 Promise.all 操作时出错:', error);
+                    // 处理整个 Promise.all 操作的错误
+                }
             } else {
-                this.gridData = this.allData
+                this.gridData = this.allData;
             }
         },
         async getURLs() {
             try {
-                this.allData = await getAllURLs();
-                this.gridData = this.allData;
+                this.allData = await getActiveNFTsURLs();
+                this.gridData = this.allData; //allData中存的是全部数据
                 console.log('allData', this.allData)
             } catch (e) {
                 console.log(e)
@@ -107,7 +123,7 @@ export default {
 }
 
 .search-box {
-    z-index: 2;
+    z-index: 10;
     text-align: left;
     color: #9c9c9c;
     padding: 10px 15px;
@@ -122,7 +138,7 @@ export default {
 }
 
 .grid-box {
-    z-index: 1;
+    z-index: 0;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     /* 一行四个，每个项目平均分配空间 */

@@ -8,6 +8,9 @@
                         <div class="record-picture">
                             <el-avatar shape="square" :size="220" :src="picUrl"></el-avatar>
                         </div>
+                        <div class="price-box">
+                            售价：{{workPrice}} wei
+                        </div>
                     </div>
                     <div class="detail-box-top-right">
                         <div class="work-name">
@@ -51,6 +54,9 @@
                     </div>
                 </div>
                 <div class="detail-box-bottom">
+                    <div >
+                        <button @click = "buyNFT"> 购买 </button>
+                    </div>
                     <div class="back-button">
                         <button @click="backToRecord"> 返回 </button>
                     </div>
@@ -72,20 +78,22 @@
 import axios from 'axios';
 import getTransactionHash from '@/commons/getTransactionHash';
 import getTokenIdbyURL from '@/commons/getTokenIdbyURL';
+import getTokenPrice from '@/commons/getTokenPrice';
+import buyToken from '@/commons/buyToken';
 
 export default {
-    mounted(){
+    mounted() {
         // 在组件创建时获取路由参数
         this.fileURL = this.$route.query.jsonURL;
-        setTimeout(()=>{
-          this.show = true;
-          this.fetchNFTData();
-        },100)
+        setTimeout(() => {
+            this.show = true;
+            this.fetchNFTData();
+        }, 100)
     },
     data() {
         return {
-            show:false,
-            fileURL:"",
+            show: false,
+            fileURL: "",
             picUrl: "", // 默认图片，加载完成后会被替换
             workHashValue: '', // 哈希值是从 exhibitWorks 中获取的
             workCreateTime: '',
@@ -94,18 +102,36 @@ export default {
             workType: '',
             workDesc: '',
             workTokenID: '',
+            workIsOnMarket:0,
+            workPrice: null,
         }
     },
     methods: {
+        async buyNFT(){
+            try{
+                let txHash = await buyToken(this.workTokenID, this.workPrice);
+                if (txHash){
+                    this.$message({
+                        type: 'success',
+                        message: '购买成功!'
+                    });
+                }
+            }catch(error){
+                console.log(error)
+            }
+           
+        },
         async fetchJson(jsonURL) {
             try {
                 let response = await axios.get(jsonURL)
                 let jsonData = response.data
                 this.workCreateTime = new Date(jsonData.timestamp)
+                console.log("workCreateTime", this.workCreateTime)
                 this.workName = jsonData.name
                 this.workType = jsonData.type
                 this.workDesc = jsonData.desc
                 this.workTokenId = await getTokenIdbyURL(jsonURL)
+                this.workPrice = await getTokenPrice(this.workTokenID)
                 console.log(this.workTokenId)
                 this.picUrl = jsonData.image
             } catch (e) {
@@ -119,7 +145,7 @@ export default {
         async fetchNFTData() {
             //先加一下，每家error判断
             this.workTokenID = await getTokenIdbyURL(this.fileURL);
-            
+
             try {
                 // const nftUrl = 'https://brown-urban-hornet-311.mypinata.cloud/ipfs/QmXwfXkjs4sFXBN5yXeokSAVJFR6PCVBd2KoNH1gBFK6oP'; // 从 exhibitWorks 中拿到的当前 NFT 的 URL
                 const nftData = await this.fetchFromPinata(this.fileURL);
@@ -130,6 +156,7 @@ export default {
                 this.workType = nftData.type;
                 this.workDesc = nftData.desc;
                 this.workCreator = nftData.creator;
+                this.workPrice = await getTokenPrice(this.workTokenID)
                 this.workHashValue = await getTransactionHash(this.fileURL);
 
             } catch (error) {
@@ -195,6 +222,16 @@ export default {
 
 .detail-box-top-left {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.price-box {
+    text-align: center;
+    /* border:1px solid red; */
+    margin-top: 40px;
+    flex: 1;
+    color: #9c9c9c;
 }
 
 .work-download {
@@ -244,9 +281,11 @@ export default {
     /* border:1px solid green; */
     width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    /* border: 1px solid red; */
     align-items: center;
     justify-content: center;
+    gap:200px;
 }
 
 .detail-box-bottom button {
