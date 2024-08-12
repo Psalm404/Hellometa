@@ -326,13 +326,13 @@ export default {
                 }
                 //mint metadata to the chain
                 document.querySelector('#loading-overlay .loading-message').textContent = '资产凭证铸造中，请稍后......';
-                document.getElementById('loading-overlay').style.display = 'flex';
+                document.getElementById('loading-overlay').style.display = 'flex'; // show loading
                 const addr = await getAccountAddr();
                 console.log('用户地址', addr);
                 let isSuccess = await mint(addr, metadataURL);
                 if (isSuccess) {
                     document.querySelector('#loading-overlay .loading-message').textContent = '资产凭证铸造成功！\n即将跳转至您的凭证记录界面......';
-                    document.getElementById('loading-overlay').style.display = 'none';
+                    document.getElementById('loading-overlay').style.display = 'none'; // end loading
                     setTimeout(() => {
                         this.$router.push('/recordWorks');
                     }, 500)

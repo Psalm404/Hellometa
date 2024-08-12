@@ -63,18 +63,7 @@
                         </button>
                     </div>
                 </div>
-                <!-- login -->
-                <!-- <div v-if="!isLoggedIn" class="login-modal" id="login">
-                    <div class="login-form">
-                        <div class="login-close" @click="showAlert">×</div>
-                        <h3>登录</h3>
-                        <input type="text" v-model="username" placeholder="账号">
-                        <input type="password" v-model="password" placeholder="密码">
-                        <button @click="login">Login</button>
-                    </div>
-                </div> -->
-                <!-- login -->
-            </div>            
+            </div>
         </transition>
     </div>
 </template>
@@ -83,13 +72,9 @@
 export default {
     mounted() {
         this.getURLs();
-        // this.checkLogin();
     },
     data() {
         return {
-            // isLoggedIn: document.cookie.includes('loggedIn=true'),
-            // username: '',
-            // password: '',
             // 走马灯图片
             picture: [
                 require("@/assets/680aa819c894e632d3ce71e1ef533ea.png"),
@@ -129,22 +114,6 @@ export default {
         },
     },
     methods: {
-        // checkLogin() {
-        //     // 检查cookie中是否有登录信息
-        //     // 如果没有，保持isLoggedIn为false
-        //     if (document.cookie.includes('loggedIn=true')) {
-        //         this.isLoggedIn = true;
-        //     }
-        // },
-        // login() {
-        //     if (this.username === 'a123' && this.password === '123') {
-        //         this.isLoggedIn = true;
-        //         document.cookie = 'loggedIn=true'; // 设置cookie
-        //         // window.location.reload(); // 刷新页面
-        //     } else {
-        //         alert('账号或密码错误');
-        //     }
-        // },
         navSearch() {
             if (this.navSearchQuery.trim() === '') {
                 return;
@@ -169,71 +138,12 @@ export default {
         connWallet() {
             alert("connWallet button clicked")
         },
-        // showAlert() {
-        //     alert('未登录不可使用该功能');
-        // }
+
     }
 }
 </script>
 
 <style>
-/* 添加登录表单和蒙版样式
-.login-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-}
-
-.login-form {
-  background-color: #333;
-  padding: 20px;
-  border-radius: 8px;
-  color: #fff;
-  width: 300px;
-  text-align: center;
-  position: relative;
-}
-
-.login-form input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.login-form button {
-  width: 100%;
-  padding: 10px;
-  background-color: #1a73e8;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.login-form button:hover {
-  background-color: #155ab3;
-}
-
-.login-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  font-size: 20px;
-  color: #fff;
-} */
-
-/* 其他原代码样式 */
 .home-navbar {
     background-color: #fff;
     border-bottom: 1px solid #e6e8ec;
