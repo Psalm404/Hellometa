@@ -7,17 +7,18 @@
                         <a href="#/home" class="home-navbar-logo">
                             <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
                         </a>
-                        <h2>工业互联网数据资产化平台</h2>
+                        <h3>————工业互联网数据资产化平台</h3>
                         <ul class="home-navbar-menu">
-                            <li><a href="#/exhibitWorks">Explore</a></li>
+                            <!-- 换成游客模式下的信息浏览 -->
+                            <!-- <li><a href="#/exhibitWorks">Explore</a></li>
                             <li><a href="#/uploadWorks">Upload</a></li>
-                            <li><a href="#/recordWorks">Records</a></li>
+                            <li><a href="#/recordWorks">Records</a></li> -->
                         </ul>
                         <div class="home-navbar-search">
-                            <div class="home-search-icon">
+                            <!-- <div class="home-search-icon">
                                 <input type="text" class="home-search-input" v-model="navSearchQuery"
                                     @keyup.enter="navSearch" placeholder="Search...">
-                            </div>
+                            </div> -->
                         </div>
                         <div>
                             <button class="home-navbar-button" @click="connWallet">Connect Wallet</button>
@@ -144,9 +145,15 @@ export default {
 </script>
 
 <style>
+h3 {
+    font-size: 2em;
+    color: rgb(249, 87, 0);
+    text-align: center;
+}
+
 .home-navbar {
-    background-color: #fff;
-    border-bottom: 1px solid #e6e8ec;
+    background-color: #ffffff42;
+    border-bottom: 1px solid #e6e8ec00;
     padding: 10px 20px;
     position: fixed;
     top: 0;

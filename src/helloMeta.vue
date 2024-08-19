@@ -1,283 +1,390 @@
 <template>
-<div id="app">
-    <div :class="{ 'guide-text-hidden':show  }" class="guide-text" :style="{ color: textColor }">{{ guideText }}
-    </div>
-    <transition name="el-fade-in-linear">
-        <div v-show="show" class="main-page">
-            <div class="side-navigator">
-                <div class='index-list'>
-                    <div class="navi-home" :class="{ 'active': activeButton === 'home' }">
-                        <button @click="select('home')"> 主页 </button>
-                    </div>
-                    <div class='navi-exhibit' :class="{ 'active': activeButton === 'exhibit' }">
-                        <button @click="select('exhibit') "> 交易市场 </button>
-                    </div>
-                    <div class='navi-uplord' :class="{ 'active': activeButton === 'upload' }">
-                        <button @click="select('upload')"> 上传我的凭证 </button>
-                    </div>
-                    <div class='navi-record' :class="{ 'active': activeButton === 'record' }">
-                        <button @click="select('record')"> 我的凭证记录 </button>
-                    </div>
-                    <div class='navi-login' :class="{ 'active': activeButton === 'login' }" style = "position:absolute; bottom:30px; left:55px;">
-                        <a @click="select('login')"> 登录 </a>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <router-view>
-
-                </router-view>
-            </div>
-            <!-- login -->
-            <div v-if="!isLoggedIn" class="login-modal" id="login">
-                <div class="login-form">
-                    <div class="login-close" @click="showAlert">×</div>
-                    <h3>登录</h3>
-                    <input type="text" v-model="username" placeholder="账号">
-                    <input type="password" v-model="password" placeholder="密码">
-                    <button @click="login">Login</button>
-                </div>
-            </div>
-            <!-- login -->
+    <div id="app">
+        <div :class="{ 'guide-text-hidden':show  }" class="guide-text" :style="{ color: textColor }">{{ guideText }}
         </div>
-    </transition>
-</div>
-</template>
-
-<script>
-import {
-    getAccountAddr
-} from './commons/getAccountAddr';
-import getRecentBlocks from '@/commons/getRecentBlocks';
-export default {
-    name: 'HellometaComponent',
-    data() {
-        return {
-            isLoggedIn: document.cookie.includes('loggedIn=true'),
-            username: '',
-            password: '',
-            //origin
-            account: '',
-            guideText: '',
-            textColor: 'transparent',
-            hidden: false,
-            activeButton: '',
-        };
-    },
-    mounted() {
-        this.checkLogin();
-        if (window.ethereum) {
-            this.guideText = '请连接到 MetaMask';
-            window.ethereum.on('accountsChanged', (accounts) => {
-                if (accounts.length === 0) {
-                    this.guideText = '连接中断';
-                } else {
-                    this.account = accounts[0];
-                    this.guideText = '已连接到MetaMask账户';
-                    setTimeout(() => {
-                        this.textColor = 'transparent';
-                        this.show = true;
-                        this.hidden = true;
-                    }, 0);
-                }
-            });
-            getAccountAddr().then(address => {
-                if (address === 'error') {
-                    this.guideText = '连接中断';
-                } else {
-                    this.account = address;
-                    this.guideText = `已连接到MetaMask账户`+address;
-                    console.log(this.guideText);
-                    setTimeout(() => {
-                        this.textColor = 'transparent';
-                        this.show = true;
-                        this.hidden = true;
-                    }, 0);
-
-                    // 调用 getBlocks 函数获取区块信息
-                    getRecentBlocks().then(blocks => {
-                        console.log("Received blocks:", blocks);
-                        // 在此处处理 blocks 数组
-                    }).catch(error => {
-                        console.error("Error fetching blocks:", error);
+        <transition name="el-fade-in-linear">
+            <div v-show="show" class="main-page">
+                <div class="side-navigator">
+                    <div class='index-list'>
+                        <div class="navi-home" :class="{ 'active': activeButton === 'home' }">
+                            <button @click="select('home')" :disabled="!isLoggedIn"> 个人主页 </button>
+                        </div>
+                        <div class='navi-exhibit' :class="{ 'active': activeButton === 'exhibit' }">
+                            <button @click="select('exhibit')" :disabled="!isLoggedIn"> 交易市场 </button>
+                        </div>
+                        <div class='navi-uplord' :class="{ 'active': activeButton === 'upload' }">
+                            <button @click="select('upload')" :disabled="!isLoggedIn"> 上传我的凭证 </button>
+                        </div>
+                        <div class='navi-record' :class="{ 'active': activeButton === 'record' }">
+                            <button @click="select('record')" :disabled="!isLoggedIn"> 我的凭证记录 </button>
+                        </div>
+                        <div class='navi-login' :class="{ 'active': activeButton === 'login' }" style="position:absolute; bottom:30px; left:55px;">
+                            <a @click="select('login')"> 登录 </a>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <router-view></router-view>
+                </div>
+                <!-- login -->
+                <transition name="el-fade-in-linear">
+                    <div v-if="!isLoggedIn || activeButton === 'login'" class="login-modal" v-show="showLogin">
+                        <div class="login-box">
+                            <!-- 关闭按钮 -->
+                            <button class="close-button" @click="closeLogin">close</button>
+                            <form @submit.prevent="login">
+                                <h2>Welcome👋</h2>
+                                <h3>请先登录您的账号</h3>
+                                <div class="login-input">
+                                    <span class="login-icon"></span>
+                                    <input 
+                                        class="login-username" 
+                                        v-model="username" 
+                                        required 
+                                        placeholder=" " 
+                                        @invalid="this.setCustomValidity('请填写您的账号id')"
+                                        @input="this.setCustomValidity('')"
+                                    >
+                                    <label> <strong>用户名:</strong></label>
+                                </div>
+                                <div class="login-input">
+                                    <span class="login-icon"></span>
+                                    <input 
+                                        class="login-password" 
+                                        type="password" 
+                                        v-model="password" 
+                                        required 
+                                        placeholder=" " 
+                                        @invalid="this.setCustomValidity('请输入您的密码')"
+                                        @input="this.setCustomValidity('')"
+                                    >
+                                    <label><strong>密码:</strong></label>
+                                </div>
+                                <div v-if="error" class="error-message">{{ error }}</div>
+                                <button class="login-submit" type="submit">登录</button>
+                            </form>
+                            <a class="registerBT" @click="register">没有账号?注册一个👇</a>
+                        </div>
+                    </div>
+                </transition>
+                <!-- login -->
+            </div>
+        </transition>
+    </div>
+    </template>
+    
+    <script>
+    import { getAccountAddr } from './commons/getAccountAddr';
+    import getRecentBlocks from '@/commons/getRecentBlocks';
+    
+    export default {
+        name: 'HellometaComponent',
+        data() {
+            return {
+                isLoggedIn: document.cookie.includes('loggedIn=true'),
+                username: '',
+                password: '',
+                error: '',
+                show: true,
+                showLogin: false,
+                account: '',
+                guideText: '',
+                textColor: 'transparent',
+                hidden: false,
+                activeButton: '',
+                isGuest: false, // 游客模式标志
+            };
+        },
+        mounted() {
+            this.checkLogin();
+            if (!this.isLoggedIn) {
+                setTimeout(() => {
+                    this.showLogin = true;
+                }, 500);
+            }
+            if (this.isLoggedIn) {
+                if (window.ethereum) {
+                    this.guideText = '请连接到 MetaMask';
+                    window.ethereum.on('accountsChanged', (accounts) => {
+                        if (accounts.length === 0) {
+                            this.guideText = '连接中断';
+                        } else {
+                            this.account = accounts[0];
+                            this.guideText = '已连接到MetaMask账户';
+                            setTimeout(() => {
+                                this.textColor = 'transparent';
+                                this.show = true;
+                                this.hidden = true;
+                            }, 0);
+                        }
                     });
+                    getAccountAddr().then(address => {
+                        if (address === 'error') {
+                            this.guideText = '连接中断';
+                        } else {
+                            this.account = address;
+                            this.guideText = `已连接到MetaMask账户` + address;
+                            setTimeout(() => {
+                                this.textColor = 'transparent';
+                                this.hidden = true;
+                            }, 0);
+    
+                            getRecentBlocks().then(blocks => {
+                                console.log("Received blocks:", blocks);
+                            }).catch(error => {
+                                console.error("Error fetching blocks:", error);
+                            });
+                        }
+                    }).catch(error => {
+                        console.error('发生错误：', error);
+                    });
+                } else {
+                    this.guideText = '未检测到钱包，请先下载';
                 }
-            }).catch(error => {
-                console.error('发生错误：', error);
-            });
-
-        } else {
-            this.guideText = '未检测到钱包，请先下载';
+                setTimeout(() => {
+                    this.textColor = '#FF5733';
+                }, 100);  
+            }
+        },
+        methods: {
+            checkLogin() {
+                if (document.cookie.includes('loggedIn=true')) {
+                    this.isLoggedIn = true;
+                }
+            },
+            login() {
+                if (this.username === 'a123' && this.password === '123') {
+                    this.isLoggedIn = true;
+                    this.isGuest = false; // 登录成功，取消游客模式
+                    document.cookie = 'loggedIn=true';
+                    this.activeButton = 'home';
+                    this.showLogin = false; // 隐藏登录框
+                } else {
+                    this.error = '账号或密码错误';
+                }
+            },
+            register() {
+                this.$router.push('/register');
+            },
+            closeLogin() {
+                this.showLogin = false;
+                this.isGuest = true; // 进入游客模式
+            },
+            select(index) {
+                if (this.isGuest && (index === 'upload' || index === 'record' || index === 'exhibit' || index == 'home')) {
+                    alert('此功能在游客模式下不可用，请登录后再试。');
+                    return;
+                }
+                var targetRoute;
+                this.activeButton = index;
+                if (index === 'upload') {
+                    targetRoute = '/uploadWorks';
+                } else if (index === 'record') {
+                    targetRoute = '/recordWorks';
+                } else if (index === 'exhibit') {
+                    targetRoute = '/exhibitWorks';
+                } else if (index === 'home') {
+                    targetRoute = '/home';
+                } else if (index === 'login') {
+                    targetRoute = '/login';
+                }
+                if (targetRoute && this.$route.path !== targetRoute)
+                    this.$router.push(targetRoute);
+            }
         }
-        setTimeout(() => {
-            this.textColor = '#FF5733';
-        }, 100);
-    },
-    methods: {
-        checkLogin() {
-            // 检查cookie中是否有登录信息
-            // 如果没有，保持isLoggedIn为false
-            if (document.cookie.includes('loggedIn=true')) {
-                this.isLoggedIn = true;
-            }
-        },
-        login() {
-            if (this.username === 'a123' && this.password === '123') {
-                this.isLoggedIn = true;
-                document.cookie = 'loggedIn=true'; // 设置cookie
-                // window.location.reload(); // 刷新页面
-            } else {
-                alert('账号或密码错误');
-            }
-        },
-        showAlert() {
-            alert('未登录不可使用该功能');
-        },
-        //origin
-        select(index) {
-            var targetRoute;
-            console.log(index)
-            this.activeButton = index;
-            if (index === 'upload') {
-                targetRoute = '/uploadWorks';
-            } else if (index === 'record') {
-                targetRoute = '/recordWorks';
-            } else if (index === 'exhibit') {
-                targetRoute = '/exhibitWorks';
-            } else if (index === 'home') {
-                targetRoute = '/home'
-            } else if (index == 'login'){
-                targetRoute = '/login'
-            }
-            if (targetRoute && this.$route.path !== targetRoute)
-                this.$router.push(targetRoute);
-        }
+    };
+    </script>
+    
+    <style>
+    #app {
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+        height: 100vh;
+        text-align: center;
+        background-color: #292929;
     }
-};
-</script>
-
-<style>
-#app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    height: 100vh;
-    text-align: center;
-    background-color: #292929;
-}
-
-/* 添加登录表单和蒙版样式 */
-.login-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-}
-
-.login-form {
-  background-color: #333;
-  padding: 20px;
-  border-radius: 8px;
-  color: #fff;
-  width: 300px;
-  text-align: center;
-  position: relative;
-}
-
-.login-form input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.login-form button {
-  width: 100%;
-  padding: 10px;
-  background-color: #1a73e8;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.login-form button:hover {
-  background-color: #155ab3;
-}
-
-.login-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  font-size: 20px;
-  color: #fff;
-}
-
-
-.guide-text {
-    padding-top: 40vh;
-    font-size: 3em;
-    transition: color 0.5s ease;
-    text-align: center
-}
-
-.guide-text-hidden {
-    display: none;
-}
-
-.main-page {
-    min-height: 100vh;
-    display: flex;
-}
-
-.side-navigator {
-    background-color: #202020;
-    width: 10%;
-    height: 100vh;
-    position: absolute;
-    z-index: 100;
-    top: 0;
-    left: 0;
-}
-
-.index-list {
-    margin-top: 150px;
-    height: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 35px;
-}
-
-.index-list button {
-    background-color: transparent;
-    border: 1px solid rgba(170, 170, 170, 1);
-    height: 35px;
-    line-height: 13px;
-    padding: 10px 20px;
-    text-align: center;
-    color: rgba(170, 170, 170, 1);
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.index-list button:hover {
-    color: #ff5733;
-    border-color: #ff5733;
-}
-
-.active button {
-    color: #ff5733;
-    border-color: #ff5733;
-}
-</style>
+    
+    .login-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      transition: background-color 0.5s ease; /* 添加渐变效果 */
+    }
+    
+    .login-box {
+        position: relative;
+        width: 400px;
+        height: 450px;
+        background-color: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(15px);
+    }
+    
+    /* 关闭按钮 */
+    .close-button {
+        position: flex;
+        margin-top: 12px;
+        margin-right: 12px;
+        background: none;
+        border: none;
+        font-size: 2em;
+        color: white;
+        cursor: pointer;
+    }
+    
+    h2 {
+        font-size: 1em;
+        color: white;
+        text-align: center;
+        margin-top: 50px;
+    }
+    
+    h3 {
+        font-size: 2em;
+        color: rgb(255, 255, 255);
+        text-align: center;
+        margin-top: 50px;
+    }
+    
+    .login-input {
+        position: relative;
+        width: 310px;
+        margin: 30px 0;
+        border-bottom: 2px solid white;
+    }
+    
+    .login-input label {
+        position: absolute;
+        top: 50%;
+        left: 0px;
+        transform: translateY(-50%);
+        font-size: 15px;
+        color: white;
+        pointer-events: none;
+        transition: .5s;
+    }
+    
+    .login-input input {
+        -webkit-text-fill-color: white;
+        width: 100%;
+        margin-top: 15px;
+        background-color: transparent;
+        border: none;
+        outline: none;
+        font-size: 1em;
+        color: white;
+    }
+    
+    input:-webkit-autofill {
+        transition: background-color 5000s ease-in-out 0s;
+    }
+    
+    .login-input input:focus~label,
+    .login-input input:valid~label,
+    .login-input input:not(:placeholder-shown)~label {
+        top: -3px;
+    }
+    
+    .login-submit {
+        width: 100%;
+        height: 40px;
+        background: #fff;
+        border: none;
+        outline: none;
+        border-radius: 40px;
+        cursor: pointer;
+        font-size: 1em;
+        color: black;
+        font-weight: 500;
+    }
+    
+    .error-message {
+        color: red;
+        margin-bottom: 10px;
+    }
+    
+    .registerBT {
+        text-decoration: underline;
+        margin-left: 20px;
+        margin-bottom: 20px;
+        color: white;
+    }
+    
+    .guide-text {
+        padding-top: 40vh;
+        font-size: 3em;
+        transition: color 0.5s ease;
+        text-align: center;
+    }
+    
+    .guide-text-hidden {
+        display: none;
+    }
+    
+    .main-page {
+        min-height: 100vh;
+        display: flex;
+    }
+    
+    .side-navigator {
+        background-color: #202020;
+        width: 10%;
+        height: 100vh;
+        position: absolute;
+        z-index: 100;
+        top: 0;
+        left: 0;
+    }
+    
+    .index-list {
+        margin-top: 150px;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 35px;
+    }
+    
+    .index-list button {
+        background-color: transparent;
+        border: 1px solid rgba(170, 170, 170, 1);
+        height: 35px;
+        line-height: 13px;
+        padding: 10px 20px;
+        text-align: center;
+        color: rgba(170, 170, 170, 1);
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .index-list button:disabled {
+        color: rgba(170, 170, 170, 0.5);
+        border-color: rgba(170, 170, 170, 0.5);
+        cursor: not-allowed;
+    }
+    
+    .index-list button:hover {
+        color: #ff5733;
+        border-color: #ff5733;
+    }
+    
+    .active button {
+        color: #ff5733;
+        border-color: #ff5733;
+    }
+    </style>
+    

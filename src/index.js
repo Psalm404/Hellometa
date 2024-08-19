@@ -8,7 +8,6 @@ import exhibitWorks from './components/exhibitWorks.vue'
 import workDetails from './components/workDetails.vue'
 import workInfo from './components/workInfo.vue'
 import homePage from './components/homePage.vue'
-import introPage from './components/introPage.vue'
 import blockBrowser from './components/blockBrowser.vue'
 import transactionDetail from './components/transactionDetail.vue'
 import loginPage from './components/loginPage.vue'
@@ -32,10 +31,6 @@ const router = new VueRouter({
       {
         path: '/home',
         component: homePage
-      },
-      {
-        path: '/intro',
-        component: introPage
       },
       {
         path:'/uploadWorks',
