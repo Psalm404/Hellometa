@@ -18,9 +18,16 @@
                         <div class='navi-record' :class="{ 'active': activeButton === 'record' }">
                             <button @click="select('record')" :disabled="!isLoggedIn"> 我的凭证记录 </button>
                         </div>
+                        <div class='navi-myAccount' :class="{ 'active': activeButton === 'myAccount' }">
+                            <button  @click="select('myAccount')" :disabled="!isLoggedIn"> 账户管理 </button >
+                        </div>
+                        <div class='navi-myGas' :class="{ 'active': activeButton === 'myGas' }">
+                            <button  @click="select('myGas')" :disabled="!isLoggedIn"> 燃料管理 </button >
+                        </div>
                         <div class='navi-login' :class="{ 'active': activeButton === 'login' }" style="position:absolute; bottom:30px; left:55px;">
                             <a @click="select('login')"> 登录 </a>
                         </div>
+                       
                     </div>
                 </div>
                 <div>
@@ -187,6 +194,10 @@
                     targetRoute = '/home';
                 } else if (index === 'login') {
                     targetRoute = '/login';
+                }else if (index === 'myAccount') {
+                    targetRoute = '/myAccount';
+                }else if (index === 'myGas'){
+                    targetRoute = '/myGas';
                 }
                 if (targetRoute && this.$route.path !== targetRoute)
                     this.$router.push(targetRoute);
