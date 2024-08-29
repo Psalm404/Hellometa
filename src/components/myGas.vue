@@ -45,9 +45,29 @@
     </el-drawer>
     <el-drawer size="40%" :visible.sync="drawer2" :with-header="false">
         <div style="font-size:20px;color:black; margin-top:10px;">收支明细</div>
+        <template>
+            <el-table :data="rechargeRecord" style="width: 90%; margin:10px 30px;">
+                <el-table-column prop="type" label="交易类型" width="180">
+                </el-table-column>
+                <el-table-column prop="amount" label="燃料变动" width="180">
+                </el-table-column>
+                <el-table-column prop="time" label="交易时间">
+                </el-table-column>
+            </el-table>
+        </template>
     </el-drawer>
     <el-drawer size="40%" :visible.sync="drawer3" :with-header="false">
         <div style="font-size:20px;color:black; margin-top:10px;">分配记录</div>
+        <template>
+            <el-table :data="distributeRecord" style="width: 90%; margin:10px 30px;">
+                <el-table-column prop="type" label="交易类型" width="180">
+                </el-table-column>
+                <el-table-column prop="amount" label="燃料变动" width="180">
+                </el-table-column>
+                <el-table-column prop="time" label="交易时间">
+                </el-table-column>
+            </el-table>
+        </template>
     </el-drawer>
 </div>
 </template>
@@ -57,15 +77,18 @@ import Web3 from 'web3';
 import axios from 'axios';
 export default {
     mounted() {
+        this.getTotalGas();
         this.getAccountBalance();
+        this.getRecord();
     },
     data() {
         return {
+            account: '123',
             myGas: null,
             drawer: false,
             drawer2: false,
             drawer3: false,
-            totalGas: 100000000,
+            totalGas: 123,
             search: '',
             listData: [{
                     name: 'Account4',
@@ -78,6 +101,8 @@ export default {
                     balance: '',
                 }
             ],
+            rechargeRecord: null,
+            distributeRecord: null,
         }
     },
     methods: {
@@ -99,14 +124,17 @@ export default {
             }).then(({
                 value
             }) => {
-                let res = axios.post('http://127.0.0.1:4523/m1/4942447-0-default/api/sendFunds', {toAddress: info.address, amount: value});
+                let res = axios.post('http://127.0.0.1:4523/m1/4942447-0-default/api/sendFunds', {
+                    toAddress: info.address,
+                    amount: value
+                });
                 console.log('hi,im in the train now and feel so bored', info.address, value)
                 console.log(res.status)
                 // if (res.status === 200) {
-                    this.$message({
-                        type: 'success',
-                        message: '分配成功'
-                    });
+                this.$message({
+                    type: 'success',
+                    message: '分配成功'
+                });
                 // }
 
             }).catch(() => {});
@@ -131,6 +159,25 @@ export default {
             } catch (e) {
                 console.log(e)
             }
+        },
+        getTotalGas() {
+            axios.get('http://127.0.0.1:4523/m1/4942447-0-default/api/getUserBalance', this.account)
+                .then(res => {
+                    if (res.data.code === '200') {
+                        this.totalGas = res.data.balance;
+                    }
+                })
+        },
+        async getRecord() {
+            await axios.get('http://127.0.0.1:4523/m1/4942447-0-default/api/getRecord', this.account).then(res => {
+                const recordList = res.data.records;
+                this.rechargeRecord = recordList.filter((item) => {
+                    return item.type === '充值'
+                });
+                this.distributeRecord = recordList.filter((item) => {
+                    return item.type === '分配燃料'
+                });
+            });
         },
         toGasRecharge() {
             this.$router.push('/myGas/gasRecharge');

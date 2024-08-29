@@ -78,12 +78,21 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$message({
-                    type: 'success',
-                    message: '删除成功!'
-                });
-            }).catch(() => {
-            });
+                axios.post('http://127.0.0.1:4523/m1/4942447-0-default/api/removeAddress', row).then(res => {
+                    if (res.data.status === '200') {
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                    }else{
+                        this.$message({
+                            type: 'error',
+                            message: '删除失败'
+                        });
+                    }
+                })
+
+            }).catch(() => {});
             console.log(index, row);
         },
         addSmallAccount() {
@@ -97,6 +106,7 @@ export default {
             let data = {
                 account: "123",
                 address: this.address,
+                name: this.name,
             }
             axios.post('http://127.0.0.1:4523/m1/4942447-0-default/api/addSmallAccount', data)
                 .then(response => {
@@ -109,12 +119,12 @@ export default {
         },
         async getAccountList() {
             let res = await axios.get('http://127.0.0.1:4523/m1/4942447-0-default/api/getSmallAccount')
-            if (res.data.status === "查询成功") {
-                this.listData = res.data.address.map(item => {
+            if (res.data.status === "查询成功" && res.data.addresses) {
+                this.listData = res.data.addresses.map(item => {
                     // 如果 address 属性不存在，给它一个默认值
                     return {
                         ...item,
-                        address: item || 'null'
+                        addresses: item || 'null'
                     };
                 });
             }
@@ -134,8 +144,9 @@ export default {
     min-height: 100vh;
     min-width: 100vw;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
-    background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);;
-    
+    background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
+    ;
+
 }
 
 .myAccount-guideBox {
