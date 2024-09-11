@@ -1,7 +1,7 @@
 <template>
 <div class="gasRecharge-container">
     <div class="content" style="height:100vh">
-        <div v-html="htmlContent"> </div>
+        <div v-html="htmlContent" ref="formDiv"> </div>
         <div class="gasRecharge-guideBox">
             <div style="display: flex; gap:50px;">
                 <div class="gasRecharge-title">
@@ -27,7 +27,7 @@
             </div>
             <div style="display: flex; flex-direction: column; margin-top:15px ">
                 <div style="align-self: self-start;">价目表</div>
-                <div> 价格情况 </div>
+                <div v-loading="loading" style="height: 40px"> {{rate}} </div>
             </div>
         </div>
         <div class="gasRecharge-currentPrice">
@@ -58,7 +58,35 @@
 import axios from 'axios';
 export default {
     /* eslint-disable */
+    mounted() {
+        this.getExchangeRate();
+    },
+    data() {
+        return {
+            loading: true,
+            rate: null,
+            price: 0,
+            htmlContent: null,
+        };
+    },
     methods: {
+        getExchangeRate() {
+            axios.get('http://127.0.0.1:28888/api/getExchangeRate').then(res => {
+                console.log(res)
+                if (res.data.code === '200') {
+                    this.CNYToUSD = res.data.CNYToUSD;
+                    this.USDToETH = res.data.USDToETH;
+                    this.rate = `人民币到美元:${this.CNYToUSD}`;
+                    this.loading = false;
+                } else {
+                    this.loading = false;
+                    this.rate = '获取汇率失败';
+                }
+                console.log(this.CNYToUSD, this.USDToETH)
+            }).catch((e) => {
+                console.log(e)
+            })
+        },
         selectPrice(price) {
             this.price = price;
         },
@@ -68,32 +96,24 @@ export default {
                 total_amount: this.price,
                 subject: '充值'
             }
-            axios.post('http://127.0.0.1:4523/m1/4942447-0-default/api/payment', data).then(res => {
-                // this.htmlContent = res.data;
-                this.htmlContent = `<form name="punchout_form" method="post"
-    action="https://openapi.alipay.com/gateway.do?charset=UTF-8&method=alipay.trade.page.pay&format=json&sign=ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE&version=1.0&app_id=2017060101317939&sign_type=RSA2&timestamp=2014-07-24+03%3A07%3A50">
-    <input type="hidden" name="biz_content" value="{&quot;time_expire&quot;:&quot;2016-12-31 10:05:01&quot;,&quot;extend_params&quot;:&quot;&quot;,&quot;query_options&quot;:&quot;[\&quot;hyb_amount\&quot;,\&quot;enterprise_pay_info\&quot;]&quot;,&quot;settle_info&quot;:&quot;&quot;,&quot;subject&quot;:&quot;Iphone6 16G&quot;,&quot;product_code&quot;:&quot;FAST_INSTANT_TRADE_PAY&quot;,&quot;body&quot;:&quot;Iphone6 16G&quot;,&quot;qr_pay_mode&quot;:&quot;1&quot;,&quot;integration_type&quot;:&quot;PCWEB&quot;,&quot;merchant_order_no&quot;:&quot;20161008001&quot;,&quot;sub_merchant&quot;:&quot;&quot;,&quot;invoice_info&quot;:&quot;&quot;,&quot;ext_user_info&quot;:&quot;&quot;,&quot;timeout_express&quot;:&quot;90m&quot;,&quot;disable_pay_channels&quot;:&quot;pcredit,moneyFund,debitCardExpress&quot;,&quot;agreement_sign_params&quot;:&quot;&quot;,&quot;royalty_info&quot;:&quot;&quot;,&quot;store_id&quot;:&quot;NJ_001&quot;,&quot;request_from_url&quot;:&quot;https://&quot;,&quot;qrcode_width&quot;:&quot;100&quot;,&quot;goods_detail&quot;:&quot;&quot;,&quot;enable_pay_channels&quot;:&quot;pcredit,moneyFund,debitCardExpress&quot;,&quot;out_trade_no&quot;:&quot;20150320010101001&quot;,&quot;total_amount&quot;:&quot;88.88&quot;,&quot;business_params&quot;:&quot;{\&quot;mc_create_trade_ip\&quot;:\&quot;127.0.0.1\&quot;}&quot;,&quot;promo_params&quot;:&quot;{\&quot;storeIdType\&quot;:\&quot;1\&quot;}&quot;}">
-    <input type="submit" value="立即支付" style="display:none" >
-</form>
-<script>
-    document.forms[0].submit();
-<\/script>`;
+            axios.post('http://127.0.0.1:28888/api/payment', data).then(res => {
+                this.htmlContent = res.data;
+                //                 this.htmlContent = `<form name="punchout_form" method="post"
+                //     action="https://openapi.alipay.com/gateway.do?charset=UTF-8&method=alipay.trade.page.pay&format=json&sign=ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE&version=1.0&app_id=2017060101317939&sign_type=RSA2&timestamp=2014-07-24+03%3A07%3A50">
+                //     <input type="hidden" name="biz_content" value="{&quot;time_expire&quot;:&quot;2016-12-31 10:05:01&quot;,&quot;extend_params&quot;:&quot;&quot;,&quot;query_options&quot;:&quot;[\&quot;hyb_amount\&quot;,\&quot;enterprise_pay_info\&quot;]&quot;,&quot;settle_info&quot;:&quot;&quot;,&quot;subject&quot;:&quot;Iphone6 16G&quot;,&quot;product_code&quot;:&quot;FAST_INSTANT_TRADE_PAY&quot;,&quot;body&quot;:&quot;Iphone6 16G&quot;,&quot;qr_pay_mode&quot;:&quot;1&quot;,&quot;integration_type&quot;:&quot;PCWEB&quot;,&quot;merchant_order_no&quot;:&quot;20161008001&quot;,&quot;sub_merchant&quot;:&quot;&quot;,&quot;invoice_info&quot;:&quot;&quot;,&quot;ext_user_info&quot;:&quot;&quot;,&quot;timeout_express&quot;:&quot;90m&quot;,&quot;disable_pay_channels&quot;:&quot;pcredit,moneyFund,debitCardExpress&quot;,&quot;agreement_sign_params&quot;:&quot;&quot;,&quot;royalty_info&quot;:&quot;&quot;,&quot;store_id&quot;:&quot;NJ_001&quot;,&quot;request_from_url&quot;:&quot;https://&quot;,&quot;qrcode_width&quot;:&quot;100&quot;,&quot;goods_detail&quot;:&quot;&quot;,&quot;enable_pay_channels&quot;:&quot;pcredit,moneyFund,debitCardExpress&quot;,&quot;out_trade_no&quot;:&quot;20150320010101001&quot;,&quot;total_amount&quot;:&quot;88.88&quot;,&quot;business_params&quot;:&quot;{\&quot;mc_create_trade_ip\&quot;:\&quot;127.0.0.1\&quot;}&quot;,&quot;promo_params&quot;:&quot;{\&quot;storeIdType\&quot;:\&quot;1\&quot;}&quot;}">
+                //     <input type="submit" value="立即支付" style="display:none" >
+                // </form>
+                // <script>
+                //     document.forms[0].submit();
+                // <\/script>`;
+                const formDiv = this.$refs.formDiv;
                 console.log(this.htmlContent)
-                this.$nextTick(() => {
-                    const form = this.$el.querySelector('form[name="punchout_form"]');
-                    if (form) {
-                        form.submit(); // 自动提交表单
-                    }
-                });
-            }).catch(error => console.error('Error:', error));
+                formDiv.innerHTML = this.htmlContent;
+                formDiv.querySelector('form').submit();
+
+            })
         }
     },
-    data() {
-        return {
-            price: 0,
-            htmlContent: null,
-        }
-    }
 }
 </script>
 

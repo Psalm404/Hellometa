@@ -51,10 +51,11 @@ export default {
         },
     },
     methods: {
-        //（勉强）实现了按名称搜索
         async filterData() {
             console.log('searchName', this.searchName);
-            if (this.searchName) {
+            console.log('searchType', this.searchType);
+
+            if (this.searchName || this.searchType) {
                 try {
                     const responses = await Promise.all(this.allData.map(async item => {
                         try {
@@ -68,27 +69,36 @@ export default {
                     this.gridData = responses.filter(response => {
                         if (!response) return false; // 过滤掉返回 null 的情况
                         const name = response.data.name;
-                        return name && name.toLowerCase().includes(this.searchName.toLowerCase());
+                        const type = response.data.type; // 假设响应中包含类型信息
+
+                        const nameMatches = this.searchName 
+                            ? name && name.toLowerCase().includes(this.searchName.toLowerCase()) 
+                            : true;
+                        
+                        const typeMatches = this.searchType 
+                            ? type && type.toLowerCase().includes(this.searchType.toLowerCase()) 
+                            : true;
+                        
+                        // 同时满足名称和类型条件
+                        return nameMatches && typeMatches;
                     }).map(response => response.config.url);
 
-                    console.log('searchList', this.gridData);
+                    console.log('filteredData', this.gridData);
                 } catch (error) {
                     console.error('处理 Promise.all 操作时出错:', error);
-                    // 处理整个 Promise.all 操作的错误
                 }
             } else {
-                this.gridData = this.allData;
+                this.gridData = this.allData; // 没有搜索条件时，显示全部数据
             }
         },
         async getURLs() {
             try {
                 this.allData = await getActiveNFTsURLs();
-                this.gridData = this.allData; //allData中存的是全部数据
-                console.log('allData', this.allData)
+                this.gridData = this.allData; // allData中存的是全部数据
+                console.log('allData', this.allData);
             } catch (e) {
-                console.log(e)
+                console.log(e);
             }
-
         }
     }
 }

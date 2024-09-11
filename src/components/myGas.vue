@@ -90,6 +90,8 @@ export default {
             drawer3: false,
             totalGas: 123,
             search: '',
+            CNYToUSD: '',
+            USDToETH: '',
             listData: [{
                     name: 'Account4',
                     address: '0x95ee5aac032ea66b9bac993a42AC998a12C8079d',
@@ -124,7 +126,7 @@ export default {
             }).then(({
                 value
             }) => {
-                let res = axios.post('http://127.0.0.1:4523/m1/4942447-0-default/api/sendFunds', {
+                let res = axios.post('http://127.0.0.1:28888/api/sendFunds', {
                     toAddress: info.address,
                     amount: value
                 });
@@ -161,15 +163,21 @@ export default {
             }
         },
         getTotalGas() {
-            axios.get('http://127.0.0.1:4523/m1/4942447-0-default/api/getUserBalance', this.account)
-                .then(res => {
-                    if (res.data.code === '200') {
-                        this.totalGas = res.data.balance;
-                    }
-                })
+            const params = {
+                account: this.account
+            }
+            axios.get('http://127.0.0.1:28888/api/getUserBalance', {
+                params: params
+            }).then(res => {
+                if (res.data.code === '200') {
+                    this.totalGas = res.data.balance;
+                }
+            }).catch(e => {
+                console.log(e)
+            })
         },
         async getRecord() {
-            await axios.get('http://127.0.0.1:4523/m1/4942447-0-default/api/getRecord', this.account).then(res => {
+            await axios.get('http://127.0.0.1:28888/api/getRecord', this.account).then(res => {
                 const recordList = res.data.records;
                 this.rechargeRecord = recordList.filter((item) => {
                     return item.type === '充值'
@@ -177,11 +185,14 @@ export default {
                 this.distributeRecord = recordList.filter((item) => {
                     return item.type === '分配燃料'
                 });
-            });
+            }).catch((e) => {
+                console.log(e)
+            })
         },
         toGasRecharge() {
             this.$router.push('/myGas/gasRecharge');
-        }
+        },
+    
     }
 }
 </script>

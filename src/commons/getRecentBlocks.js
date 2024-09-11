@@ -27,7 +27,7 @@ async function getBlocks() {
             );
 
             // 处理每个区块的详细信息
-            for (let j = Number(batchBlocks.length) - 1; j >= 0 ; j--) {
+            for (let j = Number(batchBlocks.lenngth) - 1; j >= 0 ; j--) {
                 const block = batchBlocks[j];
                 // console.log(block.number);
                 // 获取每个交易的详细信息

@@ -52,10 +52,12 @@
 import axios from 'axios';
 export default {
     mounted() {
+        this.account = localStorage.getItem('account');
         this.getAccountList();
     },
     data() {
         return {
+            account: null,
             drawer: false,
             name: '',
             address: '',
@@ -72,19 +74,20 @@ export default {
         }
     },
     methods: {
+
         handleDelete(index, row) {
             this.$confirm('是否移除该账户？', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                axios.post('http://127.0.0.1:4523/m1/4942447-0-default/api/removeAddress', row).then(res => {
+                axios.post('http://127.0.0.1:28888/api/removeAddress', row).then(res => {
                     if (res.data.status === '200') {
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
                         });
-                    }else{
+                    } else {
                         this.$message({
                             type: 'error',
                             message: '删除失败'
@@ -95,6 +98,7 @@ export default {
             }).catch(() => {});
             console.log(index, row);
         },
+
         addSmallAccount() {
             if (this.name === '') {
                 this.$message.warning('账户名不得为空');
@@ -108,17 +112,26 @@ export default {
                 address: this.address,
                 name: this.name,
             }
-            axios.post('http://127.0.0.1:4523/m1/4942447-0-default/api/addSmallAccount', data)
+
+            axios.post('http://127.0.0.1:2888/api/addSmallAccount', data)
                 .then(response => {
                     if (response.code === "200")
                         this.$message.success('导入成功');
                     else {
                         this.$message.error('导入失败');
                     }
+                }).catch(e => {
+                    console.log(e)
                 })
         },
         async getAccountList() {
-            let res = await axios.get('http://127.0.0.1:4523/m1/4942447-0-default/api/getSmallAccount')
+            let res = await axios.get('http://127.0.0.1:28888/api/getSmallAccount', {
+                params: {
+                    account: this.account
+                }
+            }).catch(e => {
+                console.log(e)
+            })
             if (res.data.status === "查询成功" && res.data.addresses) {
                 this.listData = res.data.addresses.map(item => {
                     // 如果 address 属性不存在，给它一个默认值
@@ -194,9 +207,5 @@ export default {
     display: flex;
     gap: 20px;
     flex-direction: column;
-}
-
-.create-accountBT span {
-    color: white;
 }
 </style>

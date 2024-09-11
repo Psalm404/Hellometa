@@ -96,7 +96,7 @@ import debounce from 'lodash/debounce';
 export default {
     mounted() {
         this.searchData = this.$route.query.bkSearchQuery.toString();
-        this.activeNames = Array.from({ length: 10 }, (_, index) => index);
+        this.activeNames = Array.from({ length: 100 }, (_, index) => index);
         this.blockSearch();
     },
     created() {
