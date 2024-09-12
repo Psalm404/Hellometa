@@ -1,30 +1,10 @@
 <template>
     <div id="app">
-        <div :class="{ 'guide-text-hidden':show  }" class="guide-text" :style="{ color: textColor }">{{ guideText }}
-        </div>
+        <div :class="{ 'guide-text-hidden':show  }" class="guide-text" :style="{ color: textColor }">{{ guideText }}</div>
         <transition name="el-fade-in-linear">
             <div v-show="show" class="main-page">
-                <div class="side-navigator">
-                    <div class='index-list'>
-                        <div class="navi-home" :class="{ 'active': activeButton === 'home' }">
-                            <button @click="select('home')" :disabled="!isLoggedIn"> 个人主页 </button>
-                        </div>
-                        <div class='navi-exhibit' :class="{ 'active': activeButton === 'exhibit' }">
-                            <button @click="select('exhibit')" :disabled="!isLoggedIn"> 交易市场 </button>
-                        </div>
-                        <div class='navi-uplord' :class="{ 'active': activeButton === 'upload' }">
-                            <button @click="select('upload')" :disabled="!isLoggedIn"> 上传我的凭证 </button>
-                        </div>
-                        <div class='navi-record' :class="{ 'active': activeButton === 'record' }">
-                            <button @click="select('record')" :disabled="!isLoggedIn"> 我的凭证记录 </button>
-                        </div>
-                        <div class='navi-login' :class="{ 'active': activeButton === 'login' }" style="position:absolute; bottom:30px; left:55px;">
-                            <a @click="select('login')"> 登录 </a>
-                        </div>
-                    </div>
-                </div>
                 <div>
-                    <router-view></router-view>
+                    <router-view @trigger-login="showLoginModal"></router-view>
                 </div>
                 <!-- login -->
                 <transition name="el-fade-in-linear">
@@ -71,320 +51,307 @@
             </div>
         </transition>
     </div>
-    </template>
+</template>
     
-    <script>
-    import { getAccountAddr } from './commons/getAccountAddr';
-    import getRecentBlocks from '@/commons/getRecentBlocks';
-    
-    export default {
-        name: 'HellometaComponent',
-        data() {
-            return {
-                isLoggedIn: document.cookie.includes('loggedIn=true'),
-                username: '',
-                password: '',
-                error: '',
-                show: true,
-                showLogin: false,
-                account: '',
-                guideText: '',
-                textColor: 'transparent',
-                hidden: false,
-                activeButton: '',
-                isGuest: false, // 游客模式标志
-            };
-        },
-        mounted() {
-            this.checkLogin();
-            if (!this.isLoggedIn) {
-                setTimeout(() => {
-                    this.showLogin = true;
-                }, 500);
-            }
-            if (this.isLoggedIn) {
-                if (window.ethereum) {
-                    this.guideText = '请连接到 MetaMask';
-                    window.ethereum.on('accountsChanged', (accounts) => {
-                        if (accounts.length === 0) {
-                            this.guideText = '连接中断';
-                        } else {
-                            this.account = accounts[0];
-                            this.guideText = '已连接到MetaMask账户';
-                            setTimeout(() => {
-                                this.textColor = 'transparent';
-                                this.show = true;
-                                this.hidden = true;
-                            }, 0);
-                        }
-                    });
-                    getAccountAddr().then(address => {
-                        if (address === 'error') {
-                            this.guideText = '连接中断';
-                        } else {
-                            this.account = address;
-                            this.guideText = `已连接到MetaMask账户` + address;
-                            setTimeout(() => {
-                                this.textColor = 'transparent';
-                                this.hidden = true;
-                            }, 0);
-    
-                            getRecentBlocks().then(blocks => {
-                                console.log("Received blocks:", blocks);
-                            }).catch(error => {
-                                console.error("Error fetching blocks:", error);
-                            });
-                        }
-                    }).catch(error => {
-                        console.error('发生错误：', error);
-                    });
-                } else {
-                    this.guideText = '未检测到钱包，请先下载';
-                }
-                setTimeout(() => {
-                    this.textColor = '#FF5733';
-                }, 100);  
-            }
-        },
-        methods: {
-            checkLogin() {
-                if (document.cookie.includes('loggedIn=true')) {
-                    this.isLoggedIn = true;
-                }
-            },
-            login() {
-                if (this.username === 'a123' && this.password === '123') {
-                    this.isLoggedIn = true;
-                    this.isGuest = false; // 登录成功，取消游客模式
-                    document.cookie = 'loggedIn=true';
-                    this.activeButton = 'home';
-                    this.showLogin = false; // 隐藏登录框
-                } else {
-                    this.error = '账号或密码错误';
-                }
-            },
-            register() {
-                this.$router.push('/register');
-            },
-            closeLogin() {
+<script>
+import axios from 'axios';
+
+export default {
+    name: 'HellometaComponent',
+    data() {
+        return {
+            username: '',
+            password: '',
+            error: '',
+            show: true,
+            showLogin: false,
+            guideText: '',
+            textColor: 'transparent',
+            activeButton: '',
+            isGuest: false, // 游客模式标志
+        };
+    },
+    computed: {
+        isLoggedIn() {
+            return this.$store.state.isLoggedIn;
+        }
+    },
+    watch: {
+        isLoggedIn(newStatus) {
+            if (newStatus) {
                 this.showLogin = false;
-                this.isGuest = true; // 进入游客模式
-            },
-            select(index) {
-                if (this.isGuest && (index === 'upload' || index === 'record' || index === 'exhibit' || index == 'home')) {
-                    alert('此功能在游客模式下不可用，请登录后再试。');
-                    return;
-                }
-                var targetRoute;
-                this.activeButton = index;
-                if (index === 'upload') {
-                    targetRoute = '/uploadWorks';
-                } else if (index === 'record') {
-                    targetRoute = '/recordWorks';
-                } else if (index === 'exhibit') {
-                    targetRoute = '/exhibitWorks';
-                } else if (index === 'home') {
-                    targetRoute = '/home';
-                } else if (index === 'login') {
-                    targetRoute = '/login';
-                }
-                if (targetRoute && this.$route.path !== targetRoute)
-                    this.$router.push(targetRoute);
+                this.$router.push('/home');
+            } else {
+                this.showLogin = true;
             }
         }
-    };
-    </script>
-    
-    <style>
-    #app {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-        height: 100vh;
-        text-align: center;
-        background-color: #292929;
+    },
+    mounted() {
+        // 每次加载组件时检查登录状态
+        this.$store.dispatch('checkLoginStatus');
+        if (!this.isLoggedIn) {
+            if (this.$route.path !== '/intro') {
+                this.$router.push('/intro');
+            }
+            setTimeout(() => {
+                this.showLogin = true;
+            }, 500);
+        } else {
+            if (this.$route.path !== '/u_intro') {
+                this.$router.push('/u_intro');
+            }
+        }
+    },
+    methods: {
+        login() {
+            axios.post('http://localhost:28888/api/login', {
+                account: this.username,
+                password: this.password
+            })
+            .then(response => {
+                if (response.data.code === 200) {
+                    this.$store.dispatch('login', {
+                        token: response.data.token,
+                        user: response.data.user
+                    });
+                    // // 清空登录框的内容
+                    // this.username = '';
+                    // this.password = '';
+                    // 清除错误信息
+                    this.error = '';
+                } else {
+                    this.error = response.data.status || '登录失败，请检查您的账号和密码';
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                this.error = '登录失败，请稍后再试';
+            });
+        },
+        register() {
+            this.showLogin = false;
+            if (this.$route.path !== '/register') {
+                this.$router.push('/register');
+            }
+        },
+        closeLogin() {
+            this.showLogin = false;
+            this.isGuest = true;
+            this.username = '';
+            this.password = '';
+            this.error = '';
+        },
+        showLoginModal() {
+            this.showLogin = true; // 显示登录框
+        }
     }
+};
+</script>
     
-    .login-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      transition: background-color 0.5s ease; /* 添加渐变效果 */
-    }
-    
-    .login-box {
-        position: relative;
-        width: 400px;
-        height: 450px;
-        background-color: transparent;
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        border-radius: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        backdrop-filter: blur(15px);
-    }
-    
-    /* 关闭按钮 */
-    .close-button {
-        position: flex;
-        margin-top: 12px;
-        margin-right: 12px;
-        background: none;
-        border: none;
-        font-size: 2em;
-        color: white;
-        cursor: pointer;
-    }
-    
-    h2 {
-        font-size: 1em;
-        color: white;
-        text-align: center;
-        margin-top: 50px;
-    }
-    
-    h3 {
-        font-size: 2em;
-        color: rgb(255, 255, 255);
-        text-align: center;
-        margin-top: 50px;
-    }
-    
-    .login-input {
-        position: relative;
-        width: 310px;
-        margin: 30px 0;
-        border-bottom: 2px solid white;
-    }
-    
-    .login-input label {
-        position: absolute;
-        top: 50%;
-        left: 0px;
-        transform: translateY(-50%);
-        font-size: 15px;
-        color: white;
-        pointer-events: none;
-        transition: .5s;
-    }
-    
-    .login-input input {
-        -webkit-text-fill-color: white;
-        width: 100%;
-        margin-top: 15px;
-        background-color: transparent;
-        border: none;
-        outline: none;
-        font-size: 1em;
-        color: white;
-    }
-    
-    input:-webkit-autofill {
-        transition: background-color 5000s ease-in-out 0s;
-    }
-    
-    .login-input input:focus~label,
-    .login-input input:valid~label,
-    .login-input input:not(:placeholder-shown)~label {
-        top: -3px;
-    }
-    
-    .login-submit {
-        width: 100%;
-        height: 40px;
-        background: #fff;
-        border: none;
-        outline: none;
-        border-radius: 40px;
-        cursor: pointer;
-        font-size: 1em;
-        color: black;
-        font-weight: 500;
-    }
-    
-    .error-message {
-        color: red;
-        margin-bottom: 10px;
-    }
-    
-    .registerBT {
-        text-decoration: underline;
-        margin-left: 20px;
-        margin-bottom: 20px;
-        color: white;
-    }
-    
-    .guide-text {
-        padding-top: 40vh;
-        font-size: 3em;
-        transition: color 0.5s ease;
-        text-align: center;
-    }
-    
-    .guide-text-hidden {
-        display: none;
-    }
-    
-    .main-page {
-        min-height: 100vh;
-        display: flex;
-    }
-    
-    .side-navigator {
-        background-color: #202020;
-        width: 10%;
-        height: 100vh;
-        position: absolute;
-        z-index: 100;
-        top: 0;
-        left: 0;
-    }
-    
-    .index-list {
-        margin-top: 150px;
-        height: 300px;
-        display: flex;
-        flex-direction: column;
-        gap: 35px;
-    }
-    
-    .index-list button {
-        background-color: transparent;
-        border: 1px solid rgba(170, 170, 170, 1);
-        height: 35px;
-        line-height: 13px;
-        padding: 10px 20px;
-        text-align: center;
-        color: rgba(170, 170, 170, 1);
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    
-    .index-list button:disabled {
-        color: rgba(170, 170, 170, 0.5);
-        border-color: rgba(170, 170, 170, 0.5);
-        cursor: not-allowed;
-    }
-    
-    .index-list button:hover {
-        color: #ff5733;
-        border-color: #ff5733;
-    }
-    
-    .active button {
-        color: #ff5733;
-        border-color: #ff5733;
-    }
-    </style>
+<style scoped>
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    height: 100vh;
+    text-align: center;
+    background-color: #292929;
+}
+
+
+.main-page {
+    min-height: 100vh; /* 确保主页面至少占满整个视口高度 */
+    width: 100vw; /* 使主页面宽度占满整个视口宽度 */
+    display: flex;
+    flex-direction: column; /* 将内容垂直排列 */
+    margin: 0; /* 移除任何默认外边距 */
+    padding: 0; /* 移除任何默认内边距 */
+    box-sizing: border-box; /* 确保内边距和边框不会影响元素的总宽度 */
+}
+
+.login-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    transition: background-color 0.5s ease; /* 添加渐变效果 */
+}
+
+.login-box {
+    position: relative;
+    width: 400px;
+    height: 450px;
+    background-color: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(15px);
+}
+
+/* 关闭按钮 */
+.close-button {
+    position: flex;
+    margin-top: 12px;
+    margin-right: 12px;
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: white;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color:  #c64500;
+}
+
+h2 {
+    font-size: 2em;
+    color: white;
+    text-align: center;
+    margin-top: 50px;
+}
+
+h3 {
+    font-size: 1.3em;
+    color:  #c64500;
+    text-align:center;
+}
+
+.login-input {
+    position: relative;
+    width: 310px;
+    margin: 30px 0;
+    border-bottom: 2px solid white;
+}
+
+.login-input label {
+    position: absolute;
+    top: 50%;
+    left: 0px;
+    transform: translateY(-50%);
+    font-size: 15px;
+    color: white;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.login-input input {
+    -webkit-text-fill-color: white;
+    width: 100%;
+    margin-top: 15px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    color: white;
+}
+
+input:-webkit-autofill {
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.login-input input:focus~label,
+.login-input input:valid~label,
+.login-input input:not(:placeholder-shown)~label {
+    top: -3px;
+}
+
+.login-submit {
+    width: 100%;
+    height: 40px;
+    background: #fff;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 1em;
+    color: black;
+    font-weight: 500;
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.registerBT {
+    text-decoration: underline;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.guide-text {
+    padding-top: 40vh;
+    font-size: 3em;
+    transition: color 0.5s ease;
+    text-align: center;
+}
+
+.guide-text-hidden {
+    display: none;
+}
+
+.main-page {
+    min-height: 100vh;
+    display: flex;
+}
+
+.side-navigator {
+    background-color: #202020;
+    width: 10%;
+    height: 100vh;
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    left: 0;
+}
+
+.index-list {
+    margin-top: 150px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+}
+
+.index-list button {
+    background-color: transparent;
+    border: 1px solid rgba(170, 170, 170, 1);
+    height: 35px;
+    line-height: 13px;
+    padding: 10px 20px;
+    text-align: center;
+    color: rgba(170, 170, 170, 1);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.index-list button:disabled {
+    color: rgba(170, 170, 170, 0.5);
+    border-color: rgba(170, 170, 170, 0.5);
+    cursor: not-allowed;
+}
+
+.index-list button:hover {
+    color: #ff5733;
+    border-color: #ff5733;
+}
+
+.active button {
+    color: #ff5733;
+    border-color: #ff5733;
+}
+</style>
     

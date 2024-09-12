@@ -14,13 +14,13 @@
                             <li><a href="#/recordWorks">Records</a></li>
                         </ul>
                         <div class="home-navbar-search">
-                            <div class="home-search-icon">
+                            <!-- <div class="home-search-icon">
                                 <input type="text" class="home-search-input" v-model="navSearchQuery"
                                     @keyup.enter="navSearch" placeholder="Search...">
-                            </div>
+                            </div> -->
                         </div>
                         <div>
-                            <button class="home-navbar-button" @click="connWallet">Connect Wallet</button>
+                            <!-- <button class="home-navbar-button" @click="connWallet">Connect Wallet</button> -->
                         </div>
                         <div class="home-navbar-profile">
                             <a href="https://github.com/Psalm404/Hellometa" target="_blank">
@@ -211,6 +211,114 @@ export default {
 </script>
 
 <style>
+.container {
+    margin-left: calc(50% - 50vw); /* 使用calc函数让页面自动紧贴左侧 */
+    width: 100vw; /* 确保页面内容宽度占据整个视口宽度 */
+    height: 100vw;
+}
+
+.sidebar-wallet-container {
+    display: flex;
+    justify-content: flex-end; /* 使内容靠下排列 */
+    align-items: flex-start;
+    flex-direction: column; /* 垂直排列 sidebar 和 wallet-accounts */
+    margin-top: 100px; /* 确保在 home-navbar 下方 */
+    padding: 10px;
+}
+
+.profile-titile{
+    position: relative;
+    left: -550px;
+    top: 75px;
+    z-index: 00; /* 设置一个较高的 z-index 使其在页面顶层 */
+}
+
+h2 {
+    position: relative;
+    left: 2%;
+    font-size: 6em;
+    color:  #c64500;
+    text-align: center;
+}
+
+h3 {
+    font-size: 1.4em;
+    color:  #c64500;
+    text-align: center;
+}
+
+h4 {
+    position: absolute;
+    left: 33%;
+    font-size: 2em;
+    color:  #c64500;
+    text-align: left;
+}
+
+.page-titile {
+    position: absolute;
+    left: 14%;
+    top: 21px;
+}
+
+.home-navbar {
+    margin-top: 20px;
+    margin-left: calc(50% - 55vw);
+    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    width: 90%;
+    height: auto;
+    z-index: 1000;
+    border-radius: 25px; /* 设置圆角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+}
+
+/* Recharge */
+.recharge-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -90px; /* 根据需要调整位置 */
+}
+
+/* Browser */
+.intro-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -80px; /* 根据需要调整位置 */
+}
+
+/* Explore */
+.explore-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -70px; /* 根据需要调整位置 */
+}
+
+/* Upload */
+.upload-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -60px; /* 根据需要调整位置 */
+}
+
+/* Records */
+.records-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -50px; /* 根据需要调整位置 */
+}
+
+.home-navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+}
+
 .block-browser {
     margin-top: 100px;
 }

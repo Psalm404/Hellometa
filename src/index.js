@@ -7,18 +7,22 @@ import recordWorks from './components/recordWorks.vue'
 import exhibitWorks from './components/exhibitWorks.vue'
 import workDetails from './components/workDetails.vue'
 import workInfo from './components/workInfo.vue'
-import homePage from './components/homePage.vue'
+import homePage from './components/userHomePage.vue'
 import blockBrowser from './components/blockBrowser.vue'
 import transactionDetail from './components/transactionDetail.vue'
 import loginPage from './components/loginPage.vue'
 import registerPage from './components/registerPage.vue'
+import userIntroPage from './components/userIntroPage.vue'
+import guestIntroPage from './components/guestIntroPage.vue'
+import editProfile from './components/editProfile.vue'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
  routes:[
       {
         path: '/',
-        redirect: '/home'
+        redirect: '/intro'
       },
       {
         path:'/register',
@@ -31,6 +35,18 @@ const router = new VueRouter({
       {
         path: '/home',
         component: homePage
+      },
+      {
+        path:'/editProfile',
+        component: editProfile
+      },
+      {
+        path: '/intro',
+        component: guestIntroPage
+      },
+      {
+        path: '/u_intro',
+        component: userIntroPage
       },
       {
         path:'/uploadWorks',

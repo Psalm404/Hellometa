@@ -7,7 +7,7 @@
                         <a href="#/home" class="home-navbar-logo">
                             <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
                         </a>
-                        <h3>———工业互联网数据资产化平台</h3>
+                        <h3>———个人主页</h3>
                         <ul class="home-navbar-menu">
                             <li><a>Explore</a></li>
                             <!-- <li><a href="#/uploadWorks">Upload</a></li> -->

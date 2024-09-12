@@ -4,27 +4,19 @@
             <div class="content">
                 <nav class="home-navbar">
                     <div class="home-navbar-container">
-                        <a href="#/home" class="home-navbar-logo">
-                            <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
-                        </a>
-                        <h3>————工业互联网数据资产化平台</h3>
+                        <div class="home-navbar-logo-container">
+                            <a href="#/intro" class="home-navbar-logo">
+                                <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
+                            </a>
+                            <h3 class="home-navbar-title">guest mode</h3>
+                        </div>
                         <ul class="home-navbar-menu">
-                            <!-- 换成游客模式下的信息浏览 -->
-                            <!-- <li><a href="#/exhibitWorks">Explore</a></li>
-                            <li><a href="#/uploadWorks">Upload</a></li>
-                            <li><a href="#/recordWorks">Records</a></li> -->
+                            <!-- 游客模式下的信息浏览 -->
+                            <!-- <li><a href="#/intro">Explore</a></li> -->
                         </ul>
-                        <div class="home-navbar-search">
-                            <!-- <div class="home-search-icon">
-                                <input type="text" class="home-search-input" v-model="navSearchQuery"
-                                    @keyup.enter="navSearch" placeholder="Search...">
-                            </div> -->
-                        </div>
-                        <div>
-                            <button class="home-navbar-button" @click="connWallet">Connect Wallet</button>
-                        </div>
-                        <div class="home-navbar-profile">
-                            <a href="https://github.com/Psalm404/Hellometa" target="_blank">
+                        <div class="home-navbar-actions">
+                            <button class="home-navbar-button" @click="triggerLogin">Login</button>
+                            <a href="https://github.com/Psalm404/Hellometa" target="_blank" class="home-navbar-profile">
                                 <img src="../assets/github.jpg" alt="Join us">
                             </a>
                         </div>
@@ -47,23 +39,8 @@
                         </div>
                     </div>
                 </div>
-                <el-divider><i class="el-icon-menu"></i></el-divider>
-                <a href="#/blockBrowser">
-                    <h1 class="home-block-browser" @click="gotoBrowser">区块浏览器</h1>
-                </a>
-                <div class="chain-search-container">
-                    <div class="chain-search-box">
-                        <h3 style="color: aliceblue; margin: 10px;">搜索</h3>
-                        <input type="text" v-model="bkSearchQuery" @keyup.enter="bkSearch" placeholder="搜索地址/交易/区块/代币">
-                        <button @click="bkSearch">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+                <!-- <el-divider><i class="el-icon-menu"></i></el-divider> -->
+                <!-- 移除了区块浏览器部分 -->
             </div>
         </transition>
     </div>
@@ -72,7 +49,6 @@
 <script>
 export default {
     mounted() {
-        this.getURLs();
     },
     data() {
         return {
@@ -110,11 +86,11 @@ export default {
         };
     },
     watch: {
-        searchName(newValue) {
-            this.filterData(newValue);
-        },
     },
     methods: {
+        triggerLogin() {
+            this.$emit('trigger-login'); // 触发登录事件
+        },
         navSearch() {
             if (this.navSearchQuery.trim() === '') {
                 return;
@@ -122,43 +98,38 @@ export default {
             alert('nav button clicked')
             this.navSearchQuery = '';
         },
-        bkSearch() {
-            if (this.bkSearchQuery.trim() === '') {
-                return;
-            }
-            // alert('bkSearch button clicked');
-            // 清空搜索框
-            let tmp = this.bkSearchQuery;
-            this.bkSearchQuery = '';
-            // 跳转到区块浏览器界面
-            this.$router.push({ path: '/blockBrowser', query: { bkSearchQuery: tmp } });
-        },
-        gotoBrowser() {
-            this.$router.push({ path: '/blockBrowser', query: { bkSearchQuery: this.bkSearchQuery }});
-        },
-        connWallet() {
-            alert("connWallet button clicked")
-        },
 
     }
 }
 </script>
 
-<style>
+<style scoped>
+.container {
+    margin-left: calc(50% - 50vw); /* 使用calc函数让页面自动紧贴左侧 */
+    width: 100vw; /* 确保页面内容宽度占据整个视口宽度 */
+    height: 100vw;
+}
+
 h3 {
-    font-size: 2em;
-    color: rgb(249, 87, 0);
+    font-size: 1.2em;
+    color:  #c64500;
     text-align: center;
 }
 
 .home-navbar {
-    background-color: #ffffff42;
-    border-bottom: 1px solid #e6e8ec00;
+    margin-top: 20px;
+    margin-left: calc(50% - 55vw);
+    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
     padding: 10px 20px;
     position: fixed;
     top: 0;
     width: 90%;
+    height: auto;
     z-index: 1000;
+    border-radius: 25px; /* 设置圆角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
 }
 
 .home-navbar-container {
@@ -166,6 +137,11 @@ h3 {
     justify-content: space-between;
     align-items: center;
     margin: 0 auto;
+}
+
+.home-navbar-logo-container {
+    display: flex;
+    align-items: center;
 }
 
 .home-navbar-logo {
@@ -177,9 +153,12 @@ h3 {
 
 .home-logo-image {
     height: 40px;
-    /* Adjust the height to your logo size */
     margin-right: 10px;
-    /* Space between logo and text */
+}
+
+.home-navbar-title {
+    margin: 0;
+    padding: 0;
 }
 
 .home-navbar-menu {
@@ -193,69 +172,63 @@ h3 {
     margin: 0 15px;
 }
 
-.home-navbar-menu a {
-    color: #1a73e8;
+.home-navbar-menu li a {
+    color: #4d3535;
     text-decoration: none;
     font-size: 18px;
     font-weight: bold;
-    padding: 10px 0;
     transition: color 0.3s;
 }
 
-.home-navbar-menu a:hover {
-    color: rgb(102, 229, 255);
-
+.home-navbar-menu li a:hover {
+    color:  #ff5900;
 }
 
-.home-navbar-search {
+.home-navbar-actions {
     display: flex;
     align-items: center;
-    margin-left: 20px;
-    margin-right: auto;
-    position: relative;
-}
-
-.home-search-icon {
-    position: relative;
-}
-
-.home-search-input {
-    padding: 8px 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    transition: border-color 0.3s;
-}
-
-.home-search-input:focus {
-    outline: none;
-    border-color: #aaa;
 }
 
 .home-navbar-button {
-    background-color: #1a73e8;
-    color: #fff;
-    border: none;
+    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    color: #4d3535;
+    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
     padding: 10px 10px;
-    border-radius: 5px;
+    border-radius: 20px; /* 设置圆角 */
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
+    margin-right: 10px; /* 增加一个右边距 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
 }
 
 .home-navbar-button:hover {
-    background-color: #155ab3;
+    background-color: rgba(255, 255, 255, 0.8); /* 修改hover背景色 */
+    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+}
+
+.home-navbar-button:hover {
+    background-color: #ff5900;
 }
 
 .home-navbar-profile img {
     width: 35px;
     height: 35px;
     border-radius: 50%;
-    margin-left: 20px;
     cursor: pointer;
 }
 
-.home-card-container {
+/* .home-card-container {
     margin-top: 80px;
+    height: auto;
+} */
+
+.home-card-container {
+    margin-top: 100px;
+    height: auto;
+    padding: 0; /* 移除任何内边距 */
+    width: 90%; /* 确保容器宽度为100% */
+    box-sizing: border-box; /* 确保padding和border包含在宽度内 */
 }
 
 .el-carousel__item:nth-child(2n) {
@@ -267,11 +240,24 @@ h3 {
 }
 
 .home-card-img {
-    max-width: 100%;
-    height: auto;
+    width: 100%; /* 图片宽度填充整个容器 */
+    height: 100%; /* 图片高度填充整个容器 */
+    object-fit: cover; /* 保持图片比例，同时填充整个容器 */
+}
+
+.el-divider {
+    text-align: center; /* 可以设置为 left, center, 或 right */
+    margin-left: calc(50% - 50vw); /* 根据需要调整整体对齐 */
+    margin-top: 20px; /* 增加上方空白间距 */
+    margin-bottom: 20px; /* 增加下方空白间距 */
+}
+
+.el-divider i {
+    /* introduction白框内图标样式调整 */
 }
 
 .home-introduction {
+    margin-left: calc(50% - 54vw);
     font: "Microsoft YaHei";
     color: #edebeb;
 }
@@ -303,46 +289,4 @@ h3 {
     line-height: 1.6;
 }
 
-.chain-search-container {
-    width: 100%;
-    max-width: 600px;
-    margin: 50px auto;
-}
-.home-block-browser {
-    color: aliceblue;
-}
-.chain-search-box {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.chain-search-box input[type="text"] {
-    flex: 1;
-    padding: 10px 15px;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    border-radius: 5px;
-}
-
-.chain-search-box button {
-    padding: 10px 15px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    outline: none;
-}
-
-.chain-search-box button:hover {
-    background-color: #f1f1f1;
-}
-
-.chain-search-box svg {
-    width: 20px;
-    height: 20px;
-    fill: #666;
-}
 </style>
