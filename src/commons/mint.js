@@ -20,6 +20,7 @@ async function mint(to, tokenURI, price) {
         const addr = await getAccountAddr();
 
         const priceWei = Web3.utils.toWei(price, 'ether')
+        // const priceEth = Web3.utils.toEth(priceWei,'ether')
         // 调用合约的mint函数
         await contract.methods.mint(to, tokenURI, priceWei).send({ from: addr })
         .on('receipt', function(receipt){

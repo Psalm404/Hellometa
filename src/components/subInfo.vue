@@ -18,7 +18,7 @@
                         <span>作品类别：{{ recordType }}</span>
                     </div>
                     <div v-if = "recordPrice" class="record-price">
-                        <span>售价：{{ recordPrice }} wei</span>
+                        <span>售价：{{ recordPrice }} eth</span>
                     </div>
                 </div>
             </div>

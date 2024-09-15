@@ -19,7 +19,7 @@ async function getBlocks() {
         const batchSize = 10;
 
         // 获取前100个区块信息
-        const end = Math.max(Number(latestBlockNumber) - 99, 0);
+        const end = Math.max(Number(latestBlockNumber) - 10, 0);
         for (let i = Number(latestBlockNumber); i >= end; i -= batchSize) {
             const start = Math.max(i - batchSize + 1, end);
             const batchBlocks = await Promise.all(
@@ -27,7 +27,7 @@ async function getBlocks() {
             );
 
             // 处理每个区块的详细信息
-            for (let j = Number(batchBlocks.length) - 1; j >= 0 ; j--) {
+            for (let j = Number(batchBlocks.lenngth) - 1; j >= 0 ; j--) {
                 const block = batchBlocks[j];
                 // console.log(block.number);
                 // 获取每个交易的详细信息

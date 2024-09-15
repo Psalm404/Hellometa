@@ -9,7 +9,7 @@
                             <el-avatar shape="square" :size="220" :src="picUrl"></el-avatar>
                         </div>
                         <div class="price-box">
-                            售价：{{workPrice}} wei
+                            售价：{{workPrice}} eth
                         </div>
                     </div>
                     <div class="detail-box-top-right">

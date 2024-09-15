@@ -237,7 +237,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .overlay {
     position: fixed;
     top: 0;
@@ -403,7 +403,7 @@ input:-webkit-autofill {
     height: 60px; /* 设置按钮的高度 */
 }
 
-.edit-profile-button,.edit-pwd-button:hover {
+.edit-profile-button:hover, .edit-pwd-button:hover {
     background-color: #ff5900;
     border-color: #ff5900; /* 修改hover状态下的边框颜色 */
 }

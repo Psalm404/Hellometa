@@ -1,5 +1,5 @@
 <template>
-<div class="container">
+<div class="upload-container">
     <div id="loading-overlay" style="display: none;">
         <div class="spinner"></div>
         <div class="loading-message">正在上传文件，请稍候...</div>
@@ -56,7 +56,7 @@
                     </div>
                     <div v-if="form.radio === '1'">
                         <div style="display:flex; gap: 25px;">
-                            <div class="upload-text1">定价(单位:wei):</div>
+                            <div class="upload-text1">定价(单位:eth):</div>
                             <el-form-item prop="price" required>
                                 <el-input v-model="form.price" resize="none" placeholder="请输入定价"></el-input>
                             </el-form-item>
@@ -450,7 +450,7 @@ export default {
 </script>
 
 <style>
-.container {
+.upload-container {
     max-height: 100vh;
     overflow: hidden;
     width: 100vw;
@@ -532,7 +532,7 @@ export default {
     border-radius: 5px;
 }
 
-.ivu-select div,
+ .ivu-select div,
 span {
     background-color: transparent;
     cursor: pointer;

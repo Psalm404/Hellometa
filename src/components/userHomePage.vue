@@ -17,7 +17,7 @@
                         </div>
                         <div class="want-to-be-right">
                             <ul class="home-navbar-menu">
-                                <li class="recharge-item"><a href="#/u_intro">Recharge</a></li>
+                                <li class="recharge-item"><a href="#/myGas">Recharge</a></li>
                                 <li class="intro-item"><a href="#/u_intro">Browser</a></li>
                                 <li class="explore-item"><a href="#/exhibitWorks">Market</a></li>
                                 <li class="upload-item"><a href="#/uploadWorks">Upload</a></li>
@@ -94,8 +94,8 @@ export default {
             }, 100);
         },
         goToAccountManagement() {
-            alert('route to account-management');
-            // this.$router.push('/account-management');
+            // alert('route to account-management');
+            this.$router.push('/myAccount');
         }
     }
 }

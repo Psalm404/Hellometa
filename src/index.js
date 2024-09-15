@@ -2,6 +2,7 @@
 
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import myAccount from './components/myAccount.vue'
 import uploadWorks from './components/uploadWorks.vue'
 import recordWorks from './components/recordWorks.vue'
 import exhibitWorks from './components/exhibitWorks.vue'
@@ -16,6 +17,8 @@ import userIntroPage from './components/userIntroPage.vue'
 import guestIntroPage from './components/guestIntroPage.vue'
 import editProfile from './components/editProfile.vue'
 
+import myGas from './components/myGas.vue'
+import gasRecharge from './components/gasRecharge.vue'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -75,6 +78,18 @@ const router = new VueRouter({
       {
         path: '/blockBrowser/transactionDetail',
         component:transactionDetail
+      },
+      {
+        path: '/myAccount',
+        component:myAccount
+      },
+      {
+        path:'/myGas',
+        component:myGas
+      },
+      {
+        path:'/myGas/gasRecharge',
+        component:gasRecharge,
       }
  ]
 })
