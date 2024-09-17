@@ -1,7 +1,14 @@
 <template>
 <div class="gasRecharge-container">
     <div class="content" style="height:100vh">
-        <div v-html="htmlContent" ref="formDiv"> </div>
+        <div v-if="isLoading" class="overlay">
+            <div class="overlay-content">
+                {{tip}}
+            </div>
+            <div>  <el-button id="backBT" style="z-index:10001" v-show="showBackButton" @click="close"> 返回充值 </el-button></div>
+          
+        </div>
+        <div ref="formDiv"> </div>
         <div class="gasRecharge-guideBox">
             <div style="display: flex; gap:50px;">
                 <div class="gasRecharge-title">
@@ -13,10 +20,12 @@
                     <el-breadcrumb-item>燃料充值</el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
-
+            <a @click="drawer = true" style="align-self:self-start;">
+                <i class="el-icon-question" style="display:contents;"></i>
+                我该如何使用燃料充值？</a>
         </div>
         <div class="gasRecharge-box">
-            <div style="align-self: self-start; font-weight:bold"> 燃料数量 </div>
+            <div style="align-self: self-start; font-weight:bold"> 燃料数量(单位:WEI) </div>
             <div class="gasRecharge-priceBox">
                 <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(1)"> 1万 </el-button>
                 <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(10)"> 10万 </el-button>
@@ -26,8 +35,12 @@
                 <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(100000)"> 100000万 </el-button>
             </div>
             <div style="display: flex; flex-direction: column; margin-top:15px ">
-                <div style="align-self: self-start;">价目表</div>
-                <div v-loading="loading" style="height: 40px"> {{rate}} </div>
+                <div style="align-self: self-start; font-weight:bold;">价目表</div>
+                <div style="align-self: self-start; color:red; font-weight:bold;"> 该汇率并非真实汇率，使用支付宝沙箱模拟交易环境，不涉及真实钱财交易。 </div>
+                <br />
+                <div style="align-self: center; font-weight:bold; font-size:19px;"> 1 ETH = 100,000,000 WEI </div>
+                <div style="align-self: center; font-weight:bold; font-size:19px;"> 1 RMB = 10,000 WEI </div>
+                <!-- <div v-loading="loading" style="height: 40px"> {{rate}} </div> -->
             </div>
         </div>
         <div class="gasRecharge-currentPrice">
@@ -36,11 +49,11 @@
             <div style="display: flex; flex-direction: column; ">
                 <div style="display: flex;">
                     <div style="flex:1">燃料数量</div>
-                    <div style="align-self: flex-end; flex:1; font-weight:bold; font-size:19px;"> {{price}} </div>
+                    <div style="align-self: flex-end; flex:1; font-weight:bold; font-size:19px;"> {{price}} 万</div>
                 </div>
                 <div style="display:flex">
                     <div style="flex:1; margin-top:20px">配置费用</div>
-                    <div style="align-self: flex-end; flex:1; color:red; font-size:19px; font-weight:bold"> ${{price*2}} </div>
+                    <div style="align-self: flex-end; flex:1; color:red; font-size:19px; font-weight:bold"> ￥{{price}} </div>
                 </div>
                 <el-divider></el-divider>
                 <div style="margin-top:10px;">
@@ -49,8 +62,42 @@
 
             </div>
         </div>
-
     </div>
+    <el-drawer size="40%" :visible.sync="drawer" :with-header="false">
+        <div style="font-size:22px; font-weight:bold; color:black; margin-top:20px;">我该如何使用燃料充值?</div>
+        <div style="margin:20px;">
+            <div style="display:flex; flex-direction: column; align-items: flex-start; gap:10px;">
+                <div style="font-weight:bold">一、下载沙箱版支付宝 </div>
+                <div style="font-weight:bold">二、 支付流程 </div>
+                <div style="font-weight:bold">三、支付常见问题 </div>
+            </div>
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 一、下载沙箱版支付宝 </div>
+            <br />
+            <div style="text-align: start">&emsp;&emsp;支付宝沙箱是支付宝提供的一个模拟环境, 不会影响到真实支付宝账户和资金。对于本项目的充值系统，用户需要下载手机版支付宝沙箱进行模拟支付。</div>
+            <div style="text-align: start">&emsp;&emsp;下载地址: <a href="https://open.alipay.com/develop/sandbox/tool/alipayclint" target="_blank"> https://open.alipay.com/develop/sandbox/tool/alipayclint</a></div>
+            <div style="text-align: start">&emsp;&emsp;下载完毕后，在“沙箱账号”页面查看支付宝提供的账号和密码，在登录界面使用沙箱账号即可成功登录。 </div>
+            <div style="text-align: start; margin:10px">
+                <el-image :src="require('@/assets/alipay1.png') "></el-image>
+            </div>
+            <br/>
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 二、 支付流程 </div>
+            <br/>
+            <div style="text-align: start">&emsp;&emsp;1. 选择要充值的金额，点击提交订单。 </div>
+            <div style="text-align: start">&emsp;&emsp;2. 等待支付宝页面加载完毕，用支付宝沙箱版扫描二维码或填写账号密码支付。建议使用扫码支付。 </div>
+            <div style="text-align: start; margin:10px">
+                <el-image :src="require('@/assets/alipay2.png') "></el-image>
+            </div>
+            <div style="text-align: start">&emsp;&emsp;3. 在手机上输入支付密码（默认为11111），检测到成功支付后点击按钮即可返回充值页面。 </div>
+            <br/>
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 三、支付常见问题 </div>
+            <br/>
+            <div style="text-align: start; font-weight:bold;">&emsp;&emsp;1. 页面加载慢/加载失败怎么办？ </div>
+            <div style="text-align: start">&emsp;&emsp;受支付宝沙箱系统稳定性影响，可能存在支付页面加载较慢、系统繁忙、交易失败等问题，耐心等待一会儿，多刷新几次，不要急着关闭页面。 </div>
+            <div style="text-align: start; font-weight:bold;">&emsp;&emsp;2. 会对真实支付宝账户产生影响吗？ </div>
+            <div style="text-align: start">&emsp;&emsp;不会。 </div>
+            
+        </div>
+    </el-drawer>
 </div>
 </template>
 
@@ -59,30 +106,39 @@ import axios from 'axios';
 export default {
     /* eslint-disable */
     mounted() {
+        console.log('account:', localStorage.getItem('account'))
         this.getExchangeRate();
     },
     data() {
         return {
+            tip: " 交易中，请稍后......",
             loading: true,
             rate: null,
             price: 0,
-            htmlContent: null,
+            urlContent: null,
+            isLoading: false,
+            out_trade_no: null,
+            drawer: false,
+            showBackButton: false,
         };
     },
     methods: {
+        close() {
+            this.isLoading = false;
+        },
         getExchangeRate() {
             axios.get('http://127.0.0.1:28888/api/getExchangeRate').then(res => {
                 console.log(res)
-                if (res.data.code === '200') {
-                    this.CNYToUSD = res.data.CNYToUSD;
-                    this.USDToETH = res.data.USDToETH;
-                    this.rate = `人民币到美元:${this.CNYToUSD}`;
+                if (res.data.code === 200) {
+                    console.log(res.data.rates)
+                    this.CNYToUSD = res.data.rates.CNYToUSD;
+                    this.rate = `人民币到美元:  ${this.CNYToUSD}`;
                     this.loading = false;
                 } else {
                     this.loading = false;
                     this.rate = '获取汇率失败';
                 }
-                console.log(this.CNYToUSD, this.USDToETH)
+                console.log(this.CNYToUSD)
             }).catch((e) => {
                 console.log(e)
             })
@@ -90,36 +146,92 @@ export default {
         selectPrice(price) {
             this.price = price;
         },
+        requirePayment() {
+            console.log('account:', localStorage.getItem('account'))
+            const intervalId = setInterval(() => {
+                axios.post('http://127.0.0.1:28888/api/queryPayment', {
+                        account: localStorage.getItem('account'),
+                        out_trade_no: this.out_trade_no
+                    })
+                    .then(res => {
+                        console.log(res.data.status)
+                        if (res.data.code === 10001) {
+                            this.tip = "交易成功"
+                            this.showBackButton = true;
+
+                            clearInterval(intervalId);
+                            this.$message({
+                                type: 'success',
+                                message: '交易成功'
+                            });
+                        } else if (res.data.code === 20002) {
+
+                        } else if (res.data.code === 30003) {
+                            this.isLoading = false;
+                            this.$message({
+                                type: 'error',
+                                message: '未付款，交易关闭'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error("请求失败", error);
+                    });
+            }, 2000); // 每2秒调用一次
+        },
+        beforeDestroy() {
+            clearInterval(intervalId); // 确保组件销毁时清理定时任务
+        },
         submitOrder() {
+            this.out_trade_no = new Date().getTime();
+            if (this.price === 0) {
+                this.$message({
+                    type: "error",
+                    message: "请选择充值数额"
+                })
+                return;
+            }
             let data = {
-                out_trade_no: new Date().getTime(),
+                out_trade_no: this.out_trade_no,
                 total_amount: this.price,
                 subject: '充值'
             }
             console.log('submits')
             axios.post('http://127.0.0.1:28888/api/payment', data).then(res => {
-                this.htmlContent = res.data;
-                console.log(res.data)
-                //                 this.htmlContent = `<form name="punchout_form" method="post"
-                //     action="https://openapi.alipay.com/gateway.do?charset=UTF-8&method=alipay.trade.page.pay&format=json&sign=ERITJKEIJKJHKKKKKKKHJEREEEEEEEEEEE&version=1.0&app_id=2017060101317939&sign_type=RSA2&timestamp=2014-07-24+03%3A07%3A50">
-                //     <input type="hidden" name="biz_content" value="{&quot;time_expire&quot;:&quot;2016-12-31 10:05:01&quot;,&quot;extend_params&quot;:&quot;&quot;,&quot;query_options&quot;:&quot;[\&quot;hyb_amount\&quot;,\&quot;enterprise_pay_info\&quot;]&quot;,&quot;settle_info&quot;:&quot;&quot;,&quot;subject&quot;:&quot;Iphone6 16G&quot;,&quot;product_code&quot;:&quot;FAST_INSTANT_TRADE_PAY&quot;,&quot;body&quot;:&quot;Iphone6 16G&quot;,&quot;qr_pay_mode&quot;:&quot;1&quot;,&quot;integration_type&quot;:&quot;PCWEB&quot;,&quot;merchant_order_no&quot;:&quot;20161008001&quot;,&quot;sub_merchant&quot;:&quot;&quot;,&quot;invoice_info&quot;:&quot;&quot;,&quot;ext_user_info&quot;:&quot;&quot;,&quot;timeout_express&quot;:&quot;90m&quot;,&quot;disable_pay_channels&quot;:&quot;pcredit,moneyFund,debitCardExpress&quot;,&quot;agreement_sign_params&quot;:&quot;&quot;,&quot;royalty_info&quot;:&quot;&quot;,&quot;store_id&quot;:&quot;NJ_001&quot;,&quot;request_from_url&quot;:&quot;https://&quot;,&quot;qrcode_width&quot;:&quot;100&quot;,&quot;goods_detail&quot;:&quot;&quot;,&quot;enable_pay_channels&quot;:&quot;pcredit,moneyFund,debitCardExpress&quot;,&quot;out_trade_no&quot;:&quot;20150320010101001&quot;,&quot;total_amount&quot;:&quot;88.88&quot;,&quot;business_params&quot;:&quot;{\&quot;mc_create_trade_ip\&quot;:\&quot;127.0.0.1\&quot;}&quot;,&quot;promo_params&quot;:&quot;{\&quot;storeIdType\&quot;:\&quot;1\&quot;}&quot;}">
-                //     <input type="submit" value="立即支付" style="display:none" >
-                // </form>
-                // <script>
-                //     document.forms[0].submit();
-                // <\/script>`;
-                const formDiv = this.$refs.formDiv;
-                console.log(this.htmlContent)
-                formDiv.innerHTML = this.htmlContent;
-                formDiv.querySelector('form').submit();
-
+                this.isLoading = true
+                this.urlContent = res.data.url
+                console.log(this.urlContent)
+                window.open(this.urlContent, '_blank')
+                this.requirePayment();
+            }).catch(e => {
+                console.log(e)
             })
         }
     },
 }
 </script>
 
-<style>
+<style scoped>
+/* 蒙版的样式 */
+.overlay {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 半透明黑色背景 */
+    z-index: 9999;
+    /* 保证蒙版位于最上层 */
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+}
+
 .gasRecharge-container {
     position: relative;
     display: flex;
@@ -175,12 +287,8 @@ export default {
     flex: 1
 }
 
-.gasRecharge-currentPrice .el-button--primary span {
-    color: white
-}
-
 .gasRecharge-currentPrice {
-    padding: 30px;
+    padding: 25px;
     /* border:1px solid red; */
     margin-left: 50px;
     width: 90%;

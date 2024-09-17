@@ -77,37 +77,48 @@ import Web3 from 'web3';
 import axios from 'axios';
 export default {
     mounted() {
+        this.account = localStorage.getItem('account')
         this.getTotalGas();
         this.getAccountBalance();
         this.getRecord();
+        this.getAccountList();
     },
     data() {
         return {
-            account: '123',
+            account: null,
             myGas: null,
             drawer: false,
             drawer2: false,
             drawer3: false,
-            totalGas: 123,
+            totalGas: 'null',
             search: '',
             CNYToUSD: '',
             USDToETH: '',
-            listData: [{
-                    name: 'Account4',
-                    address: '0x95ee5aac032ea66b9bac993a42AC998a12C8079d',
-                    balance: '',
-                },
-                {
-                    name: 'Account5',
-                    address: '0xd00aAb9859C88e5748E8FC375f210bd7625b9864',
-                    balance: '',
-                }
-            ],
+            listData: [],
             rechargeRecord: null,
             distributeRecord: null,
         }
     },
     methods: {
+        async getAccountList() {
+            let res = await axios.get('http://127.0.0.1:28888/api/getSmallAccount', {
+                params: {
+                    account: this.account
+                }
+            }).catch(e => {
+                console.log(e)
+            })
+            
+            if (res.data.status === "查询成功" && res.data.addresses) {
+                this.listData = res.data.addresses.map(item => {
+                    // 如果 address 属性不存在，给它一个默认值
+                    return {
+                        ...item,
+                        addresses: item || 'null'
+                    };
+                });
+            }
+        },
         distributeGas(index, info) {
             console.log(index, info)
             this.$prompt('请输入分配燃料数量:', '分配燃料', {
@@ -169,7 +180,7 @@ export default {
             axios.get('http://127.0.0.1:28888/api/getUserBalance', {
                 params: params
             }).then(res => {
-                if (res.data.code === '200') {
+                if (res.data.code === 200) {
                     this.totalGas = res.data.balance;
                 }
             }).catch(e => {
@@ -197,7 +208,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .myGas-container {
     position: relative;
     display: flex;

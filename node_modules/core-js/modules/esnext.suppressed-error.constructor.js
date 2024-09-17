@@ -1,6 +1,6 @@
 'use strict';
 var $ = require('../internals/export');
-var globalThis = require('../internals/global');
+var globalThis = require('../internals/global-this');
 var isPrototypeOf = require('../internals/object-is-prototype-of');
 var getPrototypeOf = require('../internals/object-get-prototype-of');
 var setPrototypeOf = require('../internals/object-set-prototype-of');
@@ -23,7 +23,7 @@ var WRONG_ARITY = !!NativeSuppressedError && NativeSuppressedError.length !== 3;
 
 // https://github.com/oven-sh/bun/issues/9283
 var EXTRA_ARGS_SUPPORT = !!NativeSuppressedError && fails(function () {
-  return NativeSuppressedError(1, 2, 3, { cause: 4 }).cause === 4;
+  return new NativeSuppressedError(1, 2, 3, { cause: 4 }).cause === 4;
 });
 
 var PATCH = WRONG_ARITY || EXTRA_ARGS_SUPPORT;

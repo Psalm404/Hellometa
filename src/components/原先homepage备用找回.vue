@@ -176,7 +176,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 /* 添加登录表单和蒙版样式
 .login-modal {
   position: fixed;

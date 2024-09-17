@@ -102,7 +102,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .grid-subitem {
     padding: 15px;
     height: 330px;

@@ -43,7 +43,79 @@
     </div>
 
     <el-drawer size="40%" :visible.sync="drawer" :with-header="false">
-        <div style="font-size:22px; font-weight:bold; color:black; margin-top:10px;">我该如何使用链账户管理?</div>
+        <div style="font-size:22px; font-weight:bold; color:black; margin-top:20px;">我该如何使用链账户管理?</div>
+        <div style="margin:20px">
+            <div style="display:flex; flex-direction: column; align-items: flex-start; gap:10px;">
+                <div style="font-weight:bold">一、下载MetaMask插件并注册账号 </div>
+                <div style="font-weight:bold">二、连接SSENFT区块链网络 </div>
+                <div style="font-weight:bold">三、导入MetaMask账户</div>
+            </div>
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 一、下载MetaMask插件并注册账号 </div>
+            <br />
+            <div style="text-align: start">&emsp;&emsp;MetaMask是一款常用的以太坊钱包插件，以Edge为例演示下载流程：</div>
+            <br />
+            <div style="text-align: start; font-weight: bold">1. 在浏览器拓展市场下载安装MetaMask。</div>
+            <div>
+                <el-image :src="require('@/assets/account1.png') "></el-image>
+            </div>
+            <br />
+            <div style="text-align: start; font-weight: bold">2. 以第一次使用为例，点击“创建新钱包”。</div>
+            <div>
+                <el-image :src="require('@/assets/account2.png') "></el-image>
+            </div>
+            <br />
+            <div style="text-align: start; font-weight: bold">3. 根据引导完成注册流程。</div>
+            <br />
+            <div style="text-align: start; font-weight: bold">4. 注册完毕后，进入个人主页。</div>
+            <div>
+                <el-image :src="require('@/assets/account3.png') "></el-image>
+            </div>
+            <br />
+
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 二、连接SSENFT区块链网络 </div>
+            <br />
+            <div style="text-align: start">&emsp;&emsp;MetaMask首次注册后默认连接以太坊公链。根据项目需求，需要更换至SSENFT区块链网络。</div>
+            <br />
+            <div style="text-align: start; font-weight: bold">1. 进入网络设置界面，流程如下：</div>
+            <div>
+                <el-image :src="require('@/assets/account4.png') "></el-image>
+            </div>
+            <div>
+                <el-image :src="require('@/assets/account5.png') "></el-image>
+            </div>
+            <div>
+                <el-image :src="require('@/assets/account6.png') "></el-image>
+            </div>
+            <br/>
+            <div style="text-align: start; font-weight: bold">2. 输入网络配置：</div>
+            <br/>
+            <div style="text-align: start; font-weight: bold"> &emsp;&emsp;网络名称（建议）：SSENFT</div>
+            <div style="text-align: start; font-weight: bold"> &emsp;&emsp;新的 RPC URL：http://8.134.209.144:18545</div>
+            <div style="text-align: start; font-weight: bold"> &emsp;&emsp;链ID： 12346</div>
+            <div style="text-align: start; font-weight: bold"> &emsp;&emsp;货币符号：eth</div>
+            <br/>
+            <div>
+                <el-image :src="require('@/assets/account7.png') "></el-image>
+            </div>
+            <div style="text-align: start;"> 确保填入信息无误后，点击保存并切换至该网络。</div>
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 三、导入MetaMask账户 </div>
+            <br />
+            <div style="text-align: start">&emsp;&emsp;每个MetaMask账户都有唯一的地址。将MetaMask账户地址导入本系统，便于系统定位到账户并进行区块链操作。</div>
+            <br />
+            <div style="text-align: start; font-weight: bold">1. 点击浏览器右上角拼图图标呼出MetaMask，点击账户名：</div>
+            <div>
+                <el-image :src="require('@/assets/account8.png') " size = "small"  style="width: 300px;"></el-image>
+            </div>
+            <br/>
+            <div style="text-align: start; font-weight: bold">2. 进入“账户详情”界面，可以修改账户名和查看完整的账户地址。</div>
+            <div>
+                <el-image :src="require('@/assets/account9.png') " size = "small"  style="width: 300px;"></el-image>
+            </div>
+            <br/>
+            <div style="text-align: start; font-weight: bold">3. 将账户名称和账户地址导入到本系统中。</div>
+            <div style="text-align: start;">&emsp;&emsp;注意：账户名称理论上可以自行指定，但建议与MetaMask上的账户名保持相同。账户地址必须正确无误。</div>
+
+        </div>
     </el-drawer>
 </div>
 </template>
@@ -62,15 +134,7 @@ export default {
             name: '',
             address: '',
             search: '',
-            listData: [{
-                    name: 'dasa',
-                    address: '1232131sdaa21231asd123',
-                },
-                {
-                    name: 'asassa',
-                    address: '123dsad231asd123'
-                }
-            ],
+            listData: [],
         }
     },
     methods: {
@@ -108,7 +172,7 @@ export default {
                 return;
             }
             let data = {
-                account: "123",
+                account:  this.account,
                 address: this.address,
                 name: this.name,
             }
@@ -147,7 +211,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .myAccount-container {
     position: relative;
     display: flex;
@@ -164,7 +228,6 @@ export default {
 
 .myAccount-guideBox {
     margin-top: 50px;
-    margin-left: 50px;
     /* border: 1px solid green; */
     display: flex;
     flex-direction: column;
@@ -181,7 +244,6 @@ export default {
 
 .myAccount-createAccount {
     padding: 30px;
-    margin-left: 50px;
     margin-top: 30px;
     width: 90%;
     /*侧边栏删除记得改*/
@@ -196,7 +258,6 @@ export default {
 
 .myAccount-accountList {
     padding: 30px;
-    margin-left: 50px;
     margin-top: 30px;
     width: 90%;
     /*侧边栏删除记得改*/
