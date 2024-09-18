@@ -125,6 +125,8 @@ export default {
     methods: {
         close() {
             this.isLoading = false;
+            this.tip = " 交易中，请稍后......"
+            this.showBackButton = true;
         },
         getExchangeRate() {
             axios.get('http://127.0.0.1:28888/api/getExchangeRate').then(res => {
@@ -241,7 +243,8 @@ export default {
     min-height: 100vh;
     min-width: 100vw;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
-    background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
+    background-image: linear-gradient(to top, #e25323 0%, rgba(255, 201, 163, 0.821) 100%);
+    ;
 }
 
 .gasRecharge-guideBox {
@@ -255,7 +258,7 @@ export default {
 
 .gasRecharge-title {
     align-self: flex-start;
-    color: black;
+    color: rgb(245, 240, 232);
     font-weight: bold;
     font-size: 2em;
 }

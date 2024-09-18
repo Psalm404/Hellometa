@@ -74,6 +74,7 @@ export default new Vuex.Store({
         commit('setToken', token);
         commit('setUser', user);
 
+
         // 确保这里是将数据存储到 localStorage
         localStorage.setItem('authToken', token);
         localStorage.setItem('userInfo', JSON.stringify(user));

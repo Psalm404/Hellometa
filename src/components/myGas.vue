@@ -84,10 +84,11 @@ import axios from 'axios';
 export default {
     mounted() {
         this.account = localStorage.getItem('account')
-        this.getTotalGas();
-        this.getAccountBalance();
-        this.getRecord();
         this.getAccountList();
+        this.getTotalGas();
+
+        this.getRecord();
+
     },
     data() {
         return {
@@ -96,7 +97,7 @@ export default {
             drawer: false,
             drawer2: false,
             drawer3: false,
-            totalGas: 'null',
+            totalGas: 0,
             search: '',
             CNYToUSD: '',
             USDToETH: '',
@@ -114,7 +115,7 @@ export default {
             }).catch(e => {
                 console.log(e)
             })
-            
+
             if (res.data.status === "查询成功" && res.data.addresses) {
                 this.listData = res.data.addresses.map(item => {
                     // 如果 address 属性不存在，给它一个默认值
@@ -123,6 +124,7 @@ export default {
                         addresses: item || 'null'
                     };
                 });
+                this.getAccountBalance();
             }
         },
         distributeGas(index, info) {
@@ -143,46 +145,54 @@ export default {
             }).then(({
                 value
             }) => {
-                let res = axios.post('http://127.0.0.1:28888/api/sendFunds', {
-                    toAddress: info.address,
-                    amount: value
+                let toAddress = info.address;
+                let amount = parseFloat(value);
+                axios.post('http://127.0.0.1:28888/api/sendFunds', {
+                    toAddress: toAddress,
+                    amount: amount
+                }).then(res => {
+                    console.log(toAddress, amount)
+                    console.log(res)
+                    if (res.data.code === 200) {
+                        this.$message({
+                            type: 'success',
+                            message: '分配成功'
+                        });
+                    }
                 });
-                console.log('hi,im in the train now and feel so bored', info.address, value)
-                console.log(res.status)
-                // if (res.status === 200) {
-                this.$message({
-                    type: 'success',
-                    message: '分配成功'
-                });
-                // }
 
             }).catch(() => {});
         },
         async getAccountBalance() {
+            console.log('getbalance');
             let web3 = new Web3(window.ethereum);
             try {
                 for (const item of this.listData) {
-                    await window.ethereum.request({
-                        "method": 'eth_getBalance',
-                        "params": [
-                            item.address,
-                            'latest'
-                        ]
+                    console.log(item.address);
+                    const balance = await window.ethereum.request({
+                        method: 'eth_getBalance',
+                        params: [item.address, 'latest']
                     });
-                    item.balance = await web3.eth.getBalance(item.address); // 获取余额（wei）
 
-                    const balanceInEth = web3.utils.fromWei(item.balance, 'ether'); // 将wei转换为ETH
-                    item.balance = parseFloat(balanceInEth).toFixed(10); // 保留7位小数，并赋值为字符串
-                    console.log(item.balance);
+                    const balanceInEth = web3.utils.fromWei(balance, 'ether'); // 将 wei 转换为 ETH
+                    const formattedBalance = parseFloat(balanceInEth).toFixed(10); // 保留 10 位小数
+
+                    // 使用 $set 更新数据
+                    this.$set(this.listData, this.listData.indexOf(item), {
+                        ...item,
+                        balance: formattedBalance
+                    });
+                    console.log('accountbalance', formattedBalance);
                 }
             } catch (e) {
-                console.log(e)
+                console.log(e);
             }
         },
         getTotalGas() {
             const params = {
                 account: this.account
             }
+            console.log('account', this.account)
             axios.get('http://127.0.0.1:28888/api/getUserBalance', {
                 params: params
             }).then(res => {
@@ -194,7 +204,13 @@ export default {
             })
         },
         async getRecord() {
-            await axios.get('http://127.0.0.1:28888/api/getRecord', this.account).then(res => {
+            const params = {
+                account: this.account
+            }
+            await axios.get('http://127.0.0.1:28888/api/getRecord', {
+                params: params
+            }).then(res => {
+                console.log(res)
                 const recordList = res.data.records;
                 this.rechargeRecord = recordList.filter((item) => {
                     return item.type === '充值'
@@ -209,7 +225,7 @@ export default {
         toGasRecharge() {
             this.$router.push('/myGas/gasRecharge');
         },
-    
+
     }
 }
 </script>
@@ -224,7 +240,7 @@ export default {
     min-height: 100vh;
     min-width: 100vw;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
-    background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
+    background-image: linear-gradient(to top, #e25323 0%, rgba(255, 201, 163, 0.821) 100%);
     ;
 }
 
@@ -241,7 +257,7 @@ export default {
     position: relative;
     left: -33%;
     flex: 1;
-    color: black;
+    color: rgb(245, 240, 232);
     font-weight: bold;
     font-size: 2em;
 }
@@ -280,7 +296,12 @@ export default {
 }
 
 .router-arrow{
+    color: #fff;
     position: relative;
     left: -75%;
+}
+
+.el-icon-arrow-right{
+    color: #fff;
 }
 </style>

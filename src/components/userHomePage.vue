@@ -115,7 +115,79 @@
                         </div>
                     </div>
                     <el-drawer size="40%" :visible.sync="drawer" :with-header="false">
-                        <div style="font-size:22px; font-weight:bold; color:black; margin-top:10px;">我该如何使用小账户管理?</div>
+                        <div style="font-size:22px; font-weight:bold; color:black; margin-top:20px;">我该如何使用链账户管理?</div>
+                        <div style="margin:20px">
+                            <div style="display:flex; flex-direction: column; align-items: flex-start; gap:10px;">
+                                <div style="font-weight:bold">一、下载MetaMask插件并注册账号 </div>
+                                <div style="font-weight:bold">二、连接SSENFT区块链网络 </div>
+                                <div style="font-weight:bold">三、导入MetaMask账户</div>
+                            </div>
+                            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 一、下载MetaMask插件并注册账号 </div>
+                            <br />
+                            <div style="text-align: start">&emsp;&emsp;MetaMask是一款常用的以太坊钱包插件，以Edge为例演示下载流程：</div>
+                            <br />
+                            <div style="text-align: start; font-weight: bold">1. 在浏览器拓展市场下载安装MetaMask。</div>
+                            <div>
+                                <el-image :src="require('@/assets/account1.png') "></el-image>
+                            </div>
+                            <br />
+                            <div style="text-align: start; font-weight: bold">2. 以第一次使用为例，点击“创建新钱包”。</div>
+                            <div>
+                                <el-image :src="require('@/assets/account2.png') "></el-image>
+                            </div>
+                            <br />
+                            <div style="text-align: start; font-weight: bold">3. 根据引导完成注册流程。</div>
+                            <br />
+                            <div style="text-align: start; font-weight: bold">4. 注册完毕后，进入个人主页。</div>
+                            <div>
+                                <el-image :src="require('@/assets/account3.png') "></el-image>
+                            </div>
+                            <br />
+
+                            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 二、连接SSENFT区块链网络 </div>
+                            <br />
+                            <div style="text-align: start">&emsp;&emsp;MetaMask首次注册后默认连接以太坊公链。根据项目需求，需要更换至SSENFT区块链网络。</div>
+                            <br />
+                            <div style="text-align: start; font-weight: bold">1. 进入网络设置界面，流程如下：</div>
+                            <div>
+                                <el-image :src="require('@/assets/account4.png') "></el-image>
+                            </div>
+                            <div>
+                                <el-image :src="require('@/assets/account5.png') "></el-image>
+                            </div>
+                            <div>
+                                <el-image :src="require('@/assets/account6.png') "></el-image>
+                            </div>
+                            <br />
+                            <div style="text-align: start; font-weight: bold">2. 输入网络配置：</div>
+                            <br />
+                            <div style="text-align: start; font-weight: bold"> &emsp;&emsp;网络名称（建议）：SSENFT</div>
+                            <div style="text-align: start; font-weight: bold"> &emsp;&emsp;新的 RPC URL：http://8.134.209.144:18545</div>
+                            <div style="text-align: start; font-weight: bold"> &emsp;&emsp;链ID： 12346</div>
+                            <div style="text-align: start; font-weight: bold"> &emsp;&emsp;货币符号：eth</div>
+                            <br />
+                            <div>
+                                <el-image :src="require('@/assets/account7.png') "></el-image>
+                            </div>
+                            <div style="text-align: start;"> 确保填入信息无误后，点击保存并切换至该网络。</div>
+                            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 三、导入MetaMask账户 </div>
+                            <br />
+                            <div style="text-align: start">&emsp;&emsp;每个MetaMask账户都有唯一的地址。将MetaMask账户地址导入本系统，便于系统定位到账户并进行区块链操作。</div>
+                            <br />
+                            <div style="text-align: start; font-weight: bold">1. 点击浏览器右上角拼图图标呼出MetaMask，点击账户名：</div>
+                            <div>
+                                <el-image :src="require('@/assets/account8.png') " size="small" style="width: 300px;"></el-image>
+                            </div>
+                            <br />
+                            <div style="text-align: start; font-weight: bold">2. 进入“账户详情”界面，可以修改账户名和查看完整的账户地址。</div>
+                            <div>
+                                <el-image :src="require('@/assets/account9.png') " size="small" style="width: 300px;"></el-image>
+                            </div>
+                            <br />
+                            <div style="text-align: start; font-weight: bold">3. 将账户名称和账户地址导入到本系统中。</div>
+                            <div style="text-align: start;">&emsp;&emsp;注意：账户名称理论上可以自行指定，但建议与MetaMask上的账户名保持相同。账户地址必须正确无误。</div>
+
+                        </div>
                     </el-drawer>
                 </div>
             </div>
@@ -218,58 +290,34 @@ export default {
                 });
             }
         },
-        handleDelete(index, row) {
-            console.log('delllllll');
-            this.$confirm('是否移除该账户？', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                axios.post('http://127.0.0.1:28888/api/removeAddress', row).then(res => {
-                    if (res.data.code == '200') {
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
-                    } else {
-                        this.$message({
-                            type: 'error',
-                            message: '删除失败'
-                        });
-                    }
-                })
+        // addSmallAccount() {
+        //     if (this.name === '') {
+        //         this.$message.warning('账户名不得为空');
+        //         return;
+        //     } else if (this.address === '') {
+        //         this.$message.warning('账户地址不得为空');
+        //         return;
+        //     }
+        //     let data = {
+        //         account: this.user.account,
+        //         address: this.address,
+        //         name: this.name,
+        //     }
 
-            }).catch(() => {});
-            console.log(index, row);
-        },
-        addSmallAccount() {
-            if (this.name === '') {
-                this.$message.warning('账户名不得为空');
-                return;
-            } else if (this.address === '') {
-                this.$message.warning('账户地址不得为空');
-                return;
-            }
-            let data = {
-                account: this.user.account,
-                address: this.address,
-                name: this.name,
-            }
-
-            axios.post('http://127.0.0.1:28888/api/addSmallAccount', data)
-                .then(response => {
-                    console.log(response.data.code);
-                    if (response.data.code == '200'){
-                        this.$message.success('导入成功');
-                        this.$router.go(0);                        
-                    }
-                    else {
-                        this.$message.error('导入失败');
-                    }
-                }).catch(e => {
-                    console.log(e)
-                })
-        },
+        //     axios.post('http://127.0.0.1:28888/api/addSmallAccount', data)
+        //         .then(response => {
+        //             console.log(response.data.code);
+        //             if (response.data.code == '200'){
+        //                 this.$message.success('导入成功');
+        //                 this.$router.go(0);                        
+        //             }
+        //             else {
+        //                 this.$message.error('导入失败');
+        //             }
+        //         }).catch(e => {
+        //             console.log(e)
+        //         })
+        // },
         async getAccountList() {
             let res = await axios.get('http://127.0.0.1:28888/api/getSmallAccount', {
                 params: {
@@ -286,6 +334,85 @@ export default {
                         addresses: item || 'null'
                     };
                 });
+            }
+        },
+        handleDelete(index, row) {
+            this.$confirm('是否移除该账户？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                axios.post('http://127.0.0.1:28888/api/removeAddress', row).then(res => {
+                    console.log(res);
+                    if (res.data.code == '200') {
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        this.listData.splice(index, 1);
+                    } else {
+                        this.$message({
+                            type: 'error',
+                            message: '删除失败'
+                        });
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    this.$message({
+                        type: 'error',
+                        message: '操作失败，请检查控制台以获取更多信息'
+                    });
+                })
+            }).catch(() => {
+                console.log('用户取消了删除操作');
+            });
+            console.log(index, row);
+        },
+        async addSmallAccount() {
+            // 1. 校验账户名和地址
+            if (this.name === '') {
+                this.$message.warning('账户名不得为空');
+                return;
+            } else if (this.address === '') {
+                this.$message.warning('账户地址不得为空');
+                return;
+            }
+
+            try {
+                const addressList = await window.ethereum.request({
+                    method: 'eth_accounts',
+                    params: [],
+                });
+
+                console.log('addressList', addressList);
+                if (!Array.isArray(addressList) || !addressList.includes(this.address.toLowerCase())) {
+                    this.$message.warning('未查找到该账户地址');
+                    return;
+                }
+
+                const data = {
+                    account: this.account,
+                    address: this.address,
+                    name: this.name,
+                };
+
+                axios.post('http://127.0.0.1:28888/api/addSmallAccount', data).then(response => {
+                    console.log('response', response)
+                    if (response.data.code === 200) {
+                        this.$message.success('导入成功');
+                        this.listData.push({
+                            name: this.name,
+                            address: this.address
+                        });
+                        // this.getAccountList();
+                    } else {
+                        this.$message.error(response.data.status);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                this.$message.error('操作失败，请检查控制台以获取更多信息');
             }
         },
         async connectWallet() {
@@ -330,8 +457,8 @@ export default {
 
 /* 内容样式 */
 .content {
-    max-width: 200%;
-    /* width: 100%; */
+    max-width: 100%;
+    width: 100%;
     margin: 0 auto;
 }
 
