@@ -106,7 +106,7 @@ export default {
                 password: [
                     { required: true, message: '密码不能为空', trigger: 'blur' },
                     { min: 8, message: '密码至少需要8个字符', trigger: 'blur' },
-                    { pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, message: '密码至少包含一个字母和一个数字', trigger: 'blur' }
+                    { pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, message: '密码至少包含一个字母和一个数字，只能包含字母和数字，不能包含特殊字符', trigger: 'blur' }
                 ],
                 confirmPassword: [
                     { required: true, message: '确认密码不能为空', trigger: 'blur' },

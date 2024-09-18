@@ -7,7 +7,7 @@
                 <div class="login-input">
                     <span class="login-icon"></span>
                     <input class="login-username" v-model="username" required>
-                    <label> <strong> 用户名 </strong></label>
+                    <label> <strong> 用户id </strong></label>
                 </div>
                 <div class="login-input">
                     <span class="login-icon"></span>

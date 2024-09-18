@@ -114,11 +114,7 @@ export default {
                         token: response.data.token,
                         user: response.data.user
                     });
-                    // // 清空登录框的内容
-                    // this.username = '';
-                    // this.password = '';
-                    // 清除错误信息
-                    this.error = '';
+                    this.error = ''; // 清除错误信息
                 } else {
                     this.error = response.data.status || '登录失败，请检查您的账号和密码';
                 }

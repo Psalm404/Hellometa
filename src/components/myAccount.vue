@@ -1,5 +1,5 @@
 <template>
-<div class="myAccount-container" style="background-color: #ffffff;">
+<div class="myAccount-container" style="background-color: #708090;">
     <div class="content" style="height:100vh">
         <div class="myAccount-guideBox">
             <div class="myAccount-title">链账户管理</div>
@@ -157,7 +157,7 @@ export default {
     min-height: 100vh;
     min-width: 100vw;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
-    background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
+    background-image: linear-gradient(to top, #16181b 0%, rgb(47, 43, 43) 100%);
     ;
 
 }
