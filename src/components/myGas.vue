@@ -78,6 +78,7 @@ import axios from 'axios';
 export default {
     mounted() {
         this.account = localStorage.getItem('account')
+      
         this.getTotalGas();
         this.getAccountBalance();
         this.getRecord();
@@ -177,6 +178,7 @@ export default {
             const params = {
                 account: this.account
             }
+            console.log('account', this.account)
             axios.get('http://127.0.0.1:28888/api/getUserBalance', {
                 params: params
             }).then(res => {

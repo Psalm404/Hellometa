@@ -319,6 +319,7 @@ export default {
 
 /* 内容样式 */
 .content {
+    max-width: 100%;
     width: 100%;
     margin: 0 auto;
 }
@@ -365,7 +366,7 @@ h4 {
 
 .home-navbar {
     margin-top: 20px;
-    margin-left: calc(50% - 55vw);
+    margin-left: calc(50% - 48vw);
     background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
     border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
     padding: 10px 20px;

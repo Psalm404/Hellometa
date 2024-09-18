@@ -125,6 +125,8 @@ export default {
     methods: {
         close() {
             this.isLoading = false;
+            this.tip = " 交易中，请稍后......"
+            this.showBackButton = true;
         },
         getExchangeRate() {
             axios.get('http://127.0.0.1:28888/api/getExchangeRate').then(res => {
