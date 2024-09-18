@@ -449,7 +449,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .upload-container {
     max-height: 100vh;
     overflow: hidden;

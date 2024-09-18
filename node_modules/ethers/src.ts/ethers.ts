@@ -164,7 +164,7 @@ export type { TypedDataDomain, TypedDataField } from "./hash/index.js";
 export type {
     Provider, Signer,
 
-    AbstractProviderOptions, FallbackProviderOptions,
+    AbstractProviderOptions, BrowserProviderOptions, FallbackProviderOptions,
 
     AbstractProviderPlugin, BlockParams, BlockTag, ContractRunner, DebugEventBrowserProvider,
     Eip1193Provider, EventFilter, Filter, FilterByBlockHash, GasCostParameters,
@@ -210,3 +210,4 @@ export type {
     CrowdsaleAccount, KeystoreAccount, EncryptOptions
 } from "./wallet/index.js";
 
+// dummy change; to pick-up ws security issue changes
