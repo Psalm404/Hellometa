@@ -9,7 +9,7 @@ contract.js根据智能合约地址和ABI创建一个contract实例，用于智�
 import Web3 from "web3";    
 import contractABI from '@/abi/contract';
 
-const contractAddr = '0x9547E0f78b513E3d4ad5A825AE591011Cd933F43'; // 合约地址
+const contractAddr = '0xeb7f6C4b667501fEd16797381D4BB5bc5bE821Cf'; // 合约地址
 const web3 = new Web3(window.ethereum);
 const contract = new web3.eth.Contract(contractABI, contractAddr); // 智能合约实例
 
