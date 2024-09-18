@@ -12,16 +12,16 @@
                                 <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
                             </a>
                             <div class="page-titile">
-                                <h3>Home</h3>
+                                <h3>个人主页</h3>
                             </div>
                         </div>
                         <div class="want-to-be-right">
                             <ul class="home-navbar-menu">
-                                <li class="recharge-item"><a href="#/myGas">Recharge</a></li>
-                                <li class="intro-item"><a href="#/u_intro">Browser</a></li>
-                                <li class="explore-item"><a href="#/exhibitWorks">Market</a></li>
-                                <li class="upload-item"><a href="#/uploadWorks">Upload</a></li>
-                                <li class="records-item"><a href="#/recordWorks">My Records</a></li>
+                                <li class="recharge-item"><a href="#/myGas">燃料充值</a></li>
+                                <li class="intro-item"><a href="#/u_intro">区块浏览器</a></li>
+                                <li class="explore-item"><a href="#/exhibitWorks">交易市场</a></li>
+                                <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
+                                <li class="records-item"><a href="#/recordWorks">我的凭证</a></li>
                             </ul>
                             <div>
                                 <button class="home-navbar-button" @click="logOut">Log out</button>
@@ -31,26 +31,92 @@
                 </nav>              
                 <div class="sidebar-wallet-container">
                     <div class="sidebar">
-                        <el-avatar :src="user.avatar" class="avatar" size="900">
-                            <template v-if="!user.avatar"> 
-                                <img src="../assets/default-avatar.png" alt="Default Avatar">
-                            </template>
-                        </el-avatar>
+                        <img :src="user.avatar" alt="未成功加载头像" class="avatar">
+                        <!-- <img v-else alt="未成功加载头像" class="avatar"> -->
                         <div class="user-info-container">
                             <div class="user-info">
-                                <p>ID: <span>{{ user.account }}</span></p>
-                                <p>Name: <span>{{ user.name }}</span></p>
-                                <p>Description: <span>{{ user.description }}</span></p>
-                                <button class="edit-profile-button" @click="editProfile">Edit Account Info</button>
+                                <p>用户ID: <span>{{ user.account }}</span></p>
+                                <p>公司名称: <span>{{ user.name }}</span></p>
+                                <p>描述: <span>{{ user.description }}</span></p>
+                                <button class="edit-profile-button" @click="editProfile">修改账号信息</button>
                             </div>
                             <div class="account-info">
-                                <p>Account Balance: <span>{{ user.balance }}</span></p>
-                                <p>Email&Phone: <span>{{ user.email }}   |   {{ user.phone }}</span></p>
-                                <p>Selected Chain Account: <span>{{ selectedAccount ? selectedAccount.name : 'NAN, Please go to account management to select an account.' }}</span></p>
-                                <button class="manage-account-button" @click="goToAccountManagement">Manage Chain Accounts</button>
+                                <p>剩余燃料: <span>{{ user.balance }}</span></p>
+                                <p>邮箱&电话: <span>{{ user.email }}   |   {{ user.phone }}</span></p>
+                                <p>连接到的钱包账户: <span>{{ selectedAccount ? selectedAccount.name : '未检测到钱包' }}</span></p>
+                                <!-- 重要的改动：添加动态类和点击事件 -->
+                                <button 
+                                    class="manage-account-button" 
+                                    :class="{ active: isAccountManagementVisible }" 
+                                    @click="toggleAccountManagement"
+                                >链上账号管理⬇️</button>
                             </div>
                         </div>
                     </div>
+                </div>
+                <!-- 关键：myAccount.vue的内容合并到这里 -->
+                <div v-if="isAccountManagementVisible" class="myAccount-container" style="background-color: #708090;">
+                    <div class="content" style="height:100vh">
+                        <div class="myAccount-guideBox">
+                            <div class="myAccount-title">小账户管理</div>
+                            <a class="myAccount-howtouse" @click="drawer = true" style="align-self:self-start;">
+                                <i class="el-icon-question" style="display:contents;"></i>
+                                我该如何使用账户管理？
+                            </a>
+                        </div>
+                        <div class="myAccount-createAccount">
+                            <div style="display: flex; gap: 20px">
+                                <div style=" display: flex; flex:1; justify-items: center; align-items:center; gap:15px;">
+                                    <span> 账户名称: </span>
+                                    <el-input
+                                        size="medium"
+                                        v-model="name"
+                                        placeholder="请输入账户名称"
+                                        style="width:400px"
+                                        maxlength="12"
+                                        minlength="1"
+                                        show-word-limit
+                                    ></el-input>
+                                </div>
+                                <div style=" display: flex; flex:1; justify-items: center; align-items:center; gap:15px;">
+                                    <span> 账户地址: </span>
+                                    <el-input
+                                        size="medium"
+                                        v-model="address"
+                                        placeholder="请输入账户地址"
+                                        style="width:400px"
+                                    ></el-input>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column;">
+                                <el-button type="primary" class="create-accountBT" size="small" style="align-self: self-end;" @click="addSmallAccount"> 导入账户</el-button>
+                            </div>
+                        </div>
+                        <div class="myAccount-accountList">
+                            <div style="align-self:self-start;">小账户列表</div>
+                            <div>
+                                <el-table
+                                    :key="listData.length"
+                                    :data="filteredListData"
+                                    style="width:100%"
+                                >
+                                    <el-table-column prop="name" label="账户名称" width="400"></el-table-column>
+                                    <el-table-column prop="address" label="账户地址" width="500"></el-table-column>
+                                    <el-table-column :align="'right'">
+                                        <template #header>
+                                            <el-input v-model="search" size="mini" placeholder="输入名称关键字搜索" />
+                                        </template>
+                                        <template #default="{ scope }">
+                                            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">移除</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </div>
+                        </div>
+                    </div>
+                    <el-drawer size="40%" :visible.sync="drawer" :with-header="false">
+                        <div style="font-size:22px; font-weight:bold; color:black; margin-top:10px;">我该如何使用小账户管理?</div>
+                    </el-drawer>
                 </div>
             </div>
         </transition>
@@ -58,13 +124,14 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         return {
-            // 默认的用户信息
             defaultUser: {
-                avatar: '',
-                account: '123456',
+                avatar: '../assets/default-avatar.png',
+                // account: '123456',
                 name: 'Timmy',
                 balance: '0.1eth',
                 description: "hiiiiiiiiiiiiiiiiiiiiiiiiii😁",
@@ -73,12 +140,36 @@ export default {
                 chainAccounts: []
             },
             selectedAccount: null,
+            isAccountManagementVisible: false, // 控制链账户管理部分的显示
+            account: null,
+            drawer: false,
+            name: '',
+            address: '',
+            search: '',
+            listData: [{
+                    name: 'dasa',
+                    address: '1232131sdaa21231asd123',
+                },
+                {
+                    name: 'asassa',
+                    address: '123dsad231asd123'
+                }
+            ],
         };
+    },
+    created() {
+        console.log('created avatar load=================>');
+        // this.loadAvatar();
     },
     computed: {
         user() {
-            // 如果全局状态中有用户信息，则使用全局状态中的信息，否则使用默认信息
-            return this.$store.state.user || this.defaultUser;
+            // 这里确保我们从 Vuex 的 state 中获取 user 数据
+            const user = this.$store.state.user;
+            console.log(user); // 打印到控制台检查 user 数据
+            return user;
+        },
+        filteredListData() {
+            return this.listData.filter(data => !this.search || data.name.toLowerCase().includes(this.search.toLowerCase()));
         }
     },
     methods: {
@@ -93,32 +184,148 @@ export default {
                 this.$router.push('/editProfile');
             }, 100);
         },
+        // 切换链账户管理部分的显示状态
+        toggleAccountManagement() {
+            this.isAccountManagementVisible = !this.isAccountManagementVisible;
+        },
         goToAccountManagement() {
-            // alert('route to account-management');
             this.$router.push('/myAccount');
+        },
+        async ensureUserLoaded({ state, dispatch }) {
+            if (!state.user) {
+                await dispatch('checkLoginStatus');
+            }
+            if (state.user) {
+                dispatch('loadAvatar');
+            } else {
+                console.error('用户未登录或加载失败');
+            }
+        },
+        loadAvatar() {
+            const account = this.user.account;
+            if (!account) {
+                console.error('账号信息不完整。');
+                return;
+            }
+
+            const localAvatarUrl = localStorage.getItem(`avatar_${account}`);
+            if (localAvatarUrl) {
+                console.log(localAvatarUrl);
+                this.user.avatar=localAvatarUrl;
+                this.$store.commit('setUserAvatar', localAvatarUrl);
+            } else {
+                axios.get(`http://localhost:28888/api/loadAvatar`, { params: { account } })
+                .then(res => {
+                    if (res.data && res.data.avatarUrl) {
+                        this.$store.commit('setUserAvatar', res.data.avatarUrl);
+                        localStorage.setItem(`avatar_${account}`, res.data.avatarUrl);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading avatar:', error);
+                });
+            }
+        },
+        handleDelete(index, row) {
+            this.$confirm('是否移除该账户？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                axios.post('http://127.0.0.1:28888/api/removeAddress', row).then(res => {
+                    if (res.data.status === '200') {
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                    } else {
+                        this.$message({
+                            type: 'error',
+                            message: '删除失败'
+                        });
+                    }
+                })
+
+            }).catch(() => {});
+            console.log(index, row);
+        },
+
+        addSmallAccount() {
+            if (this.name === '') {
+                this.$message.warning('账户名不得为空');
+                return;
+            } else if (this.address === '') {
+                this.$message.warning('账户地址不得为空');
+                return;
+            }
+            let data = {
+                account: "123",
+                address: this.address,
+                name: this.name,
+            }
+
+            axios.post('http://127.0.0.1:2888/api/addSmallAccount', data)
+                .then(response => {
+                    if (response.code === "200")
+                        this.$message.success('导入成功');
+                    else {
+                        this.$message.error('导入失败');
+                    }
+                }).catch(e => {
+                    console.log(e)
+                })
+        },
+        async getAccountList() {
+            let res = await axios.get('http://127.0.0.1:28888/api/getSmallAccount', {
+                params: {
+                    account: this.account
+                }
+            }).catch(e => {
+                console.log(e)
+            })
+            if (res.data.status === "查询成功" && res.data.addresses) {
+                this.listData = res.data.addresses.map(item => {
+                    // 如果 address 属性不存在，给它一个默认值
+                    return {
+                        ...item,
+                        addresses: item || 'null'
+                    };
+                });
+            }
         }
+
+    },
+    mounted() {
+        this.loadAvatar();
+        this.account = localStorage.getItem('account');
+        this.getAccountList();
     }
-}
+};
 </script>
 
 <style scoped>
-.content {
-    margin-left: 10%;
+/* 重置一些默认样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+/* 容器样式 */
 .container {
-    margin-left: calc(50% - 50vw); /* 使用calc函数让页面自动紧贴左侧 */
-    width: 100vw; /* 确保页面内容宽度占据整个视口宽度 */
-    height: 100vw;
+    width: 100%;
+    height: auto;
 }
 
-.sidebar-wallet-container {
-    display: flex;
-    justify-content: flex-end; /* 使内容靠下排列 */
-    align-items: flex-start;
-    flex-direction: column; /* 垂直排列 sidebar 和 wallet-accounts */
-    margin-top: 100px; /* 确保在 home-navbar 下方 */
-    padding: 10px;
+/* 内容样式 */
+.content {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.manage-account-button.active {
+    background-color: #ff5900;
+    border-color: #ff5900;
 }
 
 .profile-titile{
@@ -301,140 +508,167 @@ h4 {
     cursor: pointer;
 }
 
-.sidebar {
-    position: absolute;
-    top:450px;
-    left: 1px;
-    width: 40%;
-    background-color: rgba(255, 255, 255, 0);
-    padding: 10px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0);
-    order: 1;
-    height: 50vh;
-}
-
-.avatar {
-    position: absolute;
-    top:-60%;
-    left: 20%;
-    width: 52%;
-    height: 68%;
+/* 侧边栏和头像样式 */
+.sidebar-wallet-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 30px;
-    background-color: #f4f4f400;
-    border-radius: 500%; 
-    overflow: hidden;
+    margin-top: 100px; /* 根据需要调整 */
 }
 
-.user-info {
-    width:fit-content;
-    position: relative;
-    top:10%;
-    font-size: 1.6em;
-    font-weight: 700; /* 设置字体粗细，500 为中等粗细 */
-    text-align: left;
-    color: #ffffffb0;
+.sidebar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
+/* 响应式头像 */
+.avatar {
+    width: 15vw; /* 根据需要调整大小 */
+    height: 15vw; /* 确保宽高相等 */
+    max-width: 200px; /* 设置最大宽度，防止过大 */
+    max-height: 200px;
+    border-radius: 50%; /* 使其为正圆形 */
+    object-fit: cover; /* 确保图片按比例填充容器 */
+    overflow:auto;
+    background-color: transparent;
+    text-align: center; /* 使alt文字水平居中 */
+    line-height: 150px;  /* 调整这个值以改变alt文字的垂直位置 */
+    border: 0.8px solid #ffffffb0; /* 3像素宽的蓝色描边 */
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit:cover; /* 图片按比例填充容器 */
+}
+
+/* 用户信息容器 */
 .user-info-container {
-    position: absolute;
-    top:10%;
-    left: 10%;
-    width:100%;
-    display:flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
 }
 
-.user-info p {
-    white-space: nowrap;  /* 禁止换行 */
-    overflow: hidden;     /* 隐藏溢出内容 */
-    text-overflow: ellipsis; /* 在溢出时显示省略号 */
-    margin: 10px 0;
-}
-
-.account-info {
-    width:2000px;
-    position: absolute;
-    top:0%;
-    left: 90%;
-    font-size: 1.6em;
-    font-weight: 700; /* 设置字体粗细，500 为中等粗细 */
-    text-align: left;
-    color: #ffffffb0;
-}
-
-.account-info p {
-    white-space: nowrap;  /* 禁止换行 */
-    overflow: hidden;     /* 隐藏溢出内容 */
-    text-overflow: ellipsis; /* 在溢出时显示省略号 */
-    margin: 10px 0;
-}
-
+/* 用户信息样式 */
 .user-info, .account-info {
-    flex: 1;
-    margin-right: 200px; /*调整两列间距*/
+    width: 80%;
+    max-width: 600px;
+    margin: 10px 0;
+    text-align: center;
+    color: #ffffffb0;
 }
 
 .user-info p, .account-info p {
-    display: flex;
-    flex-direction: column; /* 使信息在冒号后换行显示 */
     margin: 10px 0;
 }
 
 .user-info p span, .account-info p span {
-    color: #ff741d; /* 设置为不同的颜色 */
-    font-style: italic; /* 设置字体样式为斜体 */
-    font-size: 1.2em; /* 设置字体大小 */
+    color: #ff741d;
+    font-style: italic;
+    font-size: 1em;
 }
 
-.manage-account-button {
-    position: absolute;
-    top:100%;
-    background-color: rgba(255, 255, 255, 0.303); /* 设置为半透明 */
+/* 按钮样式 */
+.edit-profile-button, .manage-account-button {
+    background-color: rgba(255, 255, 255, 0.303);
     color:  #ffffffb0;
-    font-weight: 700; /* 设置字体粗细，500 为中等粗细 */
-    border: 1px solid  #ffffff00; 
-    border-radius: 10px; /* 设置圆角 */
+    font-weight: 700;
+    border: 1px solid transparent; 
+    border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
+    transition: background-color 0.3s, border-color 0.3s;
     margin-top: 10px;
-    margin-right: 10px; /* 增加一个右边距 */
-    text-align: center; /* 文字居中 */
-    width: 400px; /* 设置按钮的宽度 */
-    height: 60px; /* 设置按钮的高度 */
+    width: 80%;
+    max-width: 400px;
+    height: 50px;
+    text-align: center;
 }
 
-.manage-account-button:hover {
+.edit-profile-button:hover, .manage-account-button:hover {
     background-color: #ff5900;
-    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+    border-color: #ff5900;
 }
 
-.edit-profile-button  {
-    position: absolute;
-    top:100%;
-    left: 0px;
-    background-color: rgba(255, 255, 255, 0.303); /* 设置为半透明 */
-    color:  #ffffffb0;
-    font-weight: 700; /* 设置字体粗细，500 为中等粗细 */
-    border: 1px solid  #ffffff00; 
-    border-radius: 10px; /* 设置圆角 */
-    cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
-    margin-top: 10px;
-    margin-right: 10px; /* 增加一个右边距 */
-    text-align: center; /* 文字居中 */
-    width: 400px; /* 设置按钮的宽度 */
-    height: 60px; /* 设置按钮的高度 */
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .avatar {
+        width: 25vw;
+        height: 25vw;
+    }
+
+    .edit-profile-button, .manage-account-button {
+        width: 90%;
+    }
+
+    .user-info, .account-info {
+        width: 90%;
+    }
 }
 
-.edit-profile-button:hover {
-    background-color: #ff5900;
-    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+.myAccount-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    min-height: 100vh;
+    min-width: 100vw;
+    /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
+    background-image: linear-gradient(to top, #333 0%, rgb(47, 43, 43) 100%);
+    ;
+
 }
 
+.myAccount-guideBox {
+    margin-top: 50px;
+    margin-left: 50px;
+    /* border: 1px solid green; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.myAccount-title {
+    flex: 1;
+    align-self: flex-start;
+    color: black;
+    font-weight: bold;
+    font-size: 2em;
+}
+
+.myAccount-createAccount {
+    padding: 30px;
+    margin-left: 50px;
+    margin-top: 30px;
+    width: 90%;
+    /*侧边栏删除记得改*/
+    height: 140px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+}
+
+.myAccount-accountList {
+    padding: 30px;
+    margin-left: 50px;
+    margin-top: 30px;
+    width: 90%;
+    /*侧边栏删除记得改*/
+    /* height: 140px; */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+}
 
 </style>
 

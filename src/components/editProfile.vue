@@ -2,8 +2,9 @@
     <div class="edit-profile-container">
         <div class="edit-profile-box">
             <div class="edit-profile-text">
-                <button class="edit-profile-button" @click="editInfo" :disabled="isNavigating">编辑您的个人资料</button>
-                <button class="edit-pwd-button" @click="editPwd" :disabled="isNavigating">修改你的账号密码</button>
+                <button class="edit-profile-button" :class="{ active: isEditingInfo }" @click="editInfo" :disabled="isNavigating">编辑您的个人资料</button>
+                <button class="edit-pwd-button" :class="{ active: !isEditingInfo }" @click="editPwd" :disabled="isNavigating">修改你的账号密码</button>
+                <a class="el-icon-back back-guest" @click="backHome" :disabled="isNavigating">返回个人主页</a>
             </div>
             <el-form :model="formData" :rules="rules" ref="formData">
                 <!-- 修改个人信息表单 -->
@@ -38,6 +39,25 @@
                                 <el-input type="textarea" v-model="formData.description" rows="4" autosize></el-input>
                             </el-form-item>
                         </div>
+                        <!-- 头像 -->
+                        <div class="edit-profile-input">
+                            <label>头像</label>
+                            <el-form-item prop="avatar">
+                                <el-upload
+                                    class="avatar-uploader"
+                                    action="http://localhost:28888/api/uploadAvatar"
+                                    :show-file-list="false"
+                                    :before-upload="beforeAvatarUpload"
+                                    :on-success="handleAvatarSuccess"
+                                    :data="{ account: formData.account }"
+                                    accept="image/*"
+                                >
+                                    <img v-if="formData.avatar" :src="formData.avatar" class="avatar">
+                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                </el-upload>
+                            </el-form-item>
+                        </div>
+                        <!-- 头像 -->
                     </div>
                 </div>
 
@@ -71,7 +91,6 @@
                     </button>
                 </el-form-item>
             </el-form>
-            <a class="el-icon-back back-guest" @click="backHome" :disabled="isNavigating">返回个人主页</a>
         </div>
         <div class="overlay" id="overlay" :style="{ display: isNavigating ? 'block' : 'none' }"></div>
     </div>
@@ -132,6 +151,9 @@ export default {
     },
     created() {
         this.fetchUserInfo();
+        if (this.user && this.user.avatar) {
+            this.formData.avatar = this.user.avatar; // 设置初始头像路径
+        }
     },
     methods: {
         fetchUserInfo() {
@@ -143,6 +165,7 @@ export default {
                     phone: this.user.phone,
                     email: this.user.email,
                     description: this.user.description,
+                    avatar: this.user.avatar,
                 };
                 this.$message.info(this.formData.account);
             } else {
@@ -160,16 +183,17 @@ export default {
                             phone: this.formData.phone,
                             email: this.formData.email,
                             description: this.formData.description,
+                            avatar: this.formData.avatar, // 添加头像信息
                         });
 
                         if (res.data.code === 200) {
-                            // 更新 Vuex 存储的用户信息
                             this.$store.commit('setUser', {
                                 ...this.user,
                                 name: this.formData.name,
                                 phone: this.formData.phone,
                                 email: this.formData.email,
                                 description: this.formData.description,
+                                avatar: this.formData.avatar,
                             });
                             this.$message.success('个人信息修改成功!2s后返回个人主页');
                             setTimeout(() => {
@@ -225,6 +249,7 @@ export default {
         },
         editInfo() {
             this.isEditingInfo = true;  // 切换到编辑个人信息表单
+            document.getElementById('edit-profile-button').active = 'true';
         },
         editPwd() {
             this.isEditingInfo = false;  // 切换到编辑密码表单
@@ -232,12 +257,56 @@ export default {
         backHome() {
             this.isNavigating = true;  // 显示遮罩层
             this.$router.push('/home');
-        }
+        },
+        handleAvatarSuccess(res, file) {
+            if (res.code === 200) {
+                this.formData.avatar = URL.createObjectURL(file.raw); // 本地预览图片
+                this.$message.success('头像上传成功！');
+                // 更新Vuex中的用户信息
+                this.$store.commit('setUser', {
+                    ...this.user,
+                    avatar: this.formData.avatar,
+                });
+            } else {
+                this.$message.error('头像上传失败，请重试');
+            }
+        },
+        beforeAvatarUpload(file) {
+            const isImage = file.type === 'image/jpeg' || file.type === 'image/png';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isImage) {
+                this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传头像图片大小不能超过 2MB!');
+            }
+            return isImage && isLt2M;
+        },
     }
 };
 </script>
 
 <style scoped>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 容器样式 */
+.container {
+    width: 100%;
+    height: 100%;
+    background-color: #8c8c8c;
+}
+
+/* 内容样式 */
+.content {
+    width: 100%;
+    margin: 0 auto;
+}
+
 .overlay {
     position: fixed;
     top: 0;
@@ -245,6 +314,7 @@ export default {
     width: 100%;
     height: 100%;
     z-index: 9999;
+    background-color: #8c8c8c;
     /* 确保覆盖在页面上方 */
 }
 
@@ -338,7 +408,8 @@ input:-webkit-autofill {
 
 .edit-profile-submit {
     width: 400px;
-    height: 40px;
+    height: 45px;
+    margin-top: 6%;
     background: #fff;
     border: none;
     outline: none;
@@ -354,9 +425,9 @@ input:-webkit-autofill {
 }
 
 .back-guest {
-    position: absolute;
-    left: 13%;
-    top: 14%;
+    position: relative;
+    left: -48%;
+    top: -268%;
     margin-top: 10px;
     margin-right: 350px;
     color: rgb(255, 244, 94);
@@ -368,9 +439,9 @@ input:-webkit-autofill {
 }
 
 .edit-profile-button {
-    position: absolute;
-    top:20%;
-    left: 13%;
+    position: relative;
+    top:-100%;
+    left: 3%;
     background-color: rgba(255, 255, 255, 0.303); /* 设置为半透明 */
     color:  #ffffffb0;
     font-weight: 700; /* 设置字体粗细，500 为中等粗细 */
@@ -386,9 +457,9 @@ input:-webkit-autofill {
 }
 
 .edit-pwd-button  {
-    position: absolute;
-    top:20%;
-    left: 27%;
+    position: relative;
+    top:-100%;
+    left: 5%;
     background-color: rgba(255, 255, 255, 0.303); /* 设置为半透明 */
     color:  #ffffffb0;
     font-weight: 700; /* 设置字体粗细，500 为中等粗细 */
@@ -404,7 +475,43 @@ input:-webkit-autofill {
 }
 
 .edit-profile-button:hover, .edit-pwd-button:hover {
-    background-color: #ff5900;
-    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+    background-color: #f47f41;
+    border-color: #f47f41; /* 修改hover状态下的边框颜色 */
+}
+
+.edit-profile-button.active,
+.edit-pwd-button.active {
+    background-color: #ff5900; /* 保持激活状态的颜色 */
+    border-color: #ff5900;
+    color: #ffffff; /* 文字颜色 */
+}
+.avatar-uploader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 50%;
+    cursor: pointer;
+    overflow: hidden;
+}
+.avatar-uploader-icon {
+    width: 15vw; /* 根据需要调整大小 */
+    height: 15vw; /* 确保宽高相等 */
+    max-width: 200px; /* 设置最大宽度，防止过大 */
+    max-height: 200px;
+    font-size: 28px;
+    color: #8c8c8c;
+}
+.avatar {
+    width: 15vw; /* 根据需要调整大小 */
+    height: 15vw; /* 确保宽高相等 */
+    max-width: 200px; /* 设置最大宽度，防止过大 */
+    max-height: 200px;
+    border-radius: 50%; /* 使其为正圆形 */
+    object-fit: contain; /* 确保图片按比例填充容器 */
+    overflow:auto;
+    background-color: transparent;
 }
 </style>
