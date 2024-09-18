@@ -86,14 +86,14 @@
             <div>
                 <el-image :src="require('@/assets/account6.png') "></el-image>
             </div>
-            <br/>
+            <br />
             <div style="text-align: start; font-weight: bold">2. 输入网络配置：</div>
-            <br/>
+            <br />
             <div style="text-align: start; font-weight: bold"> &emsp;&emsp;网络名称（建议）：SSENFT</div>
             <div style="text-align: start; font-weight: bold"> &emsp;&emsp;新的 RPC URL：http://8.134.209.144:18545</div>
             <div style="text-align: start; font-weight: bold"> &emsp;&emsp;链ID： 12346</div>
             <div style="text-align: start; font-weight: bold"> &emsp;&emsp;货币符号：eth</div>
-            <br/>
+            <br />
             <div>
                 <el-image :src="require('@/assets/account7.png') "></el-image>
             </div>
@@ -104,14 +104,14 @@
             <br />
             <div style="text-align: start; font-weight: bold">1. 点击浏览器右上角拼图图标呼出MetaMask，点击账户名：</div>
             <div>
-                <el-image :src="require('@/assets/account8.png') " size = "small"  style="width: 300px;"></el-image>
+                <el-image :src="require('@/assets/account8.png') " size="small" style="width: 300px;"></el-image>
             </div>
-            <br/>
+            <br />
             <div style="text-align: start; font-weight: bold">2. 进入“账户详情”界面，可以修改账户名和查看完整的账户地址。</div>
             <div>
-                <el-image :src="require('@/assets/account9.png') " size = "small"  style="width: 300px;"></el-image>
+                <el-image :src="require('@/assets/account9.png') " size="small" style="width: 300px;"></el-image>
             </div>
-            <br/>
+            <br />
             <div style="text-align: start; font-weight: bold">3. 将账户名称和账户地址导入到本系统中。</div>
             <div style="text-align: start;">&emsp;&emsp;注意：账户名称理论上可以自行指定，但建议与MetaMask上的账户名保持相同。账户地址必须正确无误。</div>
 
@@ -146,24 +146,34 @@ export default {
                 type: 'warning'
             }).then(() => {
                 axios.post('http://127.0.0.1:28888/api/removeAddress', row).then(res => {
-                    if (res.data.status === '200') {
+                    console.log(res);
+                    if (res.data.code === 200) {
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
                         });
+                        this.listData.splice(index, 1);
                     } else {
                         this.$message({
                             type: 'error',
                             message: '删除失败'
                         });
                     }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    this.$message({
+                        type: 'error',
+                        message: '操作失败，请检查控制台以获取更多信息'
+                    });
                 })
-
-            }).catch(() => {});
+            }).catch(() => {
+                console.log('用户取消了删除操作');
+            });
             console.log(index, row);
         },
 
-        addSmallAccount() {
+        async addSmallAccount() {
+            // 1. 校验账户名和地址
             if (this.name === '') {
                 this.$message.warning('账户名不得为空');
                 return;
@@ -171,40 +181,66 @@ export default {
                 this.$message.warning('账户地址不得为空');
                 return;
             }
-            let data = {
-                account:  this.account,
-                address: this.address,
-                name: this.name,
-            }
 
-            axios.post('http://127.0.0.1:2888/api/addSmallAccount', data)
-                .then(response => {
-                    if (response.code === "200")
+            try {
+                const addressList = await window.ethereum.request({
+                    method: 'eth_accounts',
+                    params: [],
+                });
+
+                console.log('addressList', addressList);
+                if (!Array.isArray(addressList) || !addressList.includes(this.address.toLowerCase())) {
+                    this.$message.warning('未查找到该账户地址');
+                    return;
+                }
+
+                const data = {
+                    account: this.account,
+                    address: this.address,
+                    name: this.name,
+                };
+
+                axios.post('http://127.0.0.1:28888/api/addSmallAccount', data).then(response => {
+                    console.log('response', response)
+                    if (response.data.code === 200) {
                         this.$message.success('导入成功');
-                    else {
-                        this.$message.error('导入失败');
+                        this.listData.push({
+                            name: this.name,
+                            address: this.address
+                        });
+                        // this.getAccountList();
+                    } else {
+                        this.$message.error(response.data.status);
                     }
-                }).catch(e => {
-                    console.log(e)
-                })
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                this.$message.error('操作失败，请检查控制台以获取更多信息');
+            }
         },
-        async getAccountList() {
-            let res = await axios.get('http://127.0.0.1:28888/api/getSmallAccount', {
+        getAccountList() {
+            axios.get('http://127.0.0.1:28888/api/getSmallAccount', {
                 params: {
                     account: this.account
                 }
+            }).then(res => {
+                console.log('res', res)
+                if (res.data.status === "查询成功" && res.data.addresses) {
+                    this.listData = res.data.addresses.map(item => {
+                        // 如果 address 属性不存在，给它一个默认值
+                        return {
+                            ...item,
+                            addresses: item || 'null'
+                        };
+                    });
+                }
+
+                console.log('listData', this.listData)
             }).catch(e => {
                 console.log(e)
             })
-            if (res.data.status === "查询成功" && res.data.addresses) {
-                this.listData = res.data.addresses.map(item => {
-                    // 如果 address 属性不存在，给它一个默认值
-                    return {
-                        ...item,
-                        addresses: item || 'null'
-                    };
-                });
-            }
+
         }
     },
 
