@@ -121,6 +121,7 @@
                                 <div style="font-weight:bold">一、下载MetaMask插件并注册账号 </div>
                                 <div style="font-weight:bold">二、连接SSENFT区块链网络 </div>
                                 <div style="font-weight:bold">三、导入MetaMask账户</div>
+                                <div style="font-weight:bold">四、常见问题</div>
                             </div>
                             <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 一、下载MetaMask插件并注册账号 </div>
                             <br />
@@ -186,7 +187,10 @@
                             <br />
                             <div style="text-align: start; font-weight: bold">3. 将账户名称和账户地址导入到本系统中。</div>
                             <div style="text-align: start;">&emsp;&emsp;注意：账户名称理论上可以自行指定，但建议与MetaMask上的账户名保持相同。账户地址必须正确无误。</div>
-
+                            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 四、常见问题 </div>
+                            <br/>
+                            <div style="text-align: start; font-weight: bold">总是提醒“未查询到该账户”怎么办？</div>
+                            <div style="text-align: start;">&emsp;&emsp;确保您的地址与MetaMask钱包中的一致。如果仍然无法解决，请检查MetaMask中的账户连接是否正常。</div>
                         </div>
                     </el-drawer>
                 </div>
@@ -232,7 +236,17 @@ export default {
     },
     created() {
         console.log('created avatar load=================>');
+        this.account = localStorage.getItem('account');
+        console.log('account', this.account)
         // this.loadAvatar();
+    },
+    mounted() {
+        this.account = localStorage.getItem('account');
+        this.connectWallet();
+        
+        this.loadAvatar();
+        console.log('account', this.account)
+        this.getAccountList();
     },
     computed: {
         user() {
@@ -395,7 +409,7 @@ export default {
                     address: this.address,
                     name: this.name,
                 };
-
+                console.log('asds', data)
                 axios.post('http://127.0.0.1:28888/api/addSmallAccount', data).then(response => {
                     console.log('response', response)
                     if (response.data.code === 200) {
@@ -432,12 +446,7 @@ export default {
             }
         },
     },
-    mounted() {
-        this.connectWallet();
-        this.loadAvatar();
-        this.account = localStorage.getItem('account');
-        this.getAccountList();
-    }
+   
 };
 </script>
 
