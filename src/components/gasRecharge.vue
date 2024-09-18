@@ -15,7 +15,7 @@
                     燃料充值
                 </div>
                 <el-breadcrumb separator-class="el-icon-arrow-right" style="margin-top:13px;">
-                    <el-breadcrumb-item :to="{ path: '/' }">个人中心</el-breadcrumb-item>
+                    <el-breadcrumb-item :to="{ path: '/home' }">个人中心</el-breadcrumb-item>
                     <el-breadcrumb-item :to="{ path: '/myGas' }">燃料管理</el-breadcrumb-item>
                     <el-breadcrumb-item>燃料充值</el-breadcrumb-item>
                 </el-breadcrumb>

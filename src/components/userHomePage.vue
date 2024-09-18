@@ -12,7 +12,7 @@
                                 <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
                             </a>
                             <div class="page-titile">
-                                <h3>个人主页</h3>
+                                <h3>个人中心</h3>
                             </div>
                         </div>
                         <div class="want-to-be-right">
@@ -31,7 +31,7 @@
                 </nav>              
                 <div class="sidebar-wallet-container">
                     <div class="sidebar">
-                        <img :src="user.avatar" alt="未成功加载头像" class="avatar">
+                        <img :src="this.user.avatar" alt="未成功加载头像" class="avatar">
                         <!-- <img v-else alt="未成功加载头像" class="avatar"> -->
                         <div class="user-info-container">
                             <div class="user-info">
@@ -43,7 +43,7 @@
                             <div class="account-info">
                                 <p>剩余燃料: <span>{{ user.balance }}</span></p>
                                 <p>邮箱&电话: <span>{{ user.email }}   |   {{ user.phone }}</span></p>
-                                <p>连接到的钱包账户: <span>{{ selectedAccount ? selectedAccount.name : '未检测到钱包' }}</span></p>
+                                <p>连接到的钱包账户: <span>{{ selectedAccount ? selectedAccount : '未检测到钱包' }}</span></p>
                                 <!-- 重要的改动：添加动态类和点击事件 -->
                                 <button 
                                     class="manage-account-button" 
@@ -58,7 +58,7 @@
                 <div v-if="isAccountManagementVisible" class="myAccount-container" style="background-color: #708090;">
                     <div class="content" style="height:100vh">
                         <div class="myAccount-guideBox">
-                            <div class="myAccount-title">小账户管理</div>
+                            <div class="myAccount-title">链上账号管理</div>
                             <a class="myAccount-howtouse" @click="drawer = true" style="align-self:self-start;">
                                 <i class="el-icon-question" style="display:contents;"></i>
                                 我该如何使用账户管理？
@@ -106,8 +106,8 @@
                                         <template #header>
                                             <el-input v-model="search" size="mini" placeholder="输入名称关键字搜索" />
                                         </template>
-                                        <template #default="{ scope }">
-                                            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">移除</el-button>
+                                        <template #default="scope">
+                                            <el-button size="mini" class="delete-accountBT" type="danger" @click="handleDelete(scope.$index, scope.row)">移除</el-button>
                                         </template>
                                     </el-table-column>
                                 </el-table>
@@ -136,7 +136,7 @@ export default {
                 balance: '0.1eth',
                 description: "hiiiiiiiiiiiiiiiiiiiiiiiiii😁",
                 email: "22@qq.com",
-                phone: "13244422222",
+                phone: "1324s4422222",
                 chainAccounts: []
             },
             selectedAccount: null,
@@ -146,14 +146,15 @@ export default {
             name: '',
             address: '',
             search: '',
-            listData: [{
-                    name: 'dasa',
-                    address: '1232131sdaa21231asd123',
-                },
-                {
-                    name: 'asassa',
-                    address: '123dsad231asd123'
-                }
+            listData: [
+                // {
+                //     name: 'dasa',
+                //     address: '1232131sdaa21231asd123',
+                // },
+                // {
+                //     name: 'asassa',
+                //     address: '123dsad231asd123'
+                // }
             ],
         };
     },
@@ -174,6 +175,7 @@ export default {
     },
     methods: {
         logOut() {
+            this.selectedAccount = null; // 注销时清空选中的钱包地址
             this.$store.dispatch('logout');
             setTimeout(() => {
                 this.$router.push('/intro');
@@ -186,20 +188,8 @@ export default {
         },
         // 切换链账户管理部分的显示状态
         toggleAccountManagement() {
+            this.getAccountList();
             this.isAccountManagementVisible = !this.isAccountManagementVisible;
-        },
-        goToAccountManagement() {
-            this.$router.push('/myAccount');
-        },
-        async ensureUserLoaded({ state, dispatch }) {
-            if (!state.user) {
-                await dispatch('checkLoginStatus');
-            }
-            if (state.user) {
-                dispatch('loadAvatar');
-            } else {
-                console.error('用户未登录或加载失败');
-            }
         },
         loadAvatar() {
             const account = this.user.account;
@@ -213,12 +203,14 @@ export default {
                 console.log(localAvatarUrl);
                 this.user.avatar=localAvatarUrl;
                 this.$store.commit('setUserAvatar', localAvatarUrl);
+                this.$forceUpdate();
             } else {
                 axios.get(`http://localhost:28888/api/loadAvatar`, { params: { account } })
                 .then(res => {
                     if (res.data && res.data.avatarUrl) {
                         this.$store.commit('setUserAvatar', res.data.avatarUrl);
                         localStorage.setItem(`avatar_${account}`, res.data.avatarUrl);
+                        this.$forceUpdate();
                     }
                 })
                 .catch(error => {
@@ -227,13 +219,14 @@ export default {
             }
         },
         handleDelete(index, row) {
+            console.log('delllllll');
             this.$confirm('是否移除该账户？', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
                 axios.post('http://127.0.0.1:28888/api/removeAddress', row).then(res => {
-                    if (res.data.status === '200') {
+                    if (res.data.code == '200') {
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
@@ -249,7 +242,6 @@ export default {
             }).catch(() => {});
             console.log(index, row);
         },
-
         addSmallAccount() {
             if (this.name === '') {
                 this.$message.warning('账户名不得为空');
@@ -259,15 +251,18 @@ export default {
                 return;
             }
             let data = {
-                account: "123",
+                account: this.user.account,
                 address: this.address,
                 name: this.name,
             }
 
-            axios.post('http://127.0.0.1:2888/api/addSmallAccount', data)
+            axios.post('http://127.0.0.1:28888/api/addSmallAccount', data)
                 .then(response => {
-                    if (response.code === "200")
+                    console.log(response.data.code);
+                    if (response.data.code == '200'){
                         this.$message.success('导入成功');
+                        this.$router.go(0);                        
+                    }
                     else {
                         this.$message.error('导入失败');
                     }
@@ -278,7 +273,7 @@ export default {
         async getAccountList() {
             let res = await axios.get('http://127.0.0.1:28888/api/getSmallAccount', {
                 params: {
-                    account: this.account
+                    account: this.user.account
                 }
             }).catch(e => {
                 console.log(e)
@@ -292,10 +287,26 @@ export default {
                     };
                 });
             }
-        }
-
+        },
+        async connectWallet() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    // 请求用户连接MetaMask钱包
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    this.selectedAccount = accounts[0]; // 获取第一个钱包地址
+                    this.$forceUpdate();
+                    console.log(accounts[0]);
+                } catch (error) {
+                    console.error('连接钱包失败:', error);
+                }
+            } else {
+                console.error('MetaMask未检测到');
+                alert('请安装MetaMask钱包');
+            }
+        },
     },
     mounted() {
+        this.connectWallet();
         this.loadAvatar();
         this.account = localStorage.getItem('account');
         this.getAccountList();
@@ -319,13 +330,15 @@ export default {
 
 /* 内容样式 */
 .content {
-    width: 100%;
+    max-width: 200%;
+    /* width: 100%; */
     margin: 0 auto;
 }
 
 .manage-account-button.active {
-    background-color: #ff5900;
-    border-color: #ff5900;
+    background-color: #f3a479;
+    border-color: #f3a479;
+    color:  #ffffff;
 }
 
 .profile-titile{
@@ -344,7 +357,7 @@ h2 {
 }
 
 h3 {
-    font-size: 1.4em;
+    font-size: 1.3em;
     color:  #c64500;
     text-align: center;
 }
@@ -365,7 +378,7 @@ h4 {
 
 .home-navbar {
     margin-top: 20px;
-    margin-left: calc(50% - 55vw);
+    margin-left: calc(50% - 48vw);
     background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
     border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
     padding: 10px 20px;
@@ -611,12 +624,13 @@ h4 {
 
 .myAccount-container {
     position: relative;
+    background-color: #ffffff5b;
     display: flex;
     flex-direction: column;
     /* justify-content: center; */
     align-items: center;
-    min-height: 100vh;
-    min-width: 100vw;
+    min-height: 95vh;
+    min-width: 95vw;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
     background-image: linear-gradient(to top, #333 0%, rgb(47, 43, 43) 100%);
     ;
@@ -626,6 +640,7 @@ h4 {
 .myAccount-guideBox {
     margin-top: 50px;
     margin-left: 50px;
+    color:#ff5900;
     /* border: 1px solid green; */
     display: flex;
     flex-direction: column;
@@ -635,7 +650,7 @@ h4 {
 .myAccount-title {
     flex: 1;
     align-self: flex-start;
-    color: black;
+    color: rgb(229, 223, 223);
     font-weight: bold;
     font-size: 2em;
 }
@@ -668,6 +683,54 @@ h4 {
     display: flex;
     gap: 20px;
     flex-direction: column;
+}
+
+.create-accountBT{
+    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    color: #4d3535;
+    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
+    padding: 10px 10px;
+    border-radius: 10px; /* 设置圆角 */
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
+    margin-right: 10px; /* 增加一个右边距 */
+}
+
+.create-accountBT:hover{
+    background-color: #af4949; /* 设置为半透明 */
+    color: #ffffff;
+    border: 1px solid #af4949; /* 添加2px的边框，颜色与原背景色一致 */
+    padding: 10px 10px;
+    border-radius: 10px; /* 设置圆角 */
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
+    margin-right: 10px; /* 增加一个右边距 */
+}
+
+.delete-accountBT{
+    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    color: #4d3535;
+    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
+    padding: 5px 5px;
+    border-radius: 10px; /* 设置圆角 */
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
+    margin-right: 10px; /* 增加一个右边距 */    
+}
+
+.delete-accountBT:hover{
+    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    color: #f63900;
+    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
+    padding: 5px 5px;
+    border-radius: 10px; /* 设置圆角 */
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
+    margin-right: 10px; /* 增加一个右边距 */    
+}
+
+.myAccount-howtouse{
+    color:#fff5d7;
 }
 
 </style>

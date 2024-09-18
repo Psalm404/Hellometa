@@ -96,11 +96,11 @@ export default {
                     { pattern: /^[A-Za-z0-9_\u4e00-\u9fa5]{3,}$/, message: '公司名称只允许字母、数字、下划线和中文字符', trigger: 'blur' }
                 ],
                 phone: [
-                    { required: true, message: '手机号不能为空', trigger: 'blur' },
+                    // { required: true, message: '手机号不能为空', trigger: 'blur' },
                     { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号', trigger: 'blur' }
                 ],
                 email: [
-                    { required: true, message: '邮箱不能为空', trigger: 'blur' },
+                    // { required: true, message: '邮箱不能为空', trigger: 'blur' },
                     { type: 'email', message: '请输入有效的邮箱地址', trigger: 'blur' }
                 ],
                 password: [

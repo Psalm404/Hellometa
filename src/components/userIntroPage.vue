@@ -9,15 +9,15 @@
                                 <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
                             </a>
                             <div class="page-titile">
-                                <h3>Intro&Block Browser</h3>
+                                <h3>区块浏览器</h3>
                             </div>
                         </div>
                         <div class="want-to-be-right">
                             <ul class="home-navbar-menu">
-                                <li class="explore-item"><a href="#/exhibitWorks">Market</a></li>
-                                <li class="home-item"><a href="#/home">Home</a></li>
-                                <li class="upload-item"><a href="#/uploadWorks">Upload</a></li>
-                                <li class="records-item"><a href="#/recordWorks">My Records</a></li>
+                                <li class="explore-item"><a href="#/exhibitWorks">交易市场</a></li>
+                                <li class="home-item"><a href="#/home">个人中心</a></li>
+                                <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
+                                <li class="records-item"><a href="#/recordWorks">我的凭证</a></li>
                             </ul>
                             <div class="home-navbar-search">
                                 <!-- <div class="home-search-icon">
@@ -164,9 +164,15 @@ export default {
 }
 
 h3 {
-    font-size: 1.2em;
+    font-size: 1.3em;
     color:  #c64500;
     text-align:justify;
+}
+
+.page-titile {
+    position: absolute;
+    left: 14%;
+    top: 24px;
 }
 
 .home-navbar {

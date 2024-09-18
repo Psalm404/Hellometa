@@ -167,9 +167,9 @@ export default {
                     description: this.user.description,
                     avatar: this.user.avatar,
                 };
-                this.$message.info(this.formData.account);
+                console.log(this.formData.account);
             } else {
-                this.$message.error('用户信息未找到，请重新登录。');
+                console.error('用户信息未找到，请重新登录。');
             }
         },
         async updateInfo(formName) {

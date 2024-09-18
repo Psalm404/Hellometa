@@ -2,7 +2,13 @@
 <div class="myGas-container">
     <div class="content" style="height:100vh">
         <div class="myGas-guideBox">
-            <div class="myGas-title">燃料管理</div>
+            <div style="display: flex; justify-content: flex-start; gap: 10vw;">
+                <div class="myGas-title">燃料管理</div>
+                <el-breadcrumb class="router-arrow" separator-class="el-icon-arrow-right" style="margin-top: 13px;">
+                    <el-breadcrumb-item :to="{ path: '/home' }">个人中心</el-breadcrumb-item>
+                    <el-breadcrumb-item>燃料管理</el-breadcrumb-item>
+                </el-breadcrumb>                
+            </div>
             <a class="myGas-howtouse" @click="drawer = true" style="align-self:self-start;">
                 <i class="el-icon-question" style="display:contents;"></i>
                 我该如何使用燃料管理？</a>
@@ -24,7 +30,7 @@
                     <el-table-column prop="name" label="账户名称" width="320"></el-table-column>
                     <el-table-column prop="address" label="账户地址" width="390"></el-table-column>
                     <el-table-column prop="balance" label="账户余额" width="200"></el-table-column>
-                    <el-table-column align="right">
+                    <el-table-column :align="right">
                         <!-- eslint-disable-next-line -->
                         <template slot="header" slot-scope="scope">
                             <el-input v-model="search" size="mini" placeholder="输入名称关键字搜索" />
@@ -224,7 +230,7 @@ export default {
 
 .myGas-guideBox {
     margin-top: 50px;
-    margin-left: 50px;
+    margin-left: 52px;
     /* border: 1px solid green; */
     display: flex;
     flex-direction: column;
@@ -232,8 +238,9 @@ export default {
 }
 
 .myGas-title {
+    position: relative;
+    left: -33%;
     flex: 1;
-    align-self: flex-start;
     color: black;
     font-weight: bold;
     font-size: 2em;
@@ -270,5 +277,10 @@ export default {
 
 .myGas-container .el-button--primary span {
     color: white;
+}
+
+.router-arrow{
+    position: relative;
+    left: -75%;
 }
 </style>

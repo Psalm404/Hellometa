@@ -67,6 +67,7 @@ export default new Vuex.Store({
       // 清除 localStorage
       localStorage.removeItem('authToken');
       localStorage.removeItem('userInfo');
+      localStorage.removeItem('account');
     },
     login({ commit }, { token, user }) {
         commit('setLoginStatus', true);
@@ -76,6 +77,7 @@ export default new Vuex.Store({
         // 确保这里是将数据存储到 localStorage
         localStorage.setItem('authToken', token);
         localStorage.setItem('userInfo', JSON.stringify(user));
+        localStorage.setItem('account', user.account);
 
         // 可以在这里打印输出看看数据是否正确
         console.log('Logged in user:', user);
