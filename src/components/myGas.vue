@@ -158,7 +158,8 @@ export default {
             }, 200);
         },
         async getAccountList() {
-            let res = await axios.get('http://127.0.0.1:28888/api/getSmallAccount', {
+            const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+            let res = await axios.get(`${apiBaseUrl}/getSmallAccount`, {
                 params: {
                     account: this.account
                 }
@@ -197,7 +198,8 @@ export default {
             }) => {
                 let toAddress = info.address;
                 let amount = parseFloat(value);
-                axios.post('http://127.0.0.1:28888/api/sendFunds', {
+                const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+                    axios.post(`${apiBaseUrl}/sendFunds`, {
                     toAddress: toAddress,
                     amount: amount
                 }).then(res => {
@@ -245,7 +247,8 @@ export default {
                 account: this.account
             }
             console.log('account', this.account)
-            axios.get('http://127.0.0.1:28888/api/getUserBalance', {
+            const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+            axios.get(`${apiBaseUrl}/getUserBalance`, {
                 params: params
             }).then(res => {
                 if (res.data.code === 200) {
@@ -259,7 +262,8 @@ export default {
             const params = {
                 account: this.account
             }
-            await axios.get('http://127.0.0.1:28888/api/getRecord', {
+            const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+            await axios.get(`${apiBaseUrl}/getRecord`, {
                 params: params
             }).then(res => {
                 console.log(res)

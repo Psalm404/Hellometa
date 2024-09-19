@@ -177,7 +177,8 @@ export default {
                 if (valid) {
                     this.isNavigating = true;  // 显示遮罩层
                     try {
-                        const res = await axios.post('http://localhost:28888/api/updateInfo', {
+                        const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+                        const res = await axios.post(`${apiBaseUrl}/updateInfo`, {
                             account: this.formData.account,
                             name: this.formData.name,
                             phone: this.formData.phone,
@@ -220,7 +221,8 @@ export default {
                 if (valid) {
                     this.isNavigating = true;  // 显示遮罩层
                     try {
-                        const res = await axios.post('http://localhost:28888/api/updatePassword', {
+                        const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+                        const res = await axios.post(`${apiBaseUrl}/updatePassword`, {
                             account: this.formData.account,
                             old_password: this.formData.currentPassword,
                             new_password: this.formData.newPassword,
