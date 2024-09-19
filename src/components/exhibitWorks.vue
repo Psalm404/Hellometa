@@ -2,13 +2,49 @@
 <div class="container">
     <transition name="el-fade-in-linear">
         <div class="content" v-show="show">
-            <div class="cool-text">DISPLAY</div>
-            <div class=search-box> <i class="el-icon-search" style="font-size: large; line-height:33px;"></i>
-                <el-input class="search-by-name" placeholder="按名称搜索" v-model="searchName" size=small></el-input>
-                <Select class="search-by-type" placeholder="按类型搜索">
-                    <Option el-option label="文本" value="txt"></Option>
-                    <Option label="图片" value="pic"></Option>
-                </Select>
+            <nav class="home-navbar">
+                <div class="home-navbar-container">
+                    <div class="want-to-be-left">
+                        <a class="home-navbar-logo">
+                            <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
+                        </a>
+                        <div class="page-titile">
+                            <h3></h3>
+                        </div>
+                    </div>
+                    <div class="want-to-be-right">
+                        <ul class="home-navbar-menu">
+                            <li class="recharge-item"><a href="#/myGas">燃料充值</a></li>
+                            <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
+                            <li class="explore-item active"><a href="#/exhibitWorks">交易市场</a></li>
+                            <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
+                            <li class="records-item"><a href="#/recordWorks">我的凭证</a></li>
+                            <li class="home-item"><a href="#/home">个人中心</a></li>
+                        </ul>
+                        <div>
+                            <button class="home-navbar-button" @click="logOut">Log out</button>
+                        </div>
+                        <div class="home-navbar-profile">
+                            <a href="https://github.com/Psalm404/Hellometa" target="_blank">
+                                <img src="../assets/github.jpg" alt="Join us">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <!-- 将 DISPLAY 和搜索框包裹在一个新的容器中 -->
+            <div class="display-container">
+                <div class="profile-title">
+                    <h2>DISPLAY</h2>
+                </div>
+                <div class="search-box">
+                    <i class="el-icon-search" style="font-size: large; line-height:33px;"></i>
+                    <el-input class="search-by-name" placeholder="按名称搜索" v-model="searchName" size="small"></el-input>
+                    <Select class="search-by-type" placeholder="按类型搜索">
+                        <Option el-option label="文本" value="txt"></Option>
+                        <Option label="图片" value="pic"></Option>
+                    </Select>
+                </div>
             </div>
             <div class="grid-box">
                 <div v-for="(item, index) in gridData" :key="index" class="grid-item">
@@ -32,12 +68,12 @@ export default {
     mounted() {
         setTimeout(() => {
                 this.show = true;
-            }, 100),
-            this.getURLs();
+            }, 0),
+        this.getURLs();
     },
     data() {
         return {
-            show: false,
+            show: true ,
             searchName: '',
             searchType: '',
             source: "exhibit",
@@ -51,6 +87,12 @@ export default {
         },
     },
     methods: {
+                logOut() {
+            this.$store.dispatch('logout');
+            setTimeout(() => {
+                this.$router.push('/intro');
+            }, 200);
+        },
         async filterData() {
             console.log('searchName', this.searchName);
             console.log('searchType', this.searchType);
@@ -104,35 +146,43 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .container {
-    display: flex;
+    width: 100%;
+    height: auto;
+    /* display: flex;
     flex-direction: column;
     max-height: 100vh;
     overflow: hidden;
-    position: relative;
+    position: relative; */
 }
 
 .content {
+    max-width: 100%;
     width: 100%;
+    margin: 0 auto;
+    /* width: 100%;
     height: 100%;
     margin-left: 10%;
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow: auto; */
 }
 
-.cool-text {
-    position: absolute;
-    z-index: 0;
-    font-size: 4.5em;
-    top: 0;
-    left: 75px;
-    color: rgba(255, 87, 51, 0.8);
+/* 新增的样式 */
+.display-container {
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    justify-content: space-between; /* 在两端对齐 */
+    margin-top: 70px; /* 根据需要调整间距 */
+    padding: 0 15px; /* 根据需要调整内边距 */
 }
 
 .search-box {
+    position: relative;
+    top:0%;
+    left: -28%;
     z-index: 10;
     text-align: left;
     color: #9c9c9c;
@@ -141,8 +191,8 @@ export default {
     box-shadow: 2px 4px 15px #171717;
     background-color: rgb(48, 48, 48);
     border-radius: 5px;
-    margin: 60px 60px;
-    margin-bottom: 0;
+    margin: 0px 60px;
+    margin-left: 10%;
     display: flex;
     gap: 15px;
 }
@@ -154,5 +204,175 @@ export default {
     /* 一行四个，每个项目平均分配空间 */
     gap: 25px;
     margin: 20px 60px;
+}
+
+.home-navbar {
+    margin-top: 20px;
+    margin-left: calc(50% - 48vw);
+    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    width: 90%;
+    height: auto;
+    z-index: 1000;
+    border-radius: 25px; /* 设置圆角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+}
+
+/* Recharge */
+.recharge-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -100px; /* 根据需要调整位置 */
+}
+
+/* Browser */
+.intro-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -90px; /* 根据需要调整位置 */
+}
+
+/* Explore */
+.explore-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -80px; /* 根据需要调整位置 */
+}
+
+/* Upload */
+.upload-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -70px; /* 根据需要调整位置 */
+}
+
+/* Records */
+.records-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -60px; /* 根据需要调整位置 */
+}
+
+/* Home */
+.home-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -50px; /* 根据需要调整位置 */
+}
+
+.home-navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.want-to-be-left {
+    display: flex;
+    justify-content: flex-start; /* 左对齐 */
+    align-items: center;
+    flex-grow: 1; /* 使其占据剩余空间 */
+}
+
+.want-to-be-right {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.home-navbar-logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.home-navbar-logo {
+    font-size: 2px;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+.home-logo-image {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.home-navbar-title {
+    margin: 0;
+    padding: 0;
+}
+
+.home-navbar-menu li {
+    margin: 0 15px;
+}
+
+.home-navbar-menu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.home-navbar-menu li a {
+    color: #4d3535;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.home-navbar-menu li.active a {
+    font-size: 18px;
+    color:  #ff5900;
+}
+
+.home-navbar-menu li a:hover {
+    color:  #ff5900;
+}
+
+.home-navbar-actions {
+    display: flex;
+    align-items: center;
+}
+
+.home-navbar-button {
+    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    color: #4d3535;
+    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
+    padding: 10px 10px;
+    border-radius: 20px; /* 设置圆角 */
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
+    margin-right: 10px; /* 增加一个右边距 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+}
+
+.home-navbar-button:hover {
+    background-color: #ff5900;
+    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+}
+
+.home-navbar-profile img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.profile-titile{
+    z-index: 00; /* 设置一个较高的 z-index 使其在页面顶层 */
+}
+
+h2 {
+    position: relative;
+    left: 12%;
+    top: 23px;
+    font-size: 6em;
+    color:  #c64500;
+    text-align: center;
 }
 </style>

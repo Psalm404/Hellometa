@@ -9,22 +9,18 @@
                                 <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
                             </a>
                             <div class="page-titile">
-                                <h3>区块浏览器</h3>
+                                <h3></h3>
                             </div>
                         </div>
                         <div class="want-to-be-right">
                             <ul class="home-navbar-menu">
+                                <li class="recharge-item"><a href="#/myGas">燃料充值</a></li>
+                                <li class="intro-item active"><a href="#/blockBrowse">区块浏览器</a></li>
                                 <li class="explore-item"><a href="#/exhibitWorks">交易市场</a></li>
-                                <li class="home-item"><a href="#/home">个人中心</a></li>
                                 <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
                                 <li class="records-item"><a href="#/recordWorks">我的凭证</a></li>
+                                <li class="home-item"><a href="#/home">个人中心</a></li>
                             </ul>
-                            <div class="home-navbar-search">
-                                <!-- <div class="home-search-icon">
-                                    <input type="text" class="home-search-input" v-model="navSearchQuery"
-                                        @keyup.enter="navSearch" placeholder="Search...">
-                                </div> -->
-                            </div>
                             <div>
                                 <button class="home-navbar-button" @click="logOut">Log out</button>
                             </div>
@@ -54,36 +50,97 @@
                     </div>
                 </div>
                 <el-divider><i class="el-icon-menu"></i></el-divider>
-                <div class="block-search">
-                    <a href="#/blockBrowser">
-                        <h1 class="home-block-browser" @click="gotoBrowser">区块浏览器</h1>
-                    </a>
-                    <div class="chain-search-container">
-                        <div class="chain-search-box">
-                            <h3 style="color: aliceblue; margin: 10px;">搜索</h3>
-                            <input type="text" v-model="bkSearchQuery" @keyup.enter="bkSearch" placeholder="搜索地址/交易/区块/代币">
-                            <button @click="bkSearch">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                </svg>
-                            </button>
+                <!-- 区块浏览器部分开始 -->
+                <div class="block-browser">
+                    <img src="../assets/logo.png" class="block-browser-logo">
+                    <p class="browser-passage1">为工业互联网数据资产存证、确权、溯源需求</p>
+                    <p class="browser-passage2">提供安全、高效、可信的区块链服务</p>
+                    <h1 style="color: rgb(196,196,196);">区块浏览器</h1>
+                </div>
+                <div class="block-browser-search-box">
+                    <input type="text" class="block-browser-search-input" placeholder="搜索地址/交易/区块/代币"
+                        v-model="searchData" @keyup.enter="blockSearch">
+                    <button class="block-browser-search-button" @click="blockSearch">搜索</button>
+                </div>
+                <div v-if="show" class="block-result-card-box">
+                    <div v-for="(item, index) in searchResult" :key="index" class="block-result-card">
+                        <h2>区块 {{ index }}</h2>
+                        <div class="block-result-card-content">
+                            <el-divider><i class="el-icon-bottom"></i></el-divider>
+                            <div>
+                                <div v-for="(title, n) in blockTitle" :key="n" class="result-card-context">
+                                    <p v-if="(n === 18 || n === 19)"></p>
+                                    <p v-else>{{ title }}: {{ item[title] }}</p>
+                                </div>
+                                <div>
+                                    <el-collapse v-model="activeNames" @change="handleChange">
+                                        <el-collapse-item title="交易列表" :name="index" class="result-card-context">
+                                            <p>transactions: {{ item['transactions'] }}</p>
+                                            <p class="transaction-Tx-link" @click="showTransactionDetail(index)">
+                                                transactionsRoot: {{ item['transactionsRoot'] }}
+                                            </p>
+                                        </el-collapse-item>
+                                    </el-collapse>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div v-else class="block-result-card-box">
+                    <div class="block-result-card">
+                        <h2>查询结果</h2>
+                        <div class="block-result-card-content">
+                            <el-divider><i class="el-icon-bottom"></i></el-divider>
+                            <div>
+                                <p v-for="(item, index) in transactions_detail_title" :key="index"
+                                    class="result-card-context">{{ item }}: {{ transactionResult[index] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 区块浏览器部分结束 -->
             </div>
         </transition>
     </div>
 </template>
 
 <script>
+import getRecentBlocks from '@/commons/getRecentBlocks';
+import getTransaction from '@/commons/getTransaction';
+import getTransactionHash from '@/commons/getTransactionHash';
+import getURLbyTokenId from '@/commons/getURLbyTokenId';
+import debounce from 'lodash/debounce';
+
 export default {
+    created() {
+        this.blockSearch = debounce(this.blockSearch, 300);
+    },
     mounted() {
-        this.getURLs();
+        this.searchData = this.$route.query.bkSearchQuery ? this.$route.query.bkSearchQuery.toString() : '';
+        this.activeNames = Array.from({ length: 100 }, (_, index) => index);
+        this.blockSearch();
     },
     data() {
         return {
+            // 区块浏览器数据
+            show: true,
+            searchData: '',
+            activeNames: [],
+            searchResult: [],
+            showDetail: false,
+            blockTitle: [
+                'baseFeePerGas', 'difficulty', 'extraData', 'gasLimit', 'gasUsed',
+                'hash', 'logsBloom', 'miner', 'mixHash', 'nonce', 'number', 'parentHash',
+                'receiptsRoot', 'sha3Uncles', 'size', 'stateRoot', 'timestamp',
+                'totalDifficulty', 'transactions', 'transactionsRoot', 'uncles'
+            ],
+            transactionResult: [],
+            transactions_detail_title: [
+                'accessList', 'blockHash', 'blockNumber', 'chainId',
+                'data', 'from', 'gas', 'gasPrice', 'hash', 'input', 'maxFeePerGas',
+                'maxPriorityFeePerGas', 'nonce', 'r', 's', 'to', 'transactionIndex', 'type',
+                'v', 'value'
+            ],
             // 走马灯图片
             picture: [
                 require("@/assets/680aa819c894e632d3ce71e1ef533ea.png"),
@@ -95,7 +152,6 @@ export default {
                 require("@/assets/4.jpg"),
                 require("@/assets/5.jpg"),
             ],
-
             // 介绍文字
             textBlocks: [
                 {
@@ -113,54 +169,104 @@ export default {
                         '创造商业机会，甚至直接作为产品或服务出售。'
                 },
             ],
-            navSearchQuery: '',
-            bkSearchQuery: '',
         };
-    },
-    watch: {
-        searchName(newValue) {
-            this.filterData(newValue);
-        },
     },
     methods: {
         navSearch() {
             if (this.navSearchQuery.trim() === '') {
                 return;
             }
-            alert('nav button clicked')
+            alert('nav button clicked');
             this.navSearchQuery = '';
-        },
-        bkSearch() {
-            if (this.bkSearchQuery.trim() === '') {
-                return;
-            }
-            // alert('bkSearch button clicked');
-            // 清空搜索框
-            let tmp = this.bkSearchQuery;
-            this.bkSearchQuery = '';
-            // 跳转到区块浏览器界面
-            this.$router.push({ path: '/blockBrowser', query: { bkSearchQuery: tmp } });
-        },
-        gotoBrowser() {
-            this.$router.push({ path: '/blockBrowser', query: { bkSearchQuery: this.bkSearchQuery }});
         },
         logOut() {
             this.$store.dispatch('logout');
             setTimeout(() => {
                 this.$router.push('/intro');
-            }, 200); // 确保状态更新完成后再执行路由跳转
+            }, 200);
         },
-
-    }
-}
+        blockSearch() {
+            if (this.searchData === '') {
+                this.show = true;
+                console.log('search for all');
+                getRecentBlocks().then(blocks => {
+                    this.searchResult = [];
+                    for (let i = 0; i < blocks.length; i++) {
+                        let tmp = {};
+                        for (let j = 0; j < this.blockTitle.length; j++) {
+                            tmp[this.blockTitle[j]] = blocks[i]['block'][this.blockTitle[j]];
+                            if (tmp[this.blockTitle[j]] != null) {
+                                tmp[this.blockTitle[j]] = tmp[this.blockTitle[j]].toString();
+                            }
+                        }
+                        this.searchResult.push(tmp);
+                    }
+                }).catch(error => {
+                    console.error("Error fetching blocks:", error);
+                });
+            } else {
+                this.show = false;
+                if (this.searchData.startsWith('0x')) {
+                    console.log('search by hashText');
+                    this.searchByTH(this.searchData);
+                } else if (this.searchData.startsWith('http')) {
+                    console.log('search by url');
+                    this.searchByUrl(this.searchData);
+                } else {
+                    console.log('search by token id');
+                    this.searchByTokenId(this.searchData);
+                }
+            }
+            this.$nextTick(() => {
+                console.log('DOM已更新');
+            });
+            this.searchData = '';
+        },
+        async searchByUrl(url) {
+            let hashTx = await getTransactionHash(url);
+            if (hashTx === null) return false;
+            return this.searchByTH(hashTx);
+        },
+        async searchByTokenId(tokenId) {
+            let url = await getURLbyTokenId(tokenId);
+            return this.searchByUrl(url);
+        },
+        async searchByTH(hash) {
+            let res = await getTransaction(hash);
+            if (res === 'error') return false;
+            this.transactionResult = [];
+            for (let i = 0; i < this.transactions_detail_title.length; i++) {
+                this.transactionResult.push(res[this.transactions_detail_title[i]]);
+            }
+            console.log(this.transactionResult);
+            return true;
+        },
+        showTransactionDetail(index) {
+            let tmp = this.searchResult[index]['transactions'];
+            this.$router.push({
+                path: '/blockBrowse/transactionDetail',
+                query: { hash: tmp }
+            });
+        },
+        handleChange(val) {
+            console.log(val);
+        },
+    },
+};
 </script>
 
-
 <style scoped>
+/* 容器样式 */
 .container {
-    margin-left: calc(50% - 50vw); /* 使用calc函数让页面自动紧贴左侧 */
-    width: 100vw; /* 确保页面内容宽度占据整个视口宽度 */
-    height: 100vw;
+    width: 100%;
+    height: auto;
+}
+
+/* 内容样式 */
+.content {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
 }
 
 h3 {
@@ -170,14 +276,14 @@ h3 {
 }
 
 .page-titile {
-    position: absolute;
+    position: relative;
     left: 14%;
-    top: 24px;
+    top: -20%;
 }
 
 .home-navbar {
     margin-top: 20px;
-    margin-left: calc(50% - 55vw);
+    margin-left: calc(50% - 48vw);
     background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
     border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
     padding: 10px 20px;
@@ -189,6 +295,48 @@ h3 {
     border-radius: 25px; /* 设置圆角 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
     backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+}
+
+/* Recharge */
+.recharge-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -100px; /* 根据需要调整位置 */
+}
+
+/* Browser */
+.intro-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -90px; /* 根据需要调整位置 */
+}
+
+/* Explore */
+.explore-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -80px; /* 根据需要调整位置 */
+}
+
+/* Upload */
+.upload-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -70px; /* 根据需要调整位置 */
+}
+
+/* Records */
+.records-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -60px; /* 根据需要调整位置 */
+}
+
+/* Home */
+.home-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -50px; /* 根据需要调整位置 */
 }
 
 .home-navbar-container {
@@ -216,7 +364,7 @@ h3 {
 }
 
 .home-navbar-logo {
-    font-size: 24px;
+    font-size: 2px;
     font-weight: bold;
     color: #333;
     text-decoration: none;
@@ -232,39 +380,15 @@ h3 {
     padding: 0;
 }
 
+.home-navbar-menu li {
+    margin: 0 15px;
+}
+
 .home-navbar-menu {
     list-style: none;
-    padding: 0;
+    display: flex;
     margin: 0;
-    position: relative; /* 使其子元素的定位基于此父元素 */
-}
-
-/* Explore */
-.explore-item {
-    position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -400px; /* 根据需要调整位置 */
-}
-
-/* Home */
-.home-item {
-    position: absolute;
-    top: 10px; /* 根据需要调整位置 */
-    left: -300px; /* 根据需要调整位置 */
-}
-
-/* Upload */
-.upload-item {
-    position: absolute;
-    top: 10px; /* 根据需要调整位置 */
-    left: -200px; /* 根据需要调整位置 */
-}
-
-/* Records */
-.records-item {
-    position: absolute;
-    top: 10px; /* 根据需要调整位置 */
-    left: -100px; /* 根据需要调整位置 */
+    padding: 0;
 }
 
 .home-navbar-menu li a {
@@ -273,6 +397,11 @@ h3 {
     font-size: 18px;
     font-weight: bold;
     transition: color 0.3s;
+}
+
+.home-navbar-menu li.active a {
+    font-size: 18px;
+    color:  #ff5900;
 }
 
 .home-navbar-menu li a:hover {
@@ -298,12 +427,8 @@ h3 {
 }
 
 .home-navbar-button:hover {
-    background-color: rgba(255, 255, 255, 0.8); /* 修改hover背景色 */
-    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
-}
-
-.home-navbar-button:hover {
     background-color: #ff5900;
+    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
 }
 
 .home-navbar-profile img {
@@ -319,6 +444,8 @@ h3 {
 } */
 
 .home-card-container {
+    position: relative;
+    left: 5%;
     margin-top: 100px;
     height: auto;
     padding: 0; /* 移除任何内边距 */
@@ -352,7 +479,7 @@ h3 {
 }
 
 .home-introduction {
-    margin-left: calc(50% - 54vw);
+    margin-left: calc(50% - 50vw);
     font: "Microsoft YaHei";
     color: #edebeb;
 }
@@ -385,7 +512,7 @@ h3 {
 }
 
 .home-block-browser {
-    margin-left: calc(50% - 55vw);
+    margin-left: calc(50% - 50vw);
     display: inline-block; /* 使标题与搜索框在同一行 */
     vertical-align: left; /* 垂直对齐 */
     color: aliceblue;
@@ -432,5 +559,113 @@ h3 {
     width: 20px;
     height: 20px;
     fill: #666;
+}
+
+/* block browser */
+.block-browser {
+    position: relative;
+    left: 0%;
+    margin-top: 5px;
+}
+
+.block-browser-logo {
+    width: 360px;
+    height: auto;
+}
+
+.browser-passage1 {
+    font-family: Poppins, sans-serif;
+    color: #ffffff;
+    font-size: 30px;
+    padding: 25px 0px 30px;
+}
+
+.browser-passage2 {
+    font-family: Poppins, sans-serif;
+    color: #ffffff;
+    font-size: 28px;
+    padding: 0px 0px 60px;
+}
+
+.block-browser-search-box {
+    position: relative;
+    left: 0%;
+    font-family: Arial, sans-serif;
+    width: 700px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #ffffffab;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+}
+
+.block-browser-search-input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ccc;
+    background-color: #ffffffd5;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+.block-browser-search-button {
+    padding: 10px 20px;
+    background-color: #ff5100;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.block-browser-search-button:hover {
+    background-color: #ffc02d;
+    color: #ffffff94;
+}
+
+.block-result-card-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.block-result-card {
+    max-width: 80%;
+    margin-bottom: 50px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    width: 80%;
+    align-self: center;
+}
+
+.block-result-card:hover {
+    transform: translateY(-10px);
+}
+
+.block-result-card-content {
+    padding: 20px;
+}
+
+.result-card-context {
+    text-align: left;
+    padding-left: 30px;
+    padding-right: 30px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+}
+
+.transaction-Tx-link {
+    color: rgb(209, 100, 37);
+}
+
+.transaction-Tx-link:hover {
+    cursor: pointer;
 }
 </style>

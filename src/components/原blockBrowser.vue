@@ -210,7 +210,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .container {
     margin-left: calc(50% - 50vw); /* 使用calc函数让页面自动紧贴左侧 */
     width: 100vw; /* 确保页面内容宽度占据整个视口宽度 */

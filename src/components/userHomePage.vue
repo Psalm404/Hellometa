@@ -12,20 +12,26 @@
                                 <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
                             </a>
                             <div class="page-titile">
-                                <h3>个人中心</h3>
+                                <h3></h3>
                             </div>
                         </div>
                         <div class="want-to-be-right">
                             <ul class="home-navbar-menu">
                                 <li class="recharge-item"><a href="#/myGas">燃料充值</a></li>
-                                <li class="intro-item"><a href="#/u_intro">区块浏览器</a></li>
+                                <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
                                 <li class="explore-item"><a href="#/exhibitWorks">交易市场</a></li>
                                 <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
                                 <li class="records-item"><a href="#/recordWorks">我的凭证</a></li>
+                                <li class="home-item active"><a>个人中心</a></li>
                             </ul>
                             <div>
                                 <button class="home-navbar-button" @click="logOut">Log out</button>
-                            </div>                            
+                            </div>                 
+                            <div class="home-navbar-profile">
+                                <a href="https://github.com/Psalm404/Hellometa" target="_blank">
+                                    <img src="../assets/github.jpg" alt="Join us">
+                                </a>
+                            </div>           
                         </div>
                     </div>
                 </nav>              
@@ -395,7 +401,7 @@ export default {
                     address: this.address,
                     name: this.name,
                 };
-
+                console.log(data);
                 axios.post('http://127.0.0.1:28888/api/addSmallAccount', data).then(response => {
                     console.log('response', response)
                     if (response.data.code === 200) {
@@ -433,9 +439,9 @@ export default {
         },
     },
     mounted() {
+        this.account = localStorage.getItem('account');
         this.connectWallet();
         this.loadAvatar();
-        this.account = localStorage.getItem('account');
         this.getAccountList();
     }
 };
@@ -523,32 +529,39 @@ h4 {
 .recharge-item {
     position: relative;
     top: 10px; /* 根据需要调整位置 */
-    left: -90px; /* 根据需要调整位置 */
+    left: -100px; /* 根据需要调整位置 */
 }
 
 /* Browser */
 .intro-item {
     position: relative;
     top: 10px; /* 根据需要调整位置 */
-    left: -80px; /* 根据需要调整位置 */
+    left: -90px; /* 根据需要调整位置 */
 }
 
 /* Explore */
 .explore-item {
     position: relative;
     top: 10px; /* 根据需要调整位置 */
-    left: -70px; /* 根据需要调整位置 */
+    left: -80px; /* 根据需要调整位置 */
 }
 
 /* Upload */
 .upload-item {
     position: relative;
     top: 10px; /* 根据需要调整位置 */
-    left: -60px; /* 根据需要调整位置 */
+    left: -70px; /* 根据需要调整位置 */
 }
 
 /* Records */
 .records-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -60px; /* 根据需要调整位置 */
+}
+
+/* Home */
+.home-item {
     position: relative;
     top: 10px; /* 根据需要调整位置 */
     left: -50px; /* 根据需要调整位置 */
@@ -612,6 +625,11 @@ h4 {
     font-size: 18px;
     font-weight: bold;
     transition: color 0.3s;
+}
+
+.home-navbar-menu li.active a {
+    font-size: 18px;
+    color:  #ff5900;
 }
 
 .home-navbar-menu li a:hover {

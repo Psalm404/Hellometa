@@ -9,7 +9,7 @@ import exhibitWorks from './components/exhibitWorks.vue'
 import workDetails from './components/workDetails.vue'
 import workInfo from './components/workInfo.vue'
 import homePage from './components/userHomePage.vue'
-import blockBrowser from './components/blockBrowser.vue'
+// import blockBrowser from './components/原blockBrowser.vue'
 import transactionDetail from './components/transactionDetail.vue'
 import loginPage from './components/loginPage.vue'
 import registerPage from './components/registerPage.vue'
@@ -48,8 +48,12 @@ const router = new VueRouter({
         component: guestIntroPage
       },
       {
-        path: '/u_intro',
+        path: '/blockBrowse',
         component: userIntroPage
+      },
+      {
+        path: '/blockBrowse/transactionDetail',
+        component:transactionDetail
       },
       {
         path:'/uploadWorks',
@@ -71,14 +75,10 @@ const router = new VueRouter({
         path:'/workInfo',
         component:workInfo
       },
-      {
-        path: '/blockBrowser',
-        component:blockBrowser
-      },
-      {
-        path: '/blockBrowser/transactionDetail',
-        component:transactionDetail
-      },
+      // {
+      //   path: '/blockBrowser',
+      //   component:blockBrowser
+      // },
       {
         path: '/myAccount',
         component:myAccount
