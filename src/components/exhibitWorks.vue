@@ -14,7 +14,7 @@
                     </div>
                     <div class="want-to-be-right">
                         <ul class="home-navbar-menu">
-                            <li class="recharge-item"><a href="#/myGas">燃料充值</a></li>
+                            <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                             <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
                             <li class="explore-item active"><a href="#/exhibitWorks">交易市场</a></li>
                             <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
@@ -35,7 +35,7 @@
             <!-- 将 DISPLAY 和搜索框包裹在一个新的容器中 -->
             <div class="display-container">
                 <div class="profile-title">
-                    <h2>DISPLAY</h2>
+                    <h2>Display</h2>
                 </div>
                 <div class="search-box">
                     <i class="el-icon-search" style="font-size: large; line-height:33px;"></i>
@@ -87,7 +87,7 @@ export default {
         },
     },
     methods: {
-                logOut() {
+        logOut() {
             this.$store.dispatch('logout');
             setTimeout(() => {
                 this.$router.push('/intro');
@@ -204,6 +204,18 @@ export default {
     /* 一行四个，每个项目平均分配空间 */
     gap: 25px;
     margin: 20px 60px;
+}
+
+.grid-item {
+    color: white;
+    background-color: rgb(48, 48, 48);
+    height: 330px;
+    text-align: center;
+    border-radius: 7px;
+    box-shadow: 2px 4px 15px #171717;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc; /* 添加灰白色边框 */
 }
 
 .home-navbar {

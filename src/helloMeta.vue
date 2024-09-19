@@ -152,6 +152,7 @@ export default {
     text-align: center;
     color: #2c3e50;
     height: 100vh;
+    /* max-height: 100%; */
     text-align: center;
     background-color: #292929;
 }
@@ -165,6 +166,7 @@ export default {
     margin: 0; /* 移除任何默认外边距 */
     padding: 0; /* 移除任何默认内边距 */
     box-sizing: border-box; /* 确保内边距和边框不会影响元素的总宽度 */
+    background-color: #292929;
 }
 
 .login-modal {

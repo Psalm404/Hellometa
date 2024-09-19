@@ -1,26 +1,49 @@
 <template>
 <div class="myGas-container">
     <div class="content" style="height:100vh">
+        <nav class="home-navbar">
+                <div class="home-navbar-container">
+                    <div class="want-to-be-left">
+                        <a class="home-navbar-logo">
+                            <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
+                        </a>
+                        <div class="page-titile">
+                            <h3></h3>
+                        </div>
+                    </div>
+                    <div class="want-to-be-right">
+                        <ul class="home-navbar-menu">
+                            <li class="recharge-item  active"><a href="#/myGas">燃料管理</a></li>
+                            <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
+                            <li class="explore-item"><a href="#/exhibitWorks">交易市场</a></li>
+                            <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
+                            <li class="records-item"><a href="#/recordWorks">我的凭证</a></li>
+                            <li class="home-item"><a href="#/home">个人中心</a></li>
+                        </ul>
+                        <div>
+                            <button class="home-navbar-button" @click="logOut">Log out</button>
+                        </div>
+                        <div class="home-navbar-profile">
+                            <a href="https://github.com/Psalm404/Hellometa" target="_blank">
+                                <img src="../assets/github.jpg" alt="Join us">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+        </nav>
         <div class="myGas-guideBox">
-            <div style="display: flex; justify-content: flex-start; gap: 10vw;">
-                <div class="myGas-title">燃料管理</div>
-                <el-breadcrumb class="router-arrow" separator-class="el-icon-arrow-right" style="margin-top: 13px;">
-                    <el-breadcrumb-item :to="{ path: '/home' }">个人中心</el-breadcrumb-item>
-                    <el-breadcrumb-item>燃料管理</el-breadcrumb-item>
-                </el-breadcrumb>                
-            </div>
             <a class="myGas-howtouse" @click="drawer = true" style="align-self:self-start;">
                 <i class="el-icon-question" style="display:contents;"></i>
                 我该如何使用燃料管理？</a>
         </div>
         <div class="myGas-info">
             <div style="align-self: self-start; font-weight:bold; font-size:17px"> 待分配燃料 </div>
-            <div style="font-size:2em; align-self: self-start;">{{totalGas.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}}</div>
+            <div style="font-size:2em; align-self: self-start;">{{totalGas.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}} eth</div>
             <div style="display: flex; gap:10px">
-                <el-button type="primary" size="mini" @click="toGasRecharge()">燃料充值</el-button>
-                <!-- <el-button type="primary" size="mini" @click = "distributeGas()">分配燃料</el-button> -->
-                <el-button size="mini" @click="drawer2 = true">收支明细</el-button>
-                <el-button size="mini" @click="drawer3 = true">分配记录</el-button>
+                <el-button class="custom-button" size="mini" @click="toGasRecharge()">燃料充值</el-button>
+                <!-- <el-button class="custom-button" size="mini" @click="distributeGas()">分配燃料</el-button> -->
+                <el-button class="custom-button" size="mini" @click="drawer2 = true">收支明细</el-button>
+                <el-button class="custom-button" size="mini" @click="drawer3 = true">分配记录</el-button>
             </div>
         </div>
         <div class="myGas-accountList">
@@ -33,11 +56,11 @@
                     <el-table-column :align="right">
                         <!-- eslint-disable-next-line -->
                         <template slot="header" slot-scope="scope">
-                            <el-input v-model="search" size="mini" placeholder="输入名称关键字搜索" />
+                            <el-input class="custom-input" v-model="search" size="mini" placeholder="输入名称关键字搜索" />
                         </template>
                         <!-- eslint-disable-next-line -->
                         <template slot-scope="scope">
-                            <el-button size="mini" type="primary" @click="distributeGas(scope.$index, scope.row)">分配燃料</el-button>
+                            <el-button class="custom-button2" size="mini" @click="distributeGas(scope.$index, scope.row)">分配燃料</el-button>
                         </template>
                     </el-table-column>
 
@@ -107,6 +130,12 @@ export default {
         }
     },
     methods: {
+        logOut() {
+            this.$store.dispatch('logout');
+            setTimeout(() => {
+                this.$router.push('/intro');
+            }, 200);
+        },
         async getAccountList() {
             let res = await axios.get('http://127.0.0.1:28888/api/getSmallAccount', {
                 params: {
@@ -239,18 +268,26 @@ export default {
     align-items: center;
     min-height: 100vh;
     min-width: 100vw;
+    background-color:  #292929;;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
-    background-image: linear-gradient(to top, #e25323 0%, rgba(255, 201, 163, 0.821) 100%);
+    /* background-image: linear-gradient(to top, #1e0e09 0%, rgba(255, 115, 22, 0.901) 100%); */
     ;
 }
 
 .myGas-guideBox {
-    margin-top: 50px;
-    margin-left: 52px;
+    position: relative;
+    top:14%;
+    left: 8%;
+    margin-top: 90px;
+    margin-left: 90px;
     /* border: 1px solid green; */
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.myGas-howtouse{
+    color: #ff5900;
 }
 
 .myGas-title {
@@ -264,11 +301,12 @@ export default {
 
 .myGas-info {
     padding: 30px;
-    margin-left: 50px;
-    margin-top: 30px;
+    margin-left: 60px;
+    margin-top: 60px;
     width: 90%;
     /*侧边栏删除记得改*/
-    background-color: #fff;
+    border-color: #ff5900;
+    background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
     display: flex;
@@ -278,8 +316,8 @@ export default {
 
 .myGas-accountList {
     padding: 30px;
-    margin-left: 50px;
-    margin-top: 30px;
+    margin-left: 60px;
+    margin-top: 40px;
     width: 90%;
     /*侧边栏删除记得改*/
     /* height: 140px; */
@@ -303,5 +341,288 @@ export default {
 
 .el-icon-arrow-right{
     color: #fff;
+}
+.content {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+    /* width: 100%;
+    height: 100%;
+    margin-left: 10%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: auto; */
+}
+
+/* 新增的样式 */
+.display-container {
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    justify-content: space-between; /* 在两端对齐 */
+    margin-top: 70px; /* 根据需要调整间距 */
+    padding: 0 15px; /* 根据需要调整内边距 */
+}
+
+.search-box {
+    position: relative;
+    top:0%;
+    left: -28%;
+    z-index: 10;
+    text-align: left;
+    color: #9c9c9c;
+    padding: 10px 15px;
+    width: 500px;
+    box-shadow: 2px 4px 15px #171717;
+    background-color: rgb(48, 48, 48);
+    border-radius: 5px;
+    margin: 0px 60px;
+    margin-left: 10%;
+    display: flex;
+    gap: 15px;
+}
+
+.grid-box {
+    z-index: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 一行四个，每个项目平均分配空间 */
+    gap: 25px;
+    margin: 20px 60px;
+}
+
+.grid-item {
+    color: white;
+    background-color: rgb(48, 48, 48);
+    height: 330px;
+    text-align: center;
+    border-radius: 7px;
+    box-shadow: 2px 4px 15px #171717;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc; /* 添加灰白色边框 */
+}
+
+.home-navbar {
+    margin-top: 20px;
+    margin-left: calc(50% - 48vw);
+    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    width: 90%;
+    height: auto;
+    z-index: 1000;
+    border-radius: 25px; /* 设置圆角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+}
+
+/* Recharge */
+.recharge-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -100px; /* 根据需要调整位置 */
+}
+
+/* Browser */
+.intro-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -90px; /* 根据需要调整位置 */
+}
+
+/* Explore */
+.explore-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -80px; /* 根据需要调整位置 */
+}
+
+/* Upload */
+.upload-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -70px; /* 根据需要调整位置 */
+}
+
+/* Records */
+.records-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -60px; /* 根据需要调整位置 */
+}
+
+/* Home */
+.home-item {
+    position: relative;
+    top: 10px; /* 根据需要调整位置 */
+    left: -50px; /* 根据需要调整位置 */
+}
+
+.home-navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.want-to-be-left {
+    display: flex;
+    justify-content: flex-start; /* 左对齐 */
+    align-items: center;
+    flex-grow: 1; /* 使其占据剩余空间 */
+}
+
+.want-to-be-right {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.home-navbar-logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.home-navbar-logo {
+    font-size: 2px;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+.home-logo-image {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.home-navbar-title {
+    margin: 0;
+    padding: 0;
+}
+
+.home-navbar-menu li {
+    margin: 0 15px;
+}
+
+.home-navbar-menu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.home-navbar-menu li a {
+    color: #4d3535;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.home-navbar-menu li.active a {
+    font-size: 18px;
+    color:  #ff5900;
+}
+
+.home-navbar-menu li a:hover {
+    color:  #ff5900;
+}
+
+.home-navbar-actions {
+    display: flex;
+    align-items: center;
+}
+
+.home-navbar-button {
+    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    color: #4d3535;
+    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
+    padding: 10px 10px;
+    border-radius: 20px; /* 设置圆角 */
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
+    margin-right: 10px; /* 增加一个右边距 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+}
+
+.home-navbar-button:hover {
+    background-color: #ff5900;
+    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+}
+
+.home-navbar-profile img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.profile-titile{
+    z-index: 00; /* 设置一个较高的 z-index 使其在页面顶层 */
+}
+
+h2 {
+    position: relative;
+    left: 12%;
+    top: 23px;
+    font-size: 6em;
+    color:  #c64500;
+    text-align: center;
+}
+
+/* 自定义按钮样式 */
+::v-deep .custom-button {
+    background-color: #ff5900; /* 默认橙色背景 */
+    color: white;              /* 白色文字 */
+    border-radius: 5px;       /* 圆角 */
+    border: none;              /* 无边框 */
+    transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
+    border: 1px solid #ff5900; /* 添加橙色边框 */
+}
+
+::v-deep .custom-button:hover {
+    /* background-color: #e65000; 悬停时稍微加深橙色 */
+    background-color: white;   /* 按下时背景变为白色 */
+    color: #ff5900;            /* 文字变为橙色 */
+    border: 1px solid #ff5900; /* 添加橙色边框 */
+}
+
+::v-deep .custom-button:active {
+    background-color: white;   /* 按下时背景变为白色 */
+    color: #ff5900;            /* 文字变为橙色 */
+    border: 1px solid #ff5900; /* 添加橙色边框 */
+}
+
+::v-deep .custom-button2 {
+    background-color: #f6894f; 
+    color: white;             
+    border-radius: 5px;                
+    transition: background-color 0.3s, color 0.3s; 
+    border: 1px solid #f6894f; 
+}
+
+::v-deep .custom-button2:hover {
+    background-color: white;   
+    color: #f6894f; 
+    border: 1px solid #f6894f; 
+}
+
+::v-deep .custom-button2:active {
+    background-color: white;  
+    color: #f6894f; 
+    border: 1px solid#f6894f; 
+}
+
+::v-deep .custom-input .el-input__inner {
+    /* border-color: #ff5900; 将边框颜色改为橙色 */
+    border-radius: 5px;    /* 添加圆角 */
+}
+
+::v-deep .custom-input .el-input__inner:focus {
+    border-color: #e65000; /* 聚焦时边框颜色变深 */
+    box-shadow: 0 0 5px rgba(230, 80, 0, 0.5); /* 添加阴影效果 */
 }
 </style>

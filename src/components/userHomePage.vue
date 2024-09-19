@@ -17,7 +17,7 @@
                         </div>
                         <div class="want-to-be-right">
                             <ul class="home-navbar-menu">
-                                <li class="recharge-item"><a href="#/myGas">燃料充值</a></li>
+                                <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                                 <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
                                 <li class="explore-item"><a href="#/exhibitWorks">交易市场</a></li>
                                 <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
@@ -453,12 +453,14 @@ export default {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* max-height: 200%; */
 }
 
 /* 容器样式 */
 .container {
     width: 100%;
     height: auto;
+    max-height: 100%;
 }
 
 /* 内容样式 */
@@ -466,6 +468,7 @@ export default {
     max-width: 100%;
     width: 100%;
     margin: 0 auto;
+    /* max-height: 200%; */
 }
 
 .manage-account-button.active {

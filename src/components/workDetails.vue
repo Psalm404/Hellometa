@@ -73,7 +73,7 @@
                     </div>
                 </div>
             </div>
-            <div class="cool-text">DETAILS</div>
+            <div class="cool-text">Details</div>
         </div>
     </transition>
 </div>
@@ -322,8 +322,18 @@ export default {
     flex-direction: column;
 }
 
+.cool-text {
+    position: absolute;
+    z-index: 0;
+    font-size: 4.5em;
+    top: 0;
+    left: 75px;
+    color: rgba(255, 87, 51, 0.8);
+}
+
 .detail-box {
     margin: 60px 60px;
+    color: #ffffff;
     background-color: #303030;
     box-shadow: 0px 4px 15px #000000;
     height: 80vh;
