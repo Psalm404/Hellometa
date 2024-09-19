@@ -132,7 +132,8 @@ export default {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     document.getElementById('overlay').style.display = 'block';
-                    axios.post('http://localhost:28888/api/register', {
+                    const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+                    axios.post(`${apiBaseUrl}/register`, {
                         account: this.formData.account,
                         password: this.formData.password,
                         repeat_password: this.formData.confirmPassword, // 传递确认密码以进行匹配验证

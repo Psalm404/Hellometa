@@ -129,7 +129,8 @@ export default {
             this.showBackButton = true;
         },
         getExchangeRate() {
-            axios.get('http://127.0.0.1:28888/api/getExchangeRate').then(res => {
+            const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+            axios.get(`${apiBaseUrl}/getExchangeRate`).then(res => {
                 console.log(res)
                 if (res.data.code === 200) {
                     console.log(res.data.rates)
@@ -150,8 +151,9 @@ export default {
         },
         requirePayment() {
             console.log('account:', localStorage.getItem('account'))
+            const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
             const intervalId = setInterval(() => {
-                axios.post('http://127.0.0.1:28888/api/queryPayment', {
+                axios.post(`${apiBaseUrl}/queryPayment`, {
                         account: localStorage.getItem('account'),
                         out_trade_no: this.out_trade_no
                     })
@@ -199,7 +201,8 @@ export default {
                 subject: '充值'
             }
             console.log('submits')
-            axios.post('http://127.0.0.1:28888/api/payment', data).then(res => {
+            const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+            axios.post(`${apiBaseUrl}/payment`, data).then(res => {
                 this.isLoading = true
                 this.urlContent = res.data.url
                 console.log(this.urlContent)

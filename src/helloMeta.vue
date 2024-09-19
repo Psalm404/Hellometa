@@ -104,7 +104,8 @@ export default {
     },
     methods: {
         login() {
-            axios.post('http://localhost:28888/api/login', {
+            const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+            axios.post(`${apiBaseUrl}/login`, {
                 account: this.username,
                 password: this.password
             })

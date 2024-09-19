@@ -145,7 +145,8 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                axios.post('http://127.0.0.1:28888/api/removeAddress', row).then(res => {
+                const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+                    axios.post(`${apiBaseUrl}/removeAddress`, row).then(res => {
                     console.log(res);
                     if (res.data.code === 200) {
                         this.$message({
@@ -199,8 +200,8 @@ export default {
                     address: this.address,
                     name: this.name,
                 };
-
-                axios.post('http://127.0.0.1:28888/api/addSmallAccount', data).then(response => {
+                const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+                    axios.post(`${apiBaseUrl}/addSmallAccount`, data).then(response => {
                     console.log('response', response)
                     if (response.data.code === 200) {
                         this.$message.success('导入成功');
@@ -220,7 +221,8 @@ export default {
             }
         },
         getAccountList() {
-            axios.get('http://127.0.0.1:28888/api/getSmallAccount', {
+            const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+            axios.get(`${apiBaseUrl}/getSmallAccount`, {
                 params: {
                     account: this.account
                 }
