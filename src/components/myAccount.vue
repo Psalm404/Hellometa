@@ -191,14 +191,17 @@ export default {
                 console.log('addressList', addressList);
                 if (!Array.isArray(addressList) || !addressList.includes(this.address.toLowerCase())) {
                     this.$message.warning('未查找到该账户地址');
+                    console.log('1234')
                     return;
                 }
-
+                console.log('asds', data)
                 const data = {
                     account: this.account,
                     address: this.address,
                     name: this.name,
                 };
+
+                console.log('data', data)
 
                 axios.post('http://127.0.0.1:28888/api/addSmallAccount', data).then(response => {
                     console.log('response', response)
