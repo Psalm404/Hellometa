@@ -33,7 +33,7 @@ export default {
         setTimeout(() => {
             this.show = true;
         }, 100)
-        this.getURLs()
+        this.getURLs();
     },
     data() {
         return {
@@ -81,7 +81,7 @@ export default {
         async getURLs() {
             try {
                 this.allData = await getMyURLs();
-                print("hi",this.allData)
+                // print("hi",this.allData)  //罪魁祸首啊！
                 this.gridData = this.allData;
             } catch (e) {
                 console.log(e)

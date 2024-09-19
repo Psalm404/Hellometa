@@ -7,9 +7,9 @@
                 <el-breadcrumb class="router-arrow" separator-class="el-icon-arrow-right" style="margin-top: 13px;">
                     <el-breadcrumb-item :to="{ path: '/home' }">个人中心</el-breadcrumb-item>
                     <el-breadcrumb-item>燃料管理</el-breadcrumb-item>
-                </el-breadcrumb>                
+                </el-breadcrumb>
             </div>
-            <a class="myGas-howtouse" @click="drawer = true" style="align-self:self-start;">
+            <a class="myGas-howtouse" @click="drawer = true; " style="align-self:self-start;">
                 <i class="el-icon-question" style="display:contents;"></i>
                 我该如何使用燃料管理？</a>
         </div>
@@ -19,8 +19,8 @@
             <div style="display: flex; gap:10px">
                 <el-button type="primary" size="mini" @click="toGasRecharge()">燃料充值</el-button>
                 <!-- <el-button type="primary" size="mini" @click = "distributeGas()">分配燃料</el-button> -->
-                <el-button size="mini" @click="drawer2 = true">收支明细</el-button>
-                <el-button size="mini" @click="drawer3 = true">分配记录</el-button>
+                <el-button size="mini" @click="drawer2 = true; getRecord();">收支明细</el-button>
+                <el-button size="mini" @click="drawer3 = true; getRecord();">分配记录</el-button>
             </div>
         </div>
         <div class="myGas-accountList">
@@ -30,7 +30,7 @@
                     <el-table-column prop="name" label="账户名称" width="320"></el-table-column>
                     <el-table-column prop="address" label="账户地址" width="390"></el-table-column>
                     <el-table-column prop="balance" label="账户余额" width="200"></el-table-column>
-                    <el-table-column :align="right">
+                    <el-table-column align="right">
                         <!-- eslint-disable-next-line -->
                         <template slot="header" slot-scope="scope">
                             <el-input v-model="search" size="mini" placeholder="输入名称关键字搜索" />
@@ -48,6 +48,29 @@
 
     <el-drawer size="40%" :visible.sync="drawer" :with-header="false">
         <div style="font-size:22px; font-weight:bold; color:black; margin-top:10px;">我该如何使用燃料管理?</div>
+        <div style="margin:20px">
+            <div style="display:flex; flex-direction: column; align-items: flex-start; gap:10px;">
+                <div style="font-weight:bold">一、在链账户管理中导入账户 </div>
+                <div style="font-weight:bold">二、充值账号余额 </div>
+                <div style="font-weight:bold">三、将余额分配给小账户</div>
+            </div>
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 一、在链账户管理中导入账户 </div>
+            <br />
+            <div style="text-align: start;">&emsp;&emsp;进入个人中心，按照指引导入MetaMask钱包账户。</div>
+            <div>
+                <el-image :src="require('@/assets/gas1.png') "></el-image>
+            </div>
+            <br />
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 二、充值账号余额 </div>
+            <br />
+            <div style="text-align: start;">&emsp;&emsp;点击'燃料充值'按钮，按照指引充值燃料余额。</div>
+            <br />
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 三、将余额分配给小账户 </div>
+            <br />
+            <div style="text-align: start;">&emsp;&emsp;在下方的链账户列表中，点击右侧按钮进行燃料分配。该操作将会根据分配数量，将余额中的燃料分配给指定小账户。</div>
+            <br />
+            <div style="text-align: start;">&emsp;&emsp;注意，燃料充值和分配都是不可逆的，请确保无误后再进行操作。充值和分配记录分别可在'收支明细'和'分配记录'中进行查看。</div>
+        </div>
     </el-drawer>
     <el-drawer size="40%" :visible.sync="drawer2" :with-header="false">
         <div style="font-size:20px;color:black; margin-top:10px;">收支明细</div>
@@ -66,7 +89,7 @@
         <div style="font-size:20px;color:black; margin-top:10px;">分配记录</div>
         <template>
             <el-table :data="distributeRecord" style="width: 90%; margin:10px 30px;">
-                <el-table-column prop="type" label="交易类型" width="180">
+                <el-table-column prop="address" label="分配账户" width="180">
                 </el-table-column>
                 <el-table-column prop="amount" label="燃料变动" width="180">
                 </el-table-column>
@@ -85,10 +108,8 @@ export default {
     mounted() {
         this.account = localStorage.getItem('account')
         this.getAccountList();
+
         this.getTotalGas();
-
-        this.getRecord();
-
     },
     data() {
         return {
@@ -160,6 +181,8 @@ export default {
                             type: 'success',
                             message: '分配成功'
                         });
+                        this.getAccountBalance();
+                        this.getTotalGas();
                     }
                 });
 
@@ -299,13 +322,13 @@ export default {
     color: white;
 }
 
-.router-arrow{
+.router-arrow {
     color: #fff;
     position: relative;
     left: -75%;
 }
 
-.el-icon-arrow-right{
+.el-icon-arrow-right {
     color: #fff;
 }
 </style>

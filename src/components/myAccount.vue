@@ -192,9 +192,10 @@ export default {
                 console.log('addressList', addressList);
                 if (!Array.isArray(addressList) || !addressList.includes(this.address.toLowerCase())) {
                     this.$message.warning('未查找到该账户地址');
+                    console.log('1234')
                     return;
                 }
-
+                console.log('asds', data)
                 const data = {
                     account: this.account,
                     address: this.address,
