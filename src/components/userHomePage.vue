@@ -20,8 +20,12 @@
                                 <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                                 <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
                                 <li class="explore-item"><a href="#/exhibitWorks">交易市场</a></li>
-                                <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
-                                <li class="records-item"><a href="#/recordWorks">我的凭证</a></li>
+                                <li class="upload-item">
+                                    <a href="#/uploadWorks" :class="{ disabled: !$store.state.isAccountMatched }">凭证上传</a>
+                                </li>
+                                <li class="records-item">
+                                    <a href="#/recordWorks" :class="{ disabled: !$store.state.isAccountMatched }">我的凭证</a>
+                                </li>
                                 <li class="home-item active"><a>个人中心</a></li>
                             </ul>
                             <div>
@@ -50,6 +54,9 @@
                                 <p>剩余燃料: <span>{{ user.balance }}</span></p>
                                 <p>邮箱&电话: <span>{{ user.email }}   |   {{ user.phone }}</span></p>
                                 <p>连接到的钱包账户: <span>{{ selectedAccount ? selectedAccount : '未检测到钱包' }}</span></p>
+                                <p v-if="!isAccountMatched && selectedAccount" class="warning-message">
+                                非所属小账户！请将此账户导入或切换至其他账户
+                                </p>
                                 <!-- 重要的改动：添加动态类和点击事件 -->
                                 <button 
                                     class="manage-account-button" 
@@ -244,7 +251,11 @@ export default {
         },
         filteredListData() {
             return this.listData.filter(data => !this.search || data.name.toLowerCase().includes(this.search.toLowerCase()));
-        }
+        },
+        isAccountMatched() {
+            if (!this.selectedAccount || !this.listData) return false;
+            return this.listData.some(item => item.address.toLowerCase() === this.selectedAccount.toLowerCase());
+        },
     },
     methods: {
         logOut() {
@@ -286,34 +297,6 @@ export default {
                 console.error('Error loading avatar:', error);
             });
         },
-        // addSmallAccount() {
-        //     if (this.name === '') {
-        //         this.$message.warning('账户名不得为空');
-        //         return;
-        //     } else if (this.address === '') {
-        //         this.$message.warning('账户地址不得为空');
-        //         return;
-        //     }
-        //     let data = {
-        //         account: this.user.account,
-        //         address: this.address,
-        //         name: this.name,
-        //     }
-
-        //     axios.post('http://127.0.0.1:28888/api/addSmallAccount', data)
-        //         .then(response => {
-        //             console.log(response.data.code);
-        //             if (response.data.code == '200'){
-        //                 this.$message.success('导入成功');
-        //                 this.$router.go(0);                        
-        //             }
-        //             else {
-        //                 this.$message.error('导入失败');
-        //             }
-        //         }).catch(e => {
-        //             console.log(e)
-        //         })
-        // },
         async getAccountList() {
             const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
             let res = await axios.get(`${apiBaseUrl}/getSmallAccount`, {
@@ -331,6 +314,7 @@ export default {
                         addresses: item || 'null'
                     };
                 });
+                this.checkAccountMatch(); // 在数据获取后检查账户匹配
             }
         },
         handleDelete(index, row) {
@@ -416,18 +400,43 @@ export default {
         async connectWallet() {
             if (typeof window.ethereum !== 'undefined') {
                 try {
-                    // 请求用户连接MetaMask钱包
+                    // 请求用户连接 MetaMask 钱包
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     this.selectedAccount = accounts[0]; // 获取第一个钱包地址
-                    this.$forceUpdate();
-                    console.log(accounts[0]);
+                    this.checkAccountMatch(); // 检查账户是否匹配
+                    console.log('当前连接的 MetaMask 账号:', accounts[0]);
+
+                    // 添加账户变更事件监听器
+                    window.ethereum.on('accountsChanged', (accounts) => {
+                        if (accounts.length === 0) {
+                            // 用户已注销
+                            console.log('用户已注销');
+                            this.selectedAccount = null;
+                        } else {
+                            this.selectedAccount = accounts[0];
+                            console.log('MetaMask 账号已更改:', accounts[0]);
+                        }
+                        this.checkAccountMatch(); // 检查账户是否匹配
+                    });
                 } catch (error) {
                     console.error('连接钱包失败:', error);
                 }
             } else {
-                console.error('MetaMask未检测到');
-                alert('请安装MetaMask钱包');
+                console.error('MetaMask 未检测到');
+                alert('请安装 MetaMask 钱包');
             }
+        },
+        checkAccountMatch() {
+            const matched = this.isAccountMatched;
+            this.$store.commit('setAccountMatched', matched);
+        },
+    },
+    watch: {
+        selectedAccount() {
+            this.checkAccountMatch();
+        },
+        listData() {
+            this.checkAccountMatch();
         },
     },
    
@@ -866,6 +875,15 @@ h4 {
 
 .myAccount-howtouse{
     color:#fff5d7;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.warning-message{
+    color: #f63900;
 }
 
 </style>
