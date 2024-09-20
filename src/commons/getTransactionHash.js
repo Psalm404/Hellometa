@@ -3,7 +3,8 @@ import axios from 'axios';
 async function getTransactionHash(tokenURI) {
     try {
         // 调用后端接口获取交易哈希
-        const response = await axios.get('/api/getTxHashByTokenURI', {
+        const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+        const response = await axios.get(`${apiBaseUrl}/getTxHashByTokenURI`, {
             params: {
                 tokenURI: tokenURI
             }

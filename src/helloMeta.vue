@@ -105,6 +105,7 @@ export default {
     methods: {
         login() {
             const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+            console.log('apiBaseUrl::'+apiBaseUrl);
             axios.post(`${apiBaseUrl}/login`, {
                 account: this.username,
                 password: this.password

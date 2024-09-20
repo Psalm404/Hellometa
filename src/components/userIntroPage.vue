@@ -64,7 +64,7 @@
                 </div>
                 <div v-if="show" class="block-result-card-box">
                     <div v-for="(item, index) in searchResult" :key="index" class="block-result-card">
-                        <h2>区块 {{ index }}</h2>
+                        <h2>区块{{ index }}</h2>
                         <div class="block-result-card-content">
                             <el-divider><i class="el-icon-bottom"></i></el-divider>
                             <div>
@@ -77,7 +77,8 @@
                                         <el-collapse-item title="交易列表" :name="index" class="result-card-context">
                                             <p>transactions: {{ item['transactions'] }}</p>
                                             <p class="transaction-Tx-link" @click="showTransactionDetail(index)">
-                                                transactionsRoot: {{ item['transactionsRoot'] }}
+                                                transactionsRoot: {{
+                                                    item['transactionsRoot'] }}
                                             </p>
                                         </el-collapse-item>
                                     </el-collapse>
@@ -94,6 +95,9 @@
                             <div>
                                 <p v-for="(item, index) in transactions_detail_title" :key="index"
                                     class="result-card-context">{{ item }}: {{ transactionResult[index] }}</p>
+                                <!-- <div v-for="(item, index) in transactionResult" :key="index" class="result-card-context">
+                                    <p v-for="(item, index) in transactionResult" :key="index">{{ index }}: {{ item }}</p>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -172,13 +176,6 @@ export default {
         };
     },
     methods: {
-        navSearch() {
-            if (this.navSearchQuery.trim() === '') {
-                return;
-            }
-            alert('nav button clicked');
-            this.navSearchQuery = '';
-        },
         logOut() {
             this.$store.dispatch('logout');
             setTimeout(() => {
@@ -232,16 +229,23 @@ export default {
             return this.searchByUrl(url);
         },
         async searchByTH(hash) {
-            let res = await getTransaction(hash);
+            let res = await getTransaction(hash)
             if (res === 'error') return false;
-            this.transactionResult = [];
+
+            // 后续处理
+            console.log(this.transactionResult)
+            if (this.transactionResult.length > 0) {
+                this.transactionResult = []
+            }
+            console.log(this.transactionResult)
             for (let i = 0; i < this.transactions_detail_title.length; i++) {
                 this.transactionResult.push(res[this.transactions_detail_title[i]]);
             }
             console.log(this.transactionResult);
-            return true;
+            return true
         },
         showTransactionDetail(index) {
+            console.log('index::'+index);
             let tmp = this.searchResult[index]['transactions'];
             this.$router.push({
                 path: '/blockBrowse/transactionDetail',
@@ -454,30 +458,12 @@ h3 {
     box-sizing: border-box; /* 确保padding和border包含在宽度内 */
 }
 
-.el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-}
-
-.el-carousel__item:nth-child(2n+1) {
-    background-color: #d3dce6;
-}
-
 .home-card-img {
     width: 100%; /* 图片宽度填充整个容器 */
     height: 100%; /* 图片高度填充整个容器 */
     object-fit: cover; /* 保持图片比例，同时填充整个容器 */
 }
 
-.el-divider {
-    text-align: center; /* 可以设置为 left, center, 或 right */
-    margin-left: calc(50% - 50vw); /* 根据需要调整整体对齐 */
-    margin-top: 20px; /* 增加上方空白间距 */
-    margin-bottom: 20px; /* 增加下方空白间距 */
-}
-
-.el-divider i {
-    /* introduction白框内图标样式调整 */
-}
 
 .home-introduction {
     margin-left: calc(50% - 50vw);

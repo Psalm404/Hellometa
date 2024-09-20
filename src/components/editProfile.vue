@@ -45,11 +45,10 @@
                             <el-form-item prop="avatar">
                                 <el-upload
                                     class="avatar-uploader"
-                                    action="http://localhost:28888/api/uploadAvatar"
                                     :show-file-list="false"
                                     :before-upload="beforeAvatarUpload"
                                     :on-success="handleAvatarSuccess"
-                                    :data="{ account: formData.account }"
+                                    :http-request="customRequest"
                                     accept="image/*"
                                 >
                                     <img v-if="formData.avatar" :src="formData.avatar" class="avatar">
@@ -57,6 +56,7 @@
                                 </el-upload>
                             </el-form-item>
                         </div>
+                        
                         <!-- 头像 -->
                     </div>
                 </div>
@@ -121,11 +121,11 @@ export default {
                     { pattern: /^[A-Za-z0-9_\u4e00-\u9fa5]{3,}$/, message: '公司名称只允许字母、数字、下划线和中文字符', trigger: 'blur' }
                 ],
                 phone: [
-                    { required: true, message: '手机号不能为空', trigger: 'blur' },
+                    // { required: true, message: '手机号不能为空', trigger: 'blur' },
                     { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号', trigger: 'blur' }
                 ],
                 email: [
-                    { required: true, message: '邮箱不能为空', trigger: 'blur' },
+                    // { required: true, message: '邮箱不能为空', trigger: 'blur' },
                     { type: 'email', message: '请输入有效的邮箱地址', trigger: 'blur' }
                 ],
                 currentPassword: [
@@ -265,6 +265,7 @@ export default {
                 this.formData.avatar = URL.createObjectURL(file.raw); // 本地预览图片
                 this.$message.success('头像上传成功！');
                 // 更新Vuex中的用户信息
+                console.log(this.formData.avatar);
                 this.$store.commit('setUser', {
                     ...this.user,
                     avatar: this.formData.avatar,
@@ -274,17 +275,49 @@ export default {
             }
         },
         beforeAvatarUpload(file) {
-            const isImage = file.type === 'image/jpeg' || file.type === 'image/png';
-            const isLt2M = file.size / 1024 / 1024 < 2;
-
+            console.log('准备上传文件:', file);
+            console.log('上传的账户名:', this.formData.account);
+            // 可以在这里检查文件类型或大小
+            const isImage = file.type.startsWith('image/');
             if (!isImage) {
-                this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!');
+            this.$message.error('上传的文件必须是图片类型');
+            return false;
             }
-            if (!isLt2M) {
-                this.$message.error('上传头像图片大小不能超过 2MB!');
-            }
-            return isImage && isLt2M;
+            return true; // 返回 true 继续上传
         },
+        customRequest({ file, onSuccess, onError }) {
+            const formData = new FormData();
+            formData.append("account", this.formData.account); // Assumes formData.account has the account value
+            formData.append("avatar", file, file.name);
+
+            // Setting headers
+            const headers = new Headers();
+            headers.append("User-Agent", "Apifox/1.0.0 (https://apifox.com)");
+            headers.append("Accept", "*/*");
+            headers.append("Host", "8.134.209.144:28888");
+            headers.append("Connection", "keep-alive");
+
+            // Fetch API for the upload
+            fetch("http://8.134.209.144:28888/api/uploadAvatar", {
+                method: 'POST',
+                headers: headers,
+                body: formData,
+                redirect: 'follow'
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                if (result.code === 200) {
+                    onSuccess(result);
+                } else {
+                    onError(new Error('上传失败'));
+                }
+            })
+            .catch(error => {
+                console.log('error', error);
+                onError(error);
+            });
+        }
     }
 };
 </script>
