@@ -38,12 +38,12 @@
         </div>
         <div class="myGas-info">
             <div style="align-self: self-start; font-weight:bold; font-size:17px"> 待分配燃料 </div>
-            <div style="font-size:2em; align-self: self-start;">{{totalGas.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}} eth</div>
+            <div style="font-size:2em; align-self: self-start;">{{totalGasETH}} ETH</div>
             <div style="display: flex; gap:10px">
                 <el-button class="custom-button" size="mini" @click="toGasRecharge()">燃料充值</el-button>
                 <!-- <el-button class="custom-button" size="mini" @click="distributeGas()">分配燃料</el-button> -->
-                <el-button class="custom-button" size="mini" @click="drawer2 = true">收支明细</el-button>
-                <el-button class="custom-button" size="mini" @click="drawer3 = true">分配记录</el-button>
+                <el-button class="custom-button" size="mini" @click="drawer2 = true; getRecord()">收支明细</el-button>
+                <el-button class="custom-button" size="mini" @click="drawer3 = true; getRecord()">分配记录</el-button>
             </div>
         </div>
         <div class="myGas-accountList">
@@ -52,7 +52,7 @@
                 <el-table :key="listData.length" :data="listData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width:100%">
                     <el-table-column prop="name" label="账户名称" width="320"></el-table-column>
                     <el-table-column prop="address" label="账户地址" width="390"></el-table-column>
-                    <el-table-column prop="balance" label="账户余额" width="200"></el-table-column>
+                    <el-table-column prop="balance" label="账户余额（ETH）" width="200"></el-table-column>
                     <el-table-column align="right">
                         <!-- eslint-disable-next-line -->
                         <template slot="header" slot-scope="scope">
@@ -131,7 +131,6 @@ export default {
     mounted() {
         this.account = localStorage.getItem('account')
         this.getAccountList();
-
         this.getTotalGas();
     },
     data() {
@@ -180,7 +179,8 @@ export default {
         },
         distributeGas(index, info) {
             console.log(index, info)
-            this.$prompt('请输入分配燃料数量:', '分配燃料', {
+            let total = Web3.utils.fromWei(this.totalGas, 'ether');
+            this.$prompt('请输入分配燃料数量（eth）;', '分配燃料', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 inputValidator: (value) => {
@@ -188,8 +188,8 @@ export default {
                     if (isNaN(numberValue)) {
                         return '请输入有效数字';
                     }
-                    if (numberValue > this.totalGas * 0.9) {
-                        return '超过最大可分配额度 (' + (this.totalGas * 0.99).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ')';
+                    if (numberValue > total * 0.9) {
+                        return '超过最大可分配额度 (' + (total * 0.99).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ')';
                     }
                     return true;
                 }
@@ -197,7 +197,7 @@ export default {
                 value
             }) => {
                 let toAddress = info.address;
-                let amount = parseFloat(value);
+                let amount = parseFloat(Web3.utils.toWei(value, 'ether'));
                 const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
                     axios.post(`${apiBaseUrl}/sendFunds`, {
                     toAddress: toAddress,
@@ -229,7 +229,7 @@ export default {
                     });
 
                     const balanceInEth = web3.utils.fromWei(balance, 'ether'); // 将 wei 转换为 ETH
-                    const formattedBalance = parseFloat(balanceInEth).toFixed(10); // 保留 10 位小数
+                    const formattedBalance = parseFloat(balanceInEth).toFixed(8); // 保留 10 位小数
 
                     // 使用 $set 更新数据
                     this.$set(this.listData, this.listData.indexOf(item), {
@@ -253,6 +253,7 @@ export default {
             }).then(res => {
                 if (res.data.code === 200) {
                     this.totalGas = res.data.balance;
+                    this.totalGasETH = Web3.utils.fromWei(this. totalGas, 'ether');
                 }
             }).catch(e => {
                 console.log(e)
@@ -294,7 +295,7 @@ export default {
     /* justify-content: center; */
     align-items: center;
     min-height: 100vh;
-    min-width: 100vw;
+    max-width: 100vw;
     background-color:  #292929;;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
     /* background-image: linear-gradient(to top, #1e0e09 0%, rgba(255, 115, 22, 0.901) 100%); */
@@ -303,10 +304,10 @@ export default {
 
 .myGas-guideBox {
     position: relative;
-    top:14%;
-    left: 8%;
-    margin-top: 90px;
-    margin-left: 90px;
+    /* border:1px solid green; */
+    /* left: 8%; */
+    margin-top: 120px;
+    margin-left: 60px;
     /* border: 1px solid green; */
     display: flex;
     flex-direction: column;

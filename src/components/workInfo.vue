@@ -54,8 +54,8 @@
                     </div>
                 </div>
                 <div class="detail-box-bottom">
-                    <div >
-                        <button @click = "buyNFT"> 购买 </button>
+                    <div>
+                        <button @click="buyNFT"> 购买 </button>
                     </div>
                     <div class="back-button">
                         <button @click="backToRecord"> 返回 </button>
@@ -80,7 +80,7 @@ import getTransactionHash from '@/commons/getTransactionHash';
 import getTokenIdbyURL from '@/commons/getTokenIdbyURL';
 import getTokenPrice from '@/commons/getTokenPrice';
 import buyToken from '@/commons/buyToken';
-
+import updateTokenPrice from '@/commons/updateTokenPrice';
 export default {
     mounted() {
         // 在组件创建时获取路由参数
@@ -102,24 +102,28 @@ export default {
             workType: '',
             workDesc: '',
             workTokenID: '',
-            workIsOnMarket:0,
+            workIsOnMarket: 0,
             workPrice: null,
         }
     },
     methods: {
-        async buyNFT(){
-            try{
+        async buyNFT() {
+            try {
                 let txHash = await buyToken(this.workTokenID, this.workPrice);
-                if (txHash){
+                let transaction = await updateTokenPrice(this.workTokenID, 0);
+
+                console.log("transaction", transaction);
+                if (txHash) {
                     this.$message({
                         type: 'success',
                         message: '购买成功!'
                     });
                 }
-            }catch(error){
+
+            } catch (error) {
                 console.log(error)
             }
-           
+
         },
         async fetchJson(jsonURL) {
             try {
@@ -158,7 +162,12 @@ export default {
                 this.workCreator = nftData.creator;
                 this.workPrice = await getTokenPrice(this.workTokenID)
                 this.workHashValue = await getTransactionHash(this.fileURL);
-
+                if (nftData.type == 'txt') {
+                    this.wordType = '文本'
+                    this.picUrl = require('@/assets/text.png')
+                }else{
+                     this.wordType = '图片'
+                }
             } catch (error) {
                 console.error('Error fetching NFT data:', error);
             }
@@ -285,7 +294,7 @@ export default {
     /* border: 1px solid red; */
     align-items: center;
     justify-content: center;
-    gap:200px;
+    gap: 200px;
 }
 
 .detail-box-bottom button {

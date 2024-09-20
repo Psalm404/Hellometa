@@ -258,7 +258,7 @@ export default {
 <style scoped>
 /* 容器样式 */
 .container {
-    width: 100%;
+    max-width: 100%;
     height: auto;
     max-height: 100%;
 }
@@ -267,7 +267,6 @@ export default {
 .content {
     max-width: 100%;
     max-height: 100%;
-    width: 100%;
     margin: 0;
 }
 

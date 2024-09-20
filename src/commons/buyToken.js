@@ -15,12 +15,18 @@ async function buyToken(tokenId, nftPrice) {
             return null;
         }
         
-        const nftPriceEth = Web3.utils.fromWei(nftPrice, 'ether')
+        const nftPriceWei = Web3.utils.toWei(nftPrice.toString(), 'ether');
         const address = await getAccountAddr();
+        const gasEstimate = await contract.methods.buyNFT(tokenId).estimateGas({
+            from: address, 
+            value: nftPriceWei, // 发送的以太坊金额（以 wei 为单位）
+        });
+        console.log(gasEstimate)
         // 调用合约的buyNFT函数
         const tx = await contract.methods.buyNFT(tokenId).send({
             from: address, // 交易发起者的地址
-            value: nftPriceEth // 发送wei的金额
+            value: nftPriceWei.toString(), // 发送wei的金额
+            gas: gasEstimate
         });
 
         // 交易成功后，打印交易哈希
