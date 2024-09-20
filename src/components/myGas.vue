@@ -253,6 +253,9 @@ export default {
             }).then(res => {
                 if (res.data.code === 200) {
                     this.totalGas = res.data.balance;
+                    // 调用 Vuex action 更新余额
+                    this.$store.dispatch('updateUserBalance', res.data.balance);
+                    console.log('userBalance::'+ res.data.balance)
                 }
             }).catch(e => {
                 console.log(e)

@@ -211,16 +211,6 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            defaultUser: {
-                avatar: '../assets/default-avatar.png',
-                // account: '123456',
-                name: 'Timmy',
-                balance: '0.1eth',
-                description: "hiiiiiiiiiiiiiiiiiiiiiiiiii😁",
-                email: "22@qq.com",
-                phone: "1324s4422222",
-                chainAccounts: []
-            },
             selectedAccount: null,
             isAccountManagementVisible: false, // 控制链账户管理部分的显示
             account: null,
@@ -229,21 +219,13 @@ export default {
             address: '',
             search: '',
             listData: [
-                // {
-                //     name: 'dasa',
-                //     address: '1232131sdaa21231asd123',
-                // },
-                // {
-                //     name: 'asassa',
-                //     address: '123dsad231asd123'
-                // }
             ],
         };
     },
     created() {
         console.log('created avatar load=================>');
         this.account = localStorage.getItem('account');
-        console.log('account', this.account)
+        console.log('account'+ this.account)
         // this.loadAvatar();
     },
     mounted() {
@@ -256,9 +238,8 @@ export default {
     },
     computed: {
         user() {
-            // 这里确保我们从 Vuex 的 state 中获取 user 数据
             const user = this.$store.state.user;
-            console.log(user); // 打印到控制台检查 user 数据
+            console.log(user);
             return user;
         },
         filteredListData() {
@@ -290,26 +271,20 @@ export default {
                 return;
             }
 
-            const localAvatarUrl = localStorage.getItem(`avatar_${account}`);
-            if (localAvatarUrl) {
-                console.log(localAvatarUrl);
-                this.user.avatar=localAvatarUrl;
-                this.$store.commit('setUserAvatar', localAvatarUrl);
-                this.$forceUpdate();
-            } else {
-                const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
-                axios.get(`${apiBaseUrl}/loadAvatar`, { params: { account } })
-                .then(res => {
-                    if (res.data && res.data.avatarUrl) {
-                        this.$store.commit('setUserAvatar', res.data.avatarUrl);
-                        localStorage.setItem(`avatar_${account}`, res.data.avatarUrl);
-                        this.$forceUpdate();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading avatar:', error);
-                });
-            }
+            const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+            axios.get(`${apiBaseUrl}/loadAvatar`, { params: { account } })
+            .then(res => {
+                console.log('res.data'+res.data);
+                console.log('res.data.avatarUrl:::'+res.data.avatarUrl)
+                if (res.data && res.data.avatarUrl) {
+                    this.$store.commit('setUserAvatar', res.data.avatarUrl);
+                    localStorage.setItem(`avatar_${account}`, res.data.avatarUrl);
+                    this.$forceUpdate();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading avatar:', error);
+            });
         },
         // addSmallAccount() {
         //     if (this.name === '') {
@@ -419,7 +394,7 @@ export default {
                     name: this.name,
                 };
                 console.log('asds', data)
-                axios.post('http://127.0.0.1:28888/api/addSmallAccount', data).then(response => {
+                axios.post('http://8.134.209.144:28888/api/addSmallAccount', data).then(response => {
                     console.log('response', response)
                     if (response.data.code === 200) {
                         this.$message.success('导入成功');

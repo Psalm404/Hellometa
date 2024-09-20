@@ -23,36 +23,15 @@ export default new Vuex.Store({
       if (state.user) {
         state.user.avatar = avatarUrl;
       } else {
-          // console.error('用户状态未初始化');
-          // 可以选择初始化 state.user 或者直接返回错误
-          state.user = { avatar: avatarUrl }; // 如果你选择初始化用户
+          state.user = { avatar: avatarUrl }; 
       }
+    },
+    setUserBalance(state, balance) { // 新增的 mutation
+      state.user.balance = balance;
     },
     
   },
   actions: {
-    // login({ commit }, { token, user }) {
-    //   const date = new Date();
-    //   date.setDate(date.getDate() + 1); // 设置 cookie 的过期时间为 1 天后
-
-    //   // 保存 token 和用户信息到 cookie，有效期为 1 天
-    //   document.cookie = `loggedIn=true; path=/; expires=${date.toUTCString()}`;
-    //   document.cookie = `token=${token}; path=/; expires=${date.toUTCString()}`;
-    //   document.cookie = `user=${encodeURIComponent(JSON.stringify(user))}; path=/; expires=${date.toUTCString()}`;
-
-    //   // 更新 Vuex 状态
-    //   commit('setLoginStatus', true);
-    //   commit('setToken', token);
-    //   commit('setUser', user);
-
-    //   // 将 token 和用户信息存储到 localStorage
-    //   localStorage.setItem('authToken', token);
-    //   // 保存 account 到 localStorage
-    //   localStorage.setItem('account', user.account);
-    //   localStorage.setItem('userInfo', JSON.stringify(user));
-    //   // localStorage.setItem(`avatar_${user.account}`, user.avatar);
-
-    // },
     logout({ commit }) {
       // 清除 cookie 中的登录状态、token 和用户信息
       document.cookie = 'loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -96,6 +75,9 @@ export default new Vuex.Store({
             commit('setToken', '');
             commit('setUser', null);
         }
+    },
+    updateUserBalance({ commit }, balance) { // 新增的 action
+      commit('setUserBalance', balance);
     },
   },
 });

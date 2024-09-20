@@ -161,6 +161,7 @@ export default {
                         if (res.data.code === 10001) {
                             this.tip = "交易成功"
                             this.showBackButton = true;
+                            
 
                             clearInterval(intervalId);
                             this.$message({
