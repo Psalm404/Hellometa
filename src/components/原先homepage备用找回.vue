@@ -36,7 +36,7 @@
                         </el-carousel-item>
                     </el-carousel>
                 </div>
-                <el-divider><i class="el-icon-s-promotion"></i></el-divider>
+                <!-- <el-divider><i class="el-icon-s-promotion"></i></el-divider> -->
                 <div class="home-introduction">
                     <h1>什么是工业互联网数据资产化？</h1>
                     <div class="home-text-blocks-container">

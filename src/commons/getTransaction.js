@@ -9,7 +9,7 @@ export default async function getTransaction(txHash) {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
         // 查询交易信息
         const transaction = await web3.eth.getTransaction(txHash);
-        // console.log(transaction);
+        console.log('transaction:'+transaction);
         return transaction;
     } catch (error) {
         console.error('Error fetching transaction:', error);

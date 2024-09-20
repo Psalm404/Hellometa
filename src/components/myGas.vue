@@ -13,13 +13,19 @@
                     </div>
                     <div class="want-to-be-right">
                         <ul class="home-navbar-menu">
-                            <li class="recharge-item  active"><a href="#/myGas">燃料管理</a></li>
-                            <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
-                            <li class="explore-item"><a href="#/exhibitWorks">交易市场</a></li>
-                            <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
-                            <li class="records-item"><a href="#/recordWorks">我的凭证</a></li>
-                            <li class="home-item"><a href="#/home">个人中心</a></li>
-                        </ul>
+                                <li class="recharge-item  active"><a>燃料管理</a></li>
+                                <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
+                                <li class="explore-item">
+                                    <a href="#/exhibitWorks" :class="{ disabled: !$store.state.isAccountMatched }">交易市场</a>
+                                </li>
+                                <li class="upload-item">
+                                    <a href="#/uploadWorks" :class="{ disabled: !$store.state.isAccountMatched }">凭证上传</a>
+                                </li>
+                                <li class="records-item">
+                                    <a href="#/recordWorks" :class="{ disabled: !$store.state.isAccountMatched }">我的凭证</a>
+                                </li>
+                                <li class="home-item"><a href="#/home">个人中心</a></li>
+                            </ul>
                         <div>
                             <button class="home-navbar-button" @click="logOut">Log out</button>
                         </div>
@@ -655,5 +661,10 @@ h2 {
 ::v-deep .custom-input .el-input__inner:focus {
     border-color: #e65000; /* 聚焦时边框颜色变深 */
     box-shadow: 0 0 5px rgba(230, 80, 0, 0.5); /* 添加阴影效果 */
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
 }
 </style>

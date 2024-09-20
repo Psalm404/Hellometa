@@ -10,7 +10,7 @@ async function getBlocks() {
         
         // 获取最新的区块号
         const latestBlockNumber = await web3.eth.getBlockNumber();
-        // console.log("Latest block number:", latestBlockNumber);
+        console.log("Latest block number:", latestBlockNumber);
 
         // 定义存储区块的数组
         let blocks = [];
@@ -25,6 +25,16 @@ async function getBlocks() {
             const batchBlocks = await Promise.all(
                 Array.from({ length: i - start + 1 }, (_, index) => web3.eth.getBlock(start + index))
             );
+
+            if (typeof batchBlocks === 'string') {
+                try {
+                    console.log('batchBlocks:', JSON.parse(batchBlocks));
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            } else {
+                console.log('batchBlocks:', batchBlocks); // 如果是对象或其他类型，直接打印
+            }
 
             // 处理每个区块的详细信息
             for (let j = Number(batchBlocks.lenngth) - 1; j >= 0 ; j--) {
@@ -48,7 +58,16 @@ async function getBlocks() {
         }
 
         // 返回查询到的前100个区块信息
-        console.log("First 100 blocks retrieved:");
+        // console.log("First 100 blocks retrieved:"+blocks);
+        if (typeof blocks === 'string') {
+            try {
+                console.log('First 100 blocks retrieved:', JSON.parse(blocks));
+            } catch (error) {
+                console.error('Error First 100 blocks retrieved: parsing JSON:', error);
+            }
+        } else {
+            console.log('First 100 blocks retrieved::', blocks); // 如果是对象或其他类型，直接打印
+        }
         return blocks;
     } catch (error) {
         console.error("Error retrieving blocks:", error);

@@ -19,7 +19,9 @@
                             <ul class="home-navbar-menu">
                                 <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                                 <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
-                                <li class="explore-item"><a href="#/exhibitWorks">交易市场</a></li>
+                                <li class="explore-item">
+                                    <a href="#/exhibitWorks" :class="{ disabled: !$store.state.isAccountMatched }">交易市场</a>
+                                </li>
                                 <li class="upload-item">
                                     <a href="#/uploadWorks" :class="{ disabled: !$store.state.isAccountMatched }">凭证上传</a>
                                 </li>

@@ -100,16 +100,36 @@ const router = new VueRouter({
  ]
 })
 
+// router.beforeEach((to, from, next) => {
+//   if (to.matched.some(record => record.meta.requiresAccountMatch)) {
+//       if (!store.state.isAccountMatched) {
+//           // 如果账户不匹配，阻止导航并重定向
+//           next('/home'); // 或者您想重定向的其他页面
+//       } else {
+//           next(); // 账户匹配，允许导航
+//       }
+//   } else {
+//       next(); // 无需检查，允许导航
+//   }
+// });
+
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAccountMatch)) {
-      if (!store.state.isAccountMatched) {
-          // 如果账户不匹配，阻止导航并重定向
-          next('/home'); // 或者您想重定向的其他页面
-      } else {
-          next(); // 账户匹配，允许导航
-      }
+  const isLoggedIn = store.state.isLoggedIn;
+
+  if (!isLoggedIn && to.path !== '/intro') {
+    next('/intro');
   } else {
+    // 如果目标路由需要账户匹配验证
+    if (to.matched.some(record => record.meta.requiresAccountMatch)) {
+      if (!store.state.isAccountMatched) {
+        // 如果账户不匹配，阻止导航并重定向
+        next('/home'); // 或者您想重定向的其他页面
+      } else {
+        next(); // 账户匹配，允许导航
+      }
+    } else {
       next(); // 无需检查，允许导航
+    }
   }
 });
 

@@ -76,7 +76,7 @@
 
 // 引入 axios 用于 HTTP 请求
 import axios from 'axios';
-import getTransactionHash from '@/commons/getTransactionHash';
+// import getTransactionHash from '@/commons/getTransactionHash';
 import getTokenIdbyURL from '@/commons/getTokenIdbyURL';
 import getTokenPrice from '@/commons/getTokenPrice';
 import buyToken from '@/commons/buyToken';
@@ -154,26 +154,30 @@ export default {
             this.$router.push('/exhibitWorks');
         },
         async fetchNFTData() {
-            //先加一下，每家error判断
-            this.workTokenID = await getTokenIdbyURL(this.fileURL);
-
             try {
-                // const nftUrl = 'https://brown-urban-hornet-311.mypinata.cloud/ipfs/QmXwfXkjs4sFXBN5yXeokSAVJFR6PCVBd2KoNH1gBFK6oP'; // 从 exhibitWorks 中拿到的当前 NFT 的 URL
+                this.workTokenID = await getTokenIdbyURL(this.fileURL);
+
                 const nftData = await this.fetchFromPinata(this.fileURL);
 
                 this.picUrl = nftData.image;
                 this.workCreateTime = new Date().toLocaleString();
                 this.workName = nftData.name;
-                this.workType = nftData.type;
+                this.workType = nftData.type === 'txt' ? '文本' : '图片';
                 this.workDesc = nftData.desc;
                 this.workCreator = nftData.creator;
-                this.workPrice = await getTokenPrice(this.workTokenID)
-                this.workHashValue = await getTransactionHash(this.fileURL);
-                if (nftData.type == 'txt') {
-                    this.workType = '文本'
-                    this.picUrl = require('@/assets/text.png')
-                }else{
-                     this.workType = '图片'
+                this.workPrice = await getTokenPrice(this.workTokenID);
+
+                console.log('this.fileURL:'+this.fileURL);
+                const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
+                const response = await axios.get(`${apiBaseUrl}/getTxHashByTokenURI`, {
+                    params: { tokenURI: this.fileURL }
+                });
+
+                if (response.data.code === 200) {
+                    this.workHashValue = response.data.txHash;
+                } else {
+                    console.error('Error fetching txHash:', response.data);
+                    this.workHashValue = '获取交易哈希失败';
                 }
             } catch (error) {
                 console.error('Error fetching NFT data:', error);
