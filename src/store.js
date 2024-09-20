@@ -8,6 +8,7 @@ export default new Vuex.Store({
     isLoggedIn: false,
     token: '',
     user: null,
+    isAccountMatched: false, // 小账号所属检测
   },
   mutations: {
     setLoginStatus(state, status) {
@@ -28,6 +29,9 @@ export default new Vuex.Store({
     },
     setUserBalance(state, balance) { // 新增的 mutation
       state.user.balance = balance;
+    },
+    setAccountMatched(state, matched) {
+      state.isAccountMatched = matched;
     },
     
   },

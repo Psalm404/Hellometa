@@ -12,36 +12,36 @@
                     <!-- 第一列 -->
                     <div class="column">
                         <div class="edit-profile-input">
-                            <label>用户名</label>
+                            <label>用户名：</label>
                             <el-form-item prop="name">
                                 <el-input type="text" v-model="formData.name"></el-input>
                             </el-form-item>
                         </div>
                         <div class="edit-profile-input">
-                            <label>手机号</label>
+                            <label>手机号：</label>
                             <el-form-item prop="phone">
                                 <el-input type="text" v-model="formData.phone"></el-input>
                             </el-form-item>
                         </div>
                         <div class="edit-profile-input">
-                            <label>邮箱</label>
+                            <label>邮箱：</label>
                             <el-form-item prop="email">
                                 <el-input type="text" v-model="formData.email"></el-input>
+                            </el-form-item>
+                        </div>
+                        <div class="edit-profile-input">
+                            <label>描述：</label>
+                            <el-form-item prop="description">
+                                <el-input type="textarea" v-model="formData.description" rows="4" autosize></el-input>
                             </el-form-item>
                         </div>
                     </div>
 
                     <!-- 第二列 -->
                     <div class="column">
-                        <div class="edit-profile-input">
-                            <label>描述</label>
-                            <el-form-item prop="description">
-                                <el-input type="textarea" v-model="formData.description" rows="4" autosize></el-input>
-                            </el-form-item>
-                        </div>
                         <!-- 头像 -->
                         <div class="edit-profile-input">
-                            <label>头像</label>
+                            <label>头像修改：</label>
                             <el-form-item prop="avatar">
                                 <el-upload
                                     class="avatar-uploader"
@@ -62,7 +62,7 @@
                 </div>
 
                 <!-- 修改账号密码表单 -->
-                <div v-if="!isEditingInfo" class="edit-profile-columns">
+                <div v-if="!isEditingInfo" class="edit-profile-columns2">
                     <!-- 第一列 -->
                     <div class="column">
                         <div class="edit-profile-input">
@@ -71,10 +71,6 @@
                                 <el-input type="password" v-model="formData.currentPassword" show-password></el-input>
                             </el-form-item>
                         </div>
-                    </div>
-
-                    <!-- 第二列 -->
-                    <div class="column">
                         <div class="edit-profile-input">
                             <label>*新密码</label>
                             <el-form-item prop="newPassword">
@@ -83,6 +79,9 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 修改头像 -->
+                 
 
                 <!-- 提交按钮 -->
                 <el-form-item>
@@ -207,9 +206,8 @@ export default {
                     } catch (error) {
                         console.error('Error updating info:', error);
                         this.$message.error('修改失败，请稍后重试');
-                    } finally {
                         this.isNavigating = false;  // 隐藏遮罩层
-                    }
+                    } 
                 } else {
                     console.log('error submit!!');
                     return false;
@@ -240,8 +238,7 @@ export default {
                     } catch (error) {
                         console.error('Error updating password:', error);
                         this.$message.error('修改失败，请稍后重试');
-                    } finally {
-                        this.isNavigating = false;  // 隐藏遮罩层
+                        this.isNavigating = false; 
                     }
                 } else {
                     console.log('error submit!!');
@@ -257,6 +254,7 @@ export default {
             this.isEditingInfo = false;  // 切换到编辑密码表单
         },
         backHome() {
+            if (this.isNavigating) return; // 如果正在导航，阻止重复点击
             this.isNavigating = true;  // 显示遮罩层
             this.$router.push('/home');
         },
@@ -403,6 +401,14 @@ export default {
     width: 100%; /* 宽度为容器的100% */
 }
 
+.edit-profile-columns2 {
+    position: relative;
+    left: -30%;
+    display: flex; /* 将两列并排显示 */
+    justify-content: space-between; /* 在两列之间添加空间 */
+    width: 100%; /* 宽度为容器的100% */
+}
+
 .column {
     flex: 1; /* 使每一列占据相等的空间 */
     margin: 0 10px; /* 给列之间添加一些间距 */
@@ -442,9 +448,11 @@ input:-webkit-autofill {
 }
 
 .edit-profile-submit {
+    position: relative;
+    left: -19%;
     width: 400px;
     height: 45px;
-    margin-top: 6%;
+    margin-top: 3%;
     background: #fff;
     border: none;
     outline: none;
@@ -524,8 +532,8 @@ input:-webkit-autofill {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 200px;
     border: 1px dashed #d9d9d9;
     border-radius: 50%;
     cursor: pointer;
@@ -548,5 +556,16 @@ input:-webkit-autofill {
     object-fit: contain; /* 确保图片按比例填充容器 */
     overflow:auto;
     background-color: transparent;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: rgba(140, 140, 140, 0.5); /* 半透明背景 */
+    pointer-events: all; /* 确保遮罩层捕获所有点击事件 */
 }
 </style>
