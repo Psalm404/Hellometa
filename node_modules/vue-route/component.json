@@ -1,0 +1,34 @@
+{
+  "name": "vue-route",
+  "version": "1.5.1",
+  "repository": "ayamflow/vue-route",
+  "description": "Routing directive for Vue.js, inspired by ng-view.",
+  "main": "src/index.js",
+  "scripts": [
+    "src/index.js",
+    "src/overrides.js",
+    "src/routing.js",
+    "src/utils.js"
+  ],
+  "keywords": [
+    "vue",
+    "route",
+    "router",
+    "page",
+    "transition"
+  ],
+  "author": "= <=>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ayamflow/vue-route/issues"
+  },
+  "dependencies": {
+    "visionmedia/page.js": "^1.5.0"
+  },
+  "development": {
+    "dependencies": {
+      "yyx990803/vue": "^0.11.3",
+      "substack/tape": "^3.0.2"
+    }
+  }
+}
