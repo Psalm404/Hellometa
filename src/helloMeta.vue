@@ -162,7 +162,7 @@ export default {
 
 .main-page {
     min-height: 100vh; /* 确保主页面至少占满整个视口高度 */
-    width: 100vw; /* 使主页面宽度占满整个视口宽度 */
+    max-width: 100vw; /* 使主页面宽度占满整个视口宽度 */
     display: flex;
     flex-direction: column; /* 将内容垂直排列 */
     margin: 0; /* 移除任何默认外边距 */

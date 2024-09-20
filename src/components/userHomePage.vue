@@ -455,7 +455,7 @@ export default {
 /* 容器样式 */
 .container {
     width: 100%;
-    height: auto;
+
     max-height: 100%;
 }
 
@@ -464,6 +464,7 @@ export default {
     max-width: 100%;
     width: 100%;
     margin: 0 auto;
+    
     /* max-height: 200%; */
 }
 
@@ -670,7 +671,7 @@ h4 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 100px; /* 根据需要调整 */
+   
 }
 
 .sidebar {

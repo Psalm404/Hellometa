@@ -9,11 +9,11 @@
     <transition name="el-fade-in-linear">
         <div class="content" v-show="show">
             <div class="detail-box">
-                <div v-if="workPrice" class="inactive-work">
+                <div v-if="workPrice !== '0' && workPrice !== 0 && workPrice !== '0.'" class="inactive-work">
                     <a @click="inactiveWork"> <i class="el-icon-edit"></i> 下架作品</a>
                 </div>
                 <div class="modify-price">
-                    <a v-if="workPrice" @click="modifyWork"> <i class="el-icon-download"></i> 修改售价</a>
+                    <a v-if="workPrice !== '0' && workPrice !== 0 && workPrice !== '0.'" @click="modifyWork"> <i class="el-icon-download"></i> 修改售价</a>
                     <a v-else @click="activeWork"> <i class="el-icon-upload2"></i> 上架作品</a>
                 </div>
                 <div class="delete-work">
@@ -57,13 +57,13 @@
                             <span style="font-weight: bolder;">
                                 上架状态:
                             </span>
-                            <span>{{ workPrice?'已上架':'未上架'}}</span>
+                            <span>{{ (workPrice !== '0' && workPrice !== 0 && workPrice !== '0.')?'已上架':'未上架'}}</span>
                         </div>
-                        <div v-if="workPrice" class="work-price">
+                        <div v-if="workPrice !== '0' && workPrice !== 0 && workPrice !== '0.'" class="work-price">
                             <span style="font-weight: bolder;">
                                 售价:
                             </span>
-                            <span>{{workPrice}} wei</span>
+                            <span>{{workPrice}} eth</span>
                         </div>
                     </div>
                 </div>
@@ -140,6 +140,12 @@ export default {
                         this.workDesc = data.desc;
                         this.workCreateTime = new Date(data.timestamp);
                         // this.workTokenID = await getTokenIdbyURL(this.testURL);
+                        if (data.type == 'txt') {
+                            this.workType = '文本'
+                            this.picUrl = require('@/assets/text.png')
+                        } else {
+                            this.workType = '图片'
+                        }
 
                     })
                     .catch(error => {
@@ -156,7 +162,7 @@ export default {
                 // 使用 await 来处理 this.$prompt 返回的 Promise
                 const {
                     value
-                } = await this.$prompt('请输入售价(单位:wei)', '修改售价', {
+                } = await this.$prompt('请输入售价(单位:eth)', '修改售价', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     inputPattern: /^(([1-9][0-9]*)|([^0]))$/,
@@ -165,6 +171,7 @@ export default {
 
                 // 使用 await 来处理 updateTokenPrice 返回的 Promise
                 let transaction = await updateTokenPrice(this.workTokenID, value);
+
                 console.log("transaction", transaction);
 
                 if (transaction) {
@@ -173,6 +180,7 @@ export default {
                         message: '修改成功'
                     });
                 }
+                this.workPrice = value;
             } catch (error) {
                 console.log(error)
             }
@@ -182,7 +190,7 @@ export default {
                 // 弹出输入框并等待用户输入
                 const {
                     value
-                } = await this.$prompt('请输入售价(单位:wei)', '上架作品', {
+                } = await this.$prompt('请输入售价(单位:eth)', '上架作品', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     inputPattern: /^(([1-9][0-9]*)|([^0]))$/,
@@ -218,7 +226,7 @@ export default {
                     });
                 }
             } catch (error) {
-               console.log(error)
+                console.log(error)
             }
         },
         //删除nft

@@ -39,10 +39,9 @@
                 <div class="search-box">
                     <i class="el-icon-search" style="font-size: large; line-height:33px;"></i>
                     <el-input class="search-by-name" placeholder="按名称搜索" v-model="searchName" size="small"></el-input>
-                    <Select class="search-by-type" placeholder="按类型搜索">
-                        <Option el-option label="文本" value="txt"></Option>
-                        <Option label="图片" value="pic"></Option>
-                    </Select>
+                    <el-select style="width:200px; " size="small" v-model="searchType" placeholder="按类型搜索">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                    </el-select>
                 </div>
             </div>
             <div class="grid-box">
@@ -74,14 +73,30 @@ export default {
         return {
             show: true,
             searchName: '',
+            searchType: '',
             gridData: [],
             allData:[],
-            source:"record"
+            source:"record",
+            options: [{
+                    value: 'pic',
+                    label: '图片'
+                }, {
+                    value: 'txt',
+                    label: '文本'
+                },
+                {
+                    value: '',
+                    label: '全部'
+                }
+            ]
         };
     },
     watch: {
         searchName(newValue) {
             this.filterData(newValue);
+        },
+        searchType(newValue2) {
+            this.filterData(newValue2);
         },
     },
     methods: {
@@ -93,30 +108,43 @@ export default {
         },
         async filterData() {
             console.log('searchName', this.searchName);
-            if (this.searchName) {
+            console.log('searchType', this.searchType);
+
+            if (this.searchName || this.searchType) {
+                console.log('searchType', this.searchType)
                 try {
                     const responses = await Promise.all(this.allData.map(async item => {
                         try {
                             return await axios.get(item);
                         } catch (error) {
                             console.error(`从 ${item} 获取数据时出错:`, error);
-                            return null; 
+                            return null;
                         }
                     }));
 
                     this.gridData = responses.filter(response => {
                         if (!response) return false; // 过滤掉返回 null 的情况
                         const name = response.data.name;
-                        return name && name.toLowerCase().includes(this.searchName.toLowerCase());
+                        const type = response.data.type; // 假设响应中包含类型信息
+
+                        const nameMatches = this.searchName ?
+                            name && name.toLowerCase().includes(this.searchName.toLowerCase()) :
+                            true;
+
+                        const typeMatches = this.searchType ?
+                            type && type.toLowerCase().includes(this.searchType.toLowerCase()) :
+                            true;
+
+                        // 同时满足名称和类型条件
+                        return nameMatches && typeMatches;
                     }).map(response => response.config.url);
 
-                    console.log('searchList', this.gridData);
+                    console.log('filteredData', this.gridData);
                 } catch (error) {
                     console.error('处理 Promise.all 操作时出错:', error);
-                    // 处理整个 Promise.all 操作的错误
                 }
             } else {
-                this.gridData = this.allData;
+                this.gridData = this.allData; // 没有搜索条件时，显示全部数据
             }
         },
         async getURLs() {
@@ -136,6 +164,7 @@ export default {
 .container {
     width: 100%;
     height: auto;
+    max-height:100%;
     /* display: flex;
     flex-direction: column;
     max-height: 100vh;

@@ -40,10 +40,9 @@
                 <div class="search-box">
                     <i class="el-icon-search" style="font-size: large; line-height:33px;"></i>
                     <el-input class="search-by-name" placeholder="按名称搜索" v-model="searchName" size="small"></el-input>
-                    <Select class="search-by-type" placeholder="按类型搜索">
-                        <Option el-option label="文本" value="txt"></Option>
-                        <Option label="图片" value="pic"></Option>
-                    </Select>
+                    <el-select style="width:200px; " size="small" v-model="searchType" placeholder="按类型搜索">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                    </el-select>
                 </div>
             </div>
             <div class="grid-box">
@@ -69,22 +68,38 @@ export default {
         setTimeout(() => {
                 this.show = true;
             }, 0),
-        this.getURLs();
+            this.getURLs();
     },
     data() {
         return {
-            show: true ,
+            show: true,
             searchName: '',
             searchType: '',
             source: "exhibit",
             allData: [],
             gridData: [],
+            options: [{
+                    value: 'pic',
+                    label: '图片'
+                }, {
+                    value: 'txt',
+                    label: '文本'
+                },
+                {
+                    value: '',
+                    label: '全部'
+                }
+            ]
         };
     },
     watch: {
         searchName(newValue) {
             this.filterData(newValue);
         },
+        searchType(newValue2) {
+
+            this.filterData(newValue2);
+        }
     },
     methods: {
         logOut() {
@@ -98,13 +113,14 @@ export default {
             console.log('searchType', this.searchType);
 
             if (this.searchName || this.searchType) {
+                console.log('searchType', this.searchType)
                 try {
                     const responses = await Promise.all(this.allData.map(async item => {
                         try {
                             return await axios.get(item);
                         } catch (error) {
                             console.error(`从 ${item} 获取数据时出错:`, error);
-                            return null; 
+                            return null;
                         }
                     }));
 
@@ -113,14 +129,14 @@ export default {
                         const name = response.data.name;
                         const type = response.data.type; // 假设响应中包含类型信息
 
-                        const nameMatches = this.searchName 
-                            ? name && name.toLowerCase().includes(this.searchName.toLowerCase()) 
-                            : true;
-                        
-                        const typeMatches = this.searchType 
-                            ? type && type.toLowerCase().includes(this.searchType.toLowerCase()) 
-                            : true;
-                        
+                        const nameMatches = this.searchName ?
+                            name && name.toLowerCase().includes(this.searchName.toLowerCase()) :
+                            true;
+
+                        const typeMatches = this.searchType ?
+                            type && type.toLowerCase().includes(this.searchType.toLowerCase()) :
+                            true;
+
                         // 同时满足名称和类型条件
                         return nameMatches && typeMatches;
                     }).map(response => response.config.url);
@@ -150,6 +166,7 @@ export default {
 .container {
     width: 100%;
     height: auto;
+    max-height: 100%;
     /* display: flex;
     flex-direction: column;
     max-height: 100vh;
@@ -159,6 +176,7 @@ export default {
 
 .content {
     max-width: 100%;
+    
     width: 100%;
     margin: 0 auto;
     /* width: 100%;
@@ -173,15 +191,19 @@ export default {
 /* 新增的样式 */
 .display-container {
     display: flex;
-    align-items: center; /* 垂直居中对齐 */
-    justify-content: space-between; /* 在两端对齐 */
-    margin-top: 70px; /* 根据需要调整间距 */
-    padding: 0 15px; /* 根据需要调整内边距 */
+    align-items: center;
+    /* 垂直居中对齐 */
+    justify-content: space-between;
+    /* 在两端对齐 */
+    margin-top: 70px;
+    /* 根据需要调整间距 */
+    padding: 0 15px;
+    /* 根据需要调整内边距 */
 }
 
 .search-box {
     position: relative;
-    top:0%;
+    top: 0%;
     left: -28%;
     z-index: 10;
     text-align: left;
@@ -215,65 +237,83 @@ export default {
     box-shadow: 2px 4px 15px #171717;
     display: flex;
     flex-direction: column;
-    border: 1px solid #ccc; /* 添加灰白色边框 */
+    border: 1px solid #ccc;
+    /* 添加灰白色边框 */
 }
 
 .home-navbar {
     margin-top: 20px;
     margin-left: calc(50% - 48vw);
-    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
-    border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* 设置为半透明 */
+    border-bottom: 1px solid rgba(230, 232, 236, 0);
+    /* 去掉底部边框 */
     padding: 10px 20px;
     position: fixed;
     top: 0;
     width: 90%;
     height: auto;
     z-index: 1000;
-    border-radius: 25px; /* 设置圆角 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+    border-radius: 25px;
+    /* 设置圆角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    backdrop-filter: blur(30px);
+    /* 添加背景模糊效果 */
 }
 
 /* Recharge */
 .recharge-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -100px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -100px;
+    /* 根据需要调整位置 */
 }
 
 /* Browser */
 .intro-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -90px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -90px;
+    /* 根据需要调整位置 */
 }
 
 /* Explore */
 .explore-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -80px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -80px;
+    /* 根据需要调整位置 */
 }
 
 /* Upload */
 .upload-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -70px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -70px;
+    /* 根据需要调整位置 */
 }
 
 /* Records */
 .records-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -60px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -60px;
+    /* 根据需要调整位置 */
 }
 
 /* Home */
 .home-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -50px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -50px;
+    /* 根据需要调整位置 */
 }
 
 .home-navbar-container {
@@ -285,9 +325,11 @@ export default {
 
 .want-to-be-left {
     display: flex;
-    justify-content: flex-start; /* 左对齐 */
+    justify-content: flex-start;
+    /* 左对齐 */
     align-items: center;
-    flex-grow: 1; /* 使其占据剩余空间 */
+    flex-grow: 1;
+    /* 使其占据剩余空间 */
 }
 
 .want-to-be-right {
@@ -338,11 +380,11 @@ export default {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color:  #ff5900;
+    color: #ff5900;
 }
 
 .home-navbar-menu li a:hover {
-    color:  #ff5900;
+    color: #ff5900;
 }
 
 .home-navbar-actions {
@@ -351,21 +393,29 @@ export default {
 }
 
 .home-navbar-button {
-    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* 设置为半透明 */
     color: #4d3535;
-    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
+    border: 1px solid #4d3535;
+    /* 添加2px的边框，颜色与原背景色一致 */
     padding: 10px 10px;
-    border-radius: 20px; /* 设置圆角 */
+    border-radius: 20px;
+    /* 设置圆角 */
     cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
-    margin-right: 10px; /* 增加一个右边距 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+    transition: background-color 0.3s, border-color 0.3s;
+    /* 添加边框颜色过渡 */
+    margin-right: 10px;
+    /* 增加一个右边距 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    backdrop-filter: blur(30px);
+    /* 添加背景模糊效果 */
 }
 
 .home-navbar-button:hover {
     background-color: #ff5900;
-    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+    border-color: #ff5900;
+    /* 修改hover状态下的边框颜色 */
 }
 
 .home-navbar-profile img {
@@ -375,8 +425,9 @@ export default {
     cursor: pointer;
 }
 
-.profile-titile{
-    z-index: 00; /* 设置一个较高的 z-index 使其在页面顶层 */
+.profile-titile {
+    z-index: 00;
+    /* 设置一个较高的 z-index 使其在页面顶层 */
 }
 
 h2 {
@@ -384,7 +435,7 @@ h2 {
     left: 12%;
     top: 23px;
     font-size: 6em;
-    color:  #c64500;
+    color: #c64500;
     text-align: center;
 }
 </style>

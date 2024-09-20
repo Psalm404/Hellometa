@@ -17,7 +17,7 @@
                     <div class="record-type">
                         <span>作品类别：{{ recordType }}</span>
                     </div>
-                    <div v-if = "recordPrice" class="record-price">
+                    <div v-if = "recordPrice !== '0' && recordPrice !== 0 && recordPrice !== '0.'" class="record-price">
                         <span>售价：{{ recordPrice }} eth</span>
                     </div>
                 </div>
@@ -85,6 +85,9 @@ export default {
                 if (jsonData.type == 'pic') {
                     this.recordType = '图片'
                     this.picUrl = jsonData.image
+                }else{
+                    this.recordType = '文本'
+                    this.picUrl = require('@/assets/text.png')
                 }
             } catch (e) {
                 console.log(e)

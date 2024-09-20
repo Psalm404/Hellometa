@@ -14,8 +14,8 @@ async function updateTokenPrice(tokenId, newPrice) {
         console.log(addr);
 
         const newPriceWei = Web3.utils.toWei(newPrice, 'ether')
-        const newPriceEth = Web3.utils.fromWei(newPriceWei, 'ether')
-        const transaction = await contract.methods.updateTokenPrice(tokenId, newPriceEth).send({ from: addr });
+        console.log('new',newPriceWei)
+        const transaction = await contract.methods.updateTokenPrice(tokenId, newPriceWei).send({ from: addr });
         console.log('代币价格修改成功');
         return transaction;
     } catch (error) {

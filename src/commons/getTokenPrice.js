@@ -9,7 +9,7 @@ async function getTokenPrice(tokenId) {
         }
 
         const priceWei = await contract.methods.getTokenPrice(tokenId).call();
-        const priceEth = Web3.utils.fromWei(priceWei, 'ether')
+        const priceEth = Web3.utils.fromWei(priceWei.toString(), 'ether')
         return priceEth;
     } catch (error) {
         console.error('获取当前Token price 失败', error);

@@ -1,6 +1,6 @@
 <template>
 <div class="gasRecharge-container">
-    <div class="content" style="height:100vh">
+    <div class="content" style="height:100vh; width: 100vw">
         <div v-if="isLoading" class="overlay">
             <div class="overlay-content">
                 {{tip}}
@@ -24,21 +24,20 @@
                 我该如何使用燃料充值？</a>
         </div>
         <div class="gasRecharge-box">
-            <div style="align-self: self-start; font-weight:bold"> 燃料数量(单位:WEI) </div>
+            <div style="align-self: self-start; font-weight:bold"> 燃料数量(单位:ETH) </div>
             <div class="gasRecharge-priceBox">
-                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(1)"> 1万 </el-button>
-                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(10)"> 10万 </el-button>
-                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(100)"> 100万 </el-button>
-                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(1000)"> 1000万 </el-button>
-                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(10000)"> 10000万 </el-button>
-                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(100000)"> 100000万 </el-button>
+                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(0.1)"> 0.1 ETH </el-button>
+                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(1)"> 1 ETH </el-button>
+                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(5)"> 5 ETH </el-button>
+                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(10)"> 10 ETH </el-button>
+                <el-button class="priceBT" type="primary" plain size="small" @click="selectPrice(50)"> 50 ETH </el-button>
             </div>
             <div style="display: flex; flex-direction: column; margin-top:15px ">
                 <div style="align-self: self-start; font-weight:bold;">价目表</div>
                 <div style="align-self: self-start; color:red; font-weight:bold;"> 该汇率并非真实汇率，使用支付宝沙箱模拟交易环境，不涉及真实钱财交易。 </div>
                 <br />
-                <div style="align-self: center; font-weight:bold; font-size:19px;"> 1 ETH = 100,000,000 WEI </div>
-                <div style="align-self: center; font-weight:bold; font-size:19px;"> 1 RMB = 10,000 WEI </div>
+                <div style="align-self: center; font-weight:bold; font-size:19px;"> 1 ETH = 1,000,000,000,000,000,000（1e18） WEI </div>
+                <div style="align-self: center; font-weight:bold; font-size:19px;"> 1 RMB = 1 ETH </div>
                 <!-- <div v-loading="loading" style="height: 40px"> {{rate}} </div> -->
             </div>
         </div>
@@ -48,7 +47,7 @@
             <div style="display: flex; flex-direction: column; ">
                 <div style="display: flex;">
                     <div style="flex:1">燃料数量</div>
-                    <div style="align-self: flex-end; flex:1; font-weight:bold; font-size:19px;"> {{price}} 万</div>
+                    <div style="align-self: flex-end; flex:1; font-weight:bold; font-size:19px;"> {{price}} </div>
                 </div>
                 <div style="display:flex">
                     <div style="flex:1; margin-top:20px">配置费用</div>
@@ -243,8 +242,8 @@ export default {
     flex-direction: column;
     /* justify-content: center; */
     align-items: center;
-    min-height: 100vh;
-    min-width: 100vw;
+    height: 100vh;
+    width: 100vw;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
     background-image: linear-gradient(to top, #e25323 0%, rgba(255, 201, 163, 0.821) 100%);
     ;

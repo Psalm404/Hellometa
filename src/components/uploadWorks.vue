@@ -40,7 +40,7 @@
             <!-- navbar -->
             <transition name="el-fade-in-linear">
                 <div class="upload-box" v-show="show[1]">
-                    <el-steps  :active="currentStep" align-center>
+                    <el-steps :active="currentStep" align-center>
                         <el-step title="步骤1" description="填写公司名称"></el-step>
                         <el-step title="步骤2" description="选择资产类别"></el-step>
                         <el-step title="步骤3" description="填写资产信息"></el-step>
@@ -103,7 +103,7 @@
             </transition>
             <transition name="el-fade-in-linear">
                 <div class="upload-box" v-show="show[3]">
-                    <el-steps  :active="currentStep" align-center>
+                    <el-steps :active="currentStep" align-center>
                         <el-step title="步骤1" description="填写公司名称"></el-step>
                         <el-step title="步骤2" description="选择资产类别"></el-step>
                         <el-step title="步骤3" description="填写资产信息"></el-step>
@@ -131,7 +131,7 @@
             </transition>
             <transition name="el-fade-in-linear">
                 <div class="upload-box" v-show="show[4]">
-                    <el-steps  :active="currentStep" align-center>
+                    <el-steps :active="currentStep" align-center>
                         <el-step title="步骤1" description="填写公司名称"></el-step>
                         <el-step title="步骤2" description="选择资产类别"></el-step>
                         <el-step title="步骤3" description="填写资产信息"></el-step>
@@ -271,10 +271,22 @@ export default {
                     required: true,
                     message: '请选择类型',
                 }],
-                price:[{
-                    required: true,
-                    message: '请输入定价',
-                }],
+                price: [{
+                        required: true,
+                        message: '请输入定价',
+                    },
+                    {
+                        validator: (rule, value, callback) => {
+                            if (value === 0 ) {
+                                callback(new Error('定价不能为0'));
+                            } else {
+                                callback(); // 验证通过
+                            }
+                        },
+                        trigger: 'blur' // 触发方式（可以是 blur、change 等）
+                    }
+                ],
+
                 creator: [{
                         required: true,
                         message: '请输入公司名称',
@@ -396,7 +408,7 @@ export default {
                 document.getElementById('loading-overlay').style.display = 'flex'; // show loading
                 const addr = await getAccountAddr();
                 console.log('用户地址', addr);
-                let isSuccess = await mint(addr, metadataURL,this.form.price);
+                let isSuccess = await mint(addr, metadataURL, this.form.price);
                 if (isSuccess) {
                     document.querySelector('#loading-overlay .loading-message').textContent = '资产凭证铸造成功！\n即将跳转至您的凭证记录界面......';
                     document.getElementById('loading-overlay').style.display = 'none'; // end loading
@@ -588,7 +600,7 @@ export default {
     border-radius: 5px;
 }
 
- .ivu-select div,
+.ivu-select div,
 span {
     background-color: transparent;
     cursor: pointer;
@@ -630,7 +642,7 @@ span {
 }
 
 .upload-box {
-    
+
     margin: 60px 60px;
     background-color: transparent;
     height: 80vh;
@@ -659,63 +671,79 @@ span {
     height: 35px;
 }
 
-
 .home-navbar {
     margin-top: 20px;
     margin-left: calc(50% - 48vw);
-    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
-    border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* 设置为半透明 */
+    border-bottom: 1px solid rgba(230, 232, 236, 0);
+    /* 去掉底部边框 */
     padding: 10px 20px;
     position: fixed;
     top: 0;
     width: 90%;
     height: auto;
     z-index: 1000;
-    border-radius: 25px; /* 设置圆角 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+    border-radius: 25px;
+    /* 设置圆角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    backdrop-filter: blur(30px);
+    /* 添加背景模糊效果 */
 }
 
 /* Recharge */
 .recharge-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -100px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -100px;
+    /* 根据需要调整位置 */
 }
 
 /* Browser */
 .intro-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -90px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -90px;
+    /* 根据需要调整位置 */
 }
 
 /* Explore */
 .explore-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -80px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -80px;
+    /* 根据需要调整位置 */
 }
 
 /* Upload */
 .upload-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -70px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -70px;
+    /* 根据需要调整位置 */
 }
 
 /* Records */
 .records-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -60px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -60px;
+    /* 根据需要调整位置 */
 }
 
 /* Home */
 .home-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -50px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -50px;
+    /* 根据需要调整位置 */
 }
 
 .home-navbar-container {
@@ -727,9 +755,11 @@ span {
 
 .want-to-be-left {
     display: flex;
-    justify-content: flex-start; /* 左对齐 */
+    justify-content: flex-start;
+    /* 左对齐 */
     align-items: center;
-    flex-grow: 1; /* 使其占据剩余空间 */
+    flex-grow: 1;
+    /* 使其占据剩余空间 */
 }
 
 .want-to-be-right {
@@ -780,11 +810,11 @@ span {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color:  #ff5900;
+    color: #ff5900;
 }
 
 .home-navbar-menu li a:hover {
-    color:  #ff5900;
+    color: #ff5900;
 }
 
 .home-navbar-actions {
@@ -793,21 +823,29 @@ span {
 }
 
 .home-navbar-button {
-    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* 设置为半透明 */
     color: #4d3535;
-    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
+    border: 1px solid #4d3535;
+    /* 添加2px的边框，颜色与原背景色一致 */
     padding: 10px 10px;
-    border-radius: 20px; /* 设置圆角 */
+    border-radius: 20px;
+    /* 设置圆角 */
     cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
-    margin-right: 10px; /* 增加一个右边距 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+    transition: background-color 0.3s, border-color 0.3s;
+    /* 添加边框颜色过渡 */
+    margin-right: 10px;
+    /* 增加一个右边距 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    backdrop-filter: blur(30px);
+    /* 添加背景模糊效果 */
 }
 
 .home-navbar-button:hover {
     background-color: #ff5900;
-    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+    border-color: #ff5900;
+    /* 修改hover状态下的边框颜色 */
 }
 
 .home-navbar-profile img {
@@ -817,8 +855,9 @@ span {
     cursor: pointer;
 }
 
-.profile-titile{
-    z-index: 00; /* 设置一个较高的 z-index 使其在页面顶层 */
+.profile-titile {
+    z-index: 00;
+    /* 设置一个较高的 z-index 使其在页面顶层 */
 }
 
 h2 {
@@ -826,33 +865,33 @@ h2 {
     left: 12%;
     top: 23px;
     font-size: 6em;
-    color:  #c64500;
+    color: #c64500;
     text-align: center;
 }
 
 /* 修改线条颜色为橙色 */
 ::v-deep .el-steps__line {
-  background-color: #ff5900;
+    background-color: #ff5900;
 }
 
 /* 修改已完成和正在进行步骤的图标背景、边框和文字颜色 */
 ::v-deep .el-step__head.is-process .el-step__icon,
 ::v-deep .el-step__head.is-finish .el-step__icon {
-  background-color: #ff5900;
-  border-color: #ff5900;
-  color: white;
+    background-color: #ff5900;
+    border-color: #ff5900;
+    color: white;
 }
 
 /* 修改等待步骤的图标边框和文字颜色 */
 ::v-deep .el-step__head.is-wait .el-step__icon {
-  border-color: #ff5900;
-  color: #ff5900;
+    border-color: #ff5900;
+    color: #ff5900;
 }
 
 /* 修改步骤标题和描述文字颜色为白色 */
 ::v-deep .el-step__title,
 ::v-deep .el-step__description {
-  color: white;
+    color: white;
 }
 
 /* 修改正在进行和已完成步骤的标题和描述文字颜色为白色 */
@@ -860,18 +899,18 @@ h2 {
 ::v-deep .el-step.is-process .el-step__description,
 ::v-deep .el-step.is-finish .el-step__title,
 ::v-deep .el-step.is-finish .el-step__description {
-  color: white;
+    color: white;
 }
 
 /* 修改等待步骤的标题和描述文字颜色为白色 */
 ::v-deep .el-step.is-wait .el-step__title,
 ::v-deep .el-step.is-wait .el-step__description {
-  color: white;
+    color: white;
 }
 
 /* 如果需要调整图标中的数字颜色 */
 ::v-deep .el-step__icon-inner {
-  color: white;
+    color: white;
 }
 
 /* 修改步骤之间的连接线颜色为橙色 */
