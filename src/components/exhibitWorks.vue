@@ -166,6 +166,7 @@ export default {
 .container {
     width: 100%;
     height: auto;
+    max-height: 100%;
     /* display: flex;
     flex-direction: column;
     max-height: 100vh;
@@ -175,6 +176,7 @@ export default {
 
 .content {
     max-width: 100%;
+    
     width: 100%;
     margin: 0 auto;
     /* width: 100%;

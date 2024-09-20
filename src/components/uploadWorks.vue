@@ -277,7 +277,7 @@ export default {
                     },
                     {
                         validator: (rule, value, callback) => {
-                            if (value === 0) {
+                            if (value === 0 ) {
                                 callback(new Error('定价不能为0'));
                             } else {
                                 callback(); // 验证通过

@@ -138,9 +138,16 @@ export default {
                 this.workPrice = await getTokenPrice(this.workTokenID)
                 console.log(this.workTokenId)
                 this.picUrl = jsonData.image
+                if (jsonData.type == 'txt') {
+                    this.workType = '文本'
+                    this.picUrl = require('@/assets/text.png')
+                }else{
+                     this.workType = '图片'
+                }
             } catch (e) {
                 console.log(e)
             }
+           
 
         },
         backToRecord() {
@@ -163,10 +170,10 @@ export default {
                 this.workPrice = await getTokenPrice(this.workTokenID)
                 this.workHashValue = await getTransactionHash(this.fileURL);
                 if (nftData.type == 'txt') {
-                    this.wordType = '文本'
+                    this.workType = '文本'
                     this.picUrl = require('@/assets/text.png')
                 }else{
-                     this.wordType = '图片'
+                     this.workType = '图片'
                 }
             } catch (error) {
                 console.error('Error fetching NFT data:', error);

@@ -164,6 +164,7 @@ export default {
 .container {
     width: 100%;
     height: auto;
+    max-height:100%;
     /* display: flex;
     flex-direction: column;
     max-height: 100vh;

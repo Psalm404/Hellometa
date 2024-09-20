@@ -141,10 +141,10 @@ export default {
                         this.workCreateTime = new Date(data.timestamp);
                         // this.workTokenID = await getTokenIdbyURL(this.testURL);
                         if (data.type == 'txt') {
-                            this.wordType = '文本'
+                            this.workType = '文本'
                             this.picUrl = require('@/assets/text.png')
                         } else {
-                            this.wordType = '图片'
+                            this.workType = '图片'
                         }
 
                     })
