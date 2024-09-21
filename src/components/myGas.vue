@@ -2,77 +2,84 @@
 <div class="myGas-container">
     <div class="content" style="height:100vh">
         <nav class="home-navbar">
-                <div class="home-navbar-container">
-                    <div class="want-to-be-left">
-                        <a class="home-navbar-logo">
-                            <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
-                        </a>
-                        <div class="page-titile">
-                            <h3></h3>
-                        </div>
-                    </div>
-                    <div class="want-to-be-right">
-                        <ul class="home-navbar-menu">
-                                <li class="recharge-item  active"><a>燃料管理</a></li>
-                                <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
-                                <li class="explore-item">
-                                    <a href="#/exhibitWorks" :class="{ disabled: !$store.state.isAccountMatched }">交易市场</a>
-                                </li>
-                                <li class="upload-item">
-                                    <a href="#/uploadWorks" :class="{ disabled: !$store.state.isAccountMatched }">凭证上传</a>
-                                </li>
-                                <li class="records-item">
-                                    <a href="#/recordWorks" :class="{ disabled: !$store.state.isAccountMatched }">我的凭证</a>
-                                </li>
-                                <li class="home-item"><a href="#/home">个人中心</a></li>
-                            </ul>
-                        <div>
-                            <button class="home-navbar-button" @click="logOut">Log out</button>
-                        </div>
-                        <div class="home-navbar-profile">
-                            <a href="https://github.com/Psalm404/Hellometa" target="_blank">
-                                <img src="../assets/github.jpg" alt="Join us">
-                            </a>
-                        </div>
+            <div class="home-navbar-container">
+                <div class="want-to-be-left">
+                    <a class="home-navbar-logo">
+                        <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
+                    </a>
+                    <div class="page-titile">
+                        <h3></h3>
                     </div>
                 </div>
+                <div class="want-to-be-right">
+                    <ul class="home-navbar-menu">
+                        <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
+                        <li class="recharge-item  active"><a>燃料管理</a></li>
+                        <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
+                        <li class="explore-item">
+                            <a href="#/exhibitWorks" :class="{ disabled: !$store.state.isAccountMatched }">交易市场</a>
+                        </li>
+                        <li class="upload-item">
+                            <a href="#/uploadWorks" :class="{ disabled: !$store.state.isAccountMatched }">凭证上传</a>
+                        </li>
+                        <li class="records-item">
+                            <a href="#/recordWorks" :class="{ disabled: !$store.state.isAccountMatched }">我的凭证</a>
+                        </li>
+                        <li class="home-item"><a href="#/home">个人中心</a></li>
+                    </ul>
+                    <div>
+                        <button class="home-navbar-button" @click="logOut">退出登录</button>
+                    </div>
+                    <div class="home-navbar-profile">
+                        <a href="https://github.com/Psalm404/Hellometa" target="_blank">
+                            <img src="../assets/github.jpg" alt="Join us">
+                        </a>
+                    </div>
+                </div>
+            </div>
         </nav>
+        <!-- 临时占位，有时间记得删 -->
         <div class="myGas-guideBox">
-            <a class="myGas-howtouse" @click="drawer = true" style="align-self:self-start;">
-                <i class="el-icon-question" style="display:contents;"></i>
-                我该如何使用燃料管理？</a>
-        </div>
-        <div class="myGas-info">
-            <div style="align-self: self-start; font-weight:bold; font-size:17px"> 待分配燃料 </div>
-            <div style="font-size:2em; align-self: self-start;">{{totalGasETH}} ETH</div>
-            <div style="display: flex; gap:10px">
-                <el-button class="custom-button" size="mini" @click="toGasRecharge()">燃料充值</el-button>
-                <!-- <el-button class="custom-button" size="mini" @click="distributeGas()">分配燃料</el-button> -->
-                <el-button class="custom-button" size="mini" @click="drawer2 = true; getRecord()">收支明细</el-button>
-                <el-button class="custom-button" size="mini" @click="drawer3 = true; getRecord()">分配记录</el-button>
-            </div>
-        </div>
-        <div class="myGas-accountList">
-            <div style="align-self:self-start;">链账户列表</div>
-            <div>
-                <el-table :key="listData.length" :data="listData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width:100%">
-                    <el-table-column prop="name" label="账户名称" width="320"></el-table-column>
-                    <el-table-column prop="address" label="账户地址" width="390"></el-table-column>
-                    <el-table-column prop="balance" label="账户余额（ETH）" width="200"></el-table-column>
-                    <el-table-column align="right">
-                        <!-- eslint-disable-next-line -->
-                        <template slot="header" slot-scope="scope">
-                            <el-input class="custom-input" v-model="search" size="mini" placeholder="输入名称关键字搜索" />
-                        </template>
-                        <!-- eslint-disable-next-line -->
-                        <template slot-scope="scope">
-                            <el-button class="custom-button2" size="mini" @click="distributeGas(scope.$index, scope.row)">分配燃料</el-button>
-                        </template>
-                    </el-table-column>
 
-                </el-table>
-            </div>
         </div>
+        <transition name="el-fade-in-linear">
+            <div class="myGas-info" v-show="show">
+                <a class="myGas-howtouse" @click="drawer = true" style="align-self:self-start;">
+                    <i class="el-icon-question" style="display:contents;"></i>
+                    我该如何使用燃料管理？</a>
+                <div style="align-self: self-start; font-weight:bold; font-size:17px"> 待分配燃料 </div>
+                <div style="font-size:2em; align-self: self-start;">{{totalGasETH}} ETH</div>
+                <div style="display: flex; gap:10px">
+                    <el-button class="custom-button" size="mini" @click="toGasRecharge()">燃料充值</el-button>
+                    <!-- <el-button class="custom-button" size="mini" @click="distributeGas()">分配燃料</el-button> -->
+                    <el-button class="custom-button" size="mini" @click="drawer2 = true; getRecord()">收支明细</el-button>
+                    <el-button class="custom-button" size="mini" @click="drawer3 = true; getRecord()">分配记录</el-button>
+                </div>
+            </div>
+        </transition>
+        <transition name="el-fade-in-linear">
+            <div class="myGas-accountList" v-show="show">
+                <div style="align-self:self-start;">链账户列表</div>
+                <div>
+                    <el-table :key="listData.length" :data="listData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width:100%">
+                        <el-table-column prop="name" label="账户名称" width="320"></el-table-column>
+                        <el-table-column prop="address" label="账户地址" width="390"></el-table-column>
+                        <el-table-column prop="balance" label="账户余额（ETH）" width="200"></el-table-column>
+                        <el-table-column align="right">
+                            <!-- eslint-disable-next-line -->
+                            <template slot="header" slot-scope="scope">
+                                <el-input class="custom-input" v-model="search" size="mini" placeholder="输入名称关键字搜索" />
+                            </template>
+                            <!-- eslint-disable-next-line -->
+                            <template slot-scope="scope">
+                                <el-button class="custom-button2" size="mini" @click="distributeGas(scope.$index, scope.row)">分配燃料</el-button>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+                </div>
+            </div>
+        </transition>
     </div>
 
     <el-drawer size="40%" :visible.sync="drawer" :with-header="false">
@@ -127,6 +134,7 @@
             </el-table>
         </template>
     </el-drawer>
+
 </div>
 </template>
 
@@ -135,12 +143,16 @@ import Web3 from 'web3';
 import axios from 'axios';
 export default {
     mounted() {
+        setTimeout(() => {
+            this.show = true;
+        }, 150)
         this.account = localStorage.getItem('account')
         this.getAccountList();
         this.getTotalGas();
     },
     data() {
         return {
+            show:false,
             account: null,
             myGas: null,
             drawer: false,
@@ -205,7 +217,7 @@ export default {
                 let toAddress = info.address;
                 let amount = parseFloat(Web3.utils.toWei(value, 'ether'));
                 const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
-                    axios.post(`${apiBaseUrl}/sendFunds`, {
+                axios.post(`${apiBaseUrl}/sendFunds`, {
                     toAddress: toAddress,
                     amount: amount
                 }).then(res => {
@@ -261,8 +273,8 @@ export default {
                     this.totalGas = res.data.balance;
                     // 调用 Vuex action 更新余额
                     this.$store.dispatch('updateUserBalance', res.data.balance);
-                    console.log('userBalance::'+ res.data.balance)
-                    this.totalGasETH = Web3.utils.fromWei(this. totalGas, 'ether');
+                    console.log('userBalance::' + res.data.balance)
+                    this.totalGasETH = Web3.utils.fromWei(this.totalGas, 'ether');
                 }
             }).catch(e => {
                 console.log(e)
@@ -305,7 +317,8 @@ export default {
     align-items: center;
     min-height: 100vh;
     max-width: 100vw;
-    background-color:  #292929;;
+    background-color: #292929;
+    ;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
     /* background-image: linear-gradient(to top, #1e0e09 0%, rgba(255, 115, 22, 0.901) 100%); */
     ;
@@ -315,7 +328,7 @@ export default {
     position: relative;
     /* border:1px solid green; */
     /* left: 8%; */
-    margin-top: 120px;
+    margin-top: 80px;
     margin-left: 60px;
     /* border: 1px solid green; */
     display: flex;
@@ -323,7 +336,7 @@ export default {
     gap: 10px;
 }
 
-.myGas-howtouse{
+.myGas-howtouse {
     color: #ff5900;
 }
 
@@ -379,6 +392,7 @@ export default {
 .el-icon-arrow-right {
     color: #fff;
 }
+
 .content {
     max-width: 100%;
     width: 100%;
@@ -395,15 +409,19 @@ export default {
 /* 新增的样式 */
 .display-container {
     display: flex;
-    align-items: center; /* 垂直居中对齐 */
-    justify-content: space-between; /* 在两端对齐 */
-    margin-top: 70px; /* 根据需要调整间距 */
-    padding: 0 15px; /* 根据需要调整内边距 */
+    align-items: center;
+    /* 垂直居中对齐 */
+    justify-content: space-between;
+    /* 在两端对齐 */
+    margin-top: 70px;
+    /* 根据需要调整间距 */
+    padding: 0 15px;
+    /* 根据需要调整内边距 */
 }
 
 .search-box {
     position: relative;
-    top:0%;
+    top: 0%;
     left: -28%;
     z-index: 10;
     text-align: left;
@@ -437,65 +455,92 @@ export default {
     box-shadow: 2px 4px 15px #171717;
     display: flex;
     flex-direction: column;
-    border: 1px solid #ccc; /* 添加灰白色边框 */
+    border: 1px solid #ccc;
+    /* 添加灰白色边框 */
 }
 
 .home-navbar {
     margin-top: 20px;
     margin-left: calc(50% - 48vw);
-    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
-    border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* 设置为半透明 */
+    border-bottom: 1px solid rgba(230, 232, 236, 0);
+    /* 去掉底部边框 */
     padding: 10px 20px;
     position: fixed;
     top: 0;
     width: 90%;
     height: auto;
     z-index: 1000;
-    border-radius: 25px; /* 设置圆角 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+    border-radius: 25px;
+    /* 设置圆角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    backdrop-filter: blur(30px);
+    /* 添加背景模糊效果 */
+}
+
+/* Recharge */
+.guide-item {
+    position: relative;
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -110px;
+    /* 根据需要调整位置 */
 }
 
 /* Recharge */
 .recharge-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -100px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -100px;
+    /* 根据需要调整位置 */
 }
 
 /* Browser */
 .intro-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -90px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -90px;
+    /* 根据需要调整位置 */
 }
 
 /* Explore */
 .explore-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -80px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -80px;
+    /* 根据需要调整位置 */
 }
 
 /* Upload */
 .upload-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -70px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -70px;
+    /* 根据需要调整位置 */
 }
 
 /* Records */
 .records-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -60px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -60px;
+    /* 根据需要调整位置 */
 }
 
 /* Home */
 .home-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -50px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -50px;
+    /* 根据需要调整位置 */
 }
 
 .home-navbar-container {
@@ -507,9 +552,11 @@ export default {
 
 .want-to-be-left {
     display: flex;
-    justify-content: flex-start; /* 左对齐 */
+    justify-content: flex-start;
+    /* 左对齐 */
     align-items: center;
-    flex-grow: 1; /* 使其占据剩余空间 */
+    flex-grow: 1;
+    /* 使其占据剩余空间 */
 }
 
 .want-to-be-right {
@@ -560,11 +607,11 @@ export default {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color:  #ff5900;
+    color: #ff5900;
 }
 
 .home-navbar-menu li a:hover {
-    color:  #ff5900;
+    color: #ff5900;
 }
 
 .home-navbar-actions {
@@ -573,21 +620,29 @@ export default {
 }
 
 .home-navbar-button {
-    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* 设置为半透明 */
     color: #4d3535;
-    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
+    border: 1px solid #4d3535;
+    /* 添加2px的边框，颜色与原背景色一致 */
     padding: 10px 10px;
-    border-radius: 20px; /* 设置圆角 */
+    border-radius: 20px;
+    /* 设置圆角 */
     cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
-    margin-right: 10px; /* 增加一个右边距 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+    transition: background-color 0.3s, border-color 0.3s;
+    /* 添加边框颜色过渡 */
+    margin-right: 10px;
+    /* 增加一个右边距 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    backdrop-filter: blur(30px);
+    /* 添加背景模糊效果 */
 }
 
 .home-navbar-button:hover {
     background-color: #ff5900;
-    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+    border-color: #ff5900;
+    /* 修改hover状态下的边框颜色 */
 }
 
 .home-navbar-profile img {
@@ -597,8 +652,9 @@ export default {
     cursor: pointer;
 }
 
-.profile-titile{
-    z-index: 00; /* 设置一个较高的 z-index 使其在页面顶层 */
+.profile-titile {
+    z-index: 00;
+    /* 设置一个较高的 z-index 使其在页面顶层 */
 }
 
 h2 {
@@ -606,61 +662,76 @@ h2 {
     left: 12%;
     top: 23px;
     font-size: 6em;
-    color:  #c64500;
+    color: #c64500;
     text-align: center;
 }
 
 /* 自定义按钮样式 */
 ::v-deep .custom-button {
-    background-color: #ff5900; /* 默认橙色背景 */
-    color: white;              /* 白色文字 */
-    border-radius: 5px;       /* 圆角 */
-    border: none;              /* 无边框 */
-    transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
-    border: 1px solid #ff5900; /* 添加橙色边框 */
+    background-color: #ff5900;
+    /* 默认橙色背景 */
+    color: white;
+    /* 白色文字 */
+    border-radius: 5px;
+    /* 圆角 */
+    border: none;
+    /* 无边框 */
+    transition: background-color 0.3s, color 0.3s;
+    /* 添加过渡效果 */
+    border: 1px solid #ff5900;
+    /* 添加橙色边框 */
 }
 
 ::v-deep .custom-button:hover {
     /* background-color: #e65000; 悬停时稍微加深橙色 */
-    background-color: white;   /* 按下时背景变为白色 */
-    color: #ff5900;            /* 文字变为橙色 */
-    border: 1px solid #ff5900; /* 添加橙色边框 */
+    background-color: white;
+    /* 按下时背景变为白色 */
+    color: #ff5900;
+    /* 文字变为橙色 */
+    border: 1px solid #ff5900;
+    /* 添加橙色边框 */
 }
 
 ::v-deep .custom-button:active {
-    background-color: white;   /* 按下时背景变为白色 */
-    color: #ff5900;            /* 文字变为橙色 */
-    border: 1px solid #ff5900; /* 添加橙色边框 */
+    background-color: white;
+    /* 按下时背景变为白色 */
+    color: #ff5900;
+    /* 文字变为橙色 */
+    border: 1px solid #ff5900;
+    /* 添加橙色边框 */
 }
 
 ::v-deep .custom-button2 {
-    background-color: #f6894f; 
-    color: white;             
-    border-radius: 5px;                
-    transition: background-color 0.3s, color 0.3s; 
-    border: 1px solid #f6894f; 
+    background-color: #f6894f;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    border: 1px solid #f6894f;
 }
 
 ::v-deep .custom-button2:hover {
-    background-color: white;   
-    color: #f6894f; 
-    border: 1px solid #f6894f; 
+    background-color: white;
+    color: #f6894f;
+    border: 1px solid #f6894f;
 }
 
 ::v-deep .custom-button2:active {
-    background-color: white;  
-    color: #f6894f; 
-    border: 1px solid#f6894f; 
+    background-color: white;
+    color: #f6894f;
+    border: 1px solid#f6894f;
 }
 
 ::v-deep .custom-input .el-input__inner {
     /* border-color: #ff5900; 将边框颜色改为橙色 */
-    border-radius: 5px;    /* 添加圆角 */
+    border-radius: 5px;
+    /* 添加圆角 */
 }
 
 ::v-deep .custom-input .el-input__inner:focus {
-    border-color: #e65000; /* 聚焦时边框颜色变深 */
-    box-shadow: 0 0 5px rgba(230, 80, 0, 0.5); /* 添加阴影效果 */
+    border-color: #e65000;
+    /* 聚焦时边框颜色变深 */
+    box-shadow: 0 0 5px rgba(230, 80, 0, 0.5);
+    /* 添加阴影效果 */
 }
 
 .disabled {

@@ -22,7 +22,7 @@
                 <div class="detail-box-top">
                     <div class="detail-box-top-left">
                         <div class="record-picture">
-                            <el-avatar shape="square" :size="220" :src="picUrl"></el-avatar>
+                            <el-avatar shape="square" :size="220" :src="workPic"></el-avatar>
                         </div>
                         <div class="work-download"> <button @click="downloadFile">下载文件</button> </div>
                     </div>
@@ -111,6 +111,7 @@ export default {
             workName: "",
             workType: "",
             workDesc: "",
+            workPic:"",
         }
     },
     methods: {
@@ -134,6 +135,7 @@ export default {
                         console.log(data);
                         // 赋值于details
                         this.picUrl = data.image;
+                        this.workPic = this.picUrl;
                         // this.workHashValue = "11"
                         this.workName = data.name;
                         this.workType = data.type;
@@ -142,7 +144,7 @@ export default {
                         // this.workTokenID = await getTokenIdbyURL(this.testURL);
                         if (data.type == 'txt') {
                             this.workType = '文本'
-                            this.picUrl = require('@/assets/text.png')
+                            this.workPic = require('@/assets/text.png')
                         } else {
                             this.workType = '图片'
                         }

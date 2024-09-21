@@ -1,85 +1,86 @@
 <template>
-    <div class="container">
+<div class="container">
+    <div class="content">
+        <nav class="home-navbar">
+            <div class="home-navbar-container">
+                <div class="want-to-be-left">
+                    <a class="home-navbar-logo">
+                        <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
+                    </a>
+                    <div class="page-titile">
+                        <h3></h3>
+                    </div>
+                </div>
+                <div class="want-to-be-right">
+                    <ul class="home-navbar-menu">
+                        <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
+                        <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
+                        <li class="intro-item  active"><a>区块浏览器</a></li>
+                        <li class="explore-item">
+                            <a href="#/exhibitWorks" :class="{ disabled: !$store.state.isAccountMatched }">交易市场</a>
+                        </li>
+                        <li class="upload-item">
+                            <a href="#/uploadWorks" :class="{ disabled: !$store.state.isAccountMatched }">凭证上传</a>
+                        </li>
+                        <li class="records-item">
+                            <a href="#/recordWorks" :class="{ disabled: !$store.state.isAccountMatched }">我的凭证</a>
+                        </li>
+                        <li class="home-item"><a href="#/home">个人中心</a></li>
+                    </ul>
+                    <div>
+                        <button class="home-navbar-button" @click="logOut">退出登录</button>
+                    </div>
+                    <div class="home-navbar-profile">
+                        <a href="https://github.com/Psalm404/Hellometa" target="_blank">
+                            <img src="../assets/github.jpg" alt="Join us">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
         <transition name="el-fade-in-linear">
-            <div class="content">
-                <nav class="home-navbar">
-                    <div class="home-navbar-container">
-                        <div class="want-to-be-left">
-                            <a class="home-navbar-logo">
-                                <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
-                            </a>
-                            <div class="page-titile">
-                                <h3></h3>
-                            </div>
-                        </div>
-                        <div class="want-to-be-right">
-                            <ul class="home-navbar-menu">
-                                <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
-                                <li class="intro-item  active"><a>区块浏览器</a></li>
-                                <li class="explore-item">
-                                    <a href="#/exhibitWorks" :class="{ disabled: !$store.state.isAccountMatched }">交易市场</a>
-                                </li>
-                                <li class="upload-item">
-                                    <a href="#/uploadWorks" :class="{ disabled: !$store.state.isAccountMatched }">凭证上传</a>
-                                </li>
-                                <li class="records-item">
-                                    <a href="#/recordWorks" :class="{ disabled: !$store.state.isAccountMatched }">我的凭证</a>
-                                </li>
-                                <li class="home-item"><a  href="#/home">个人中心</a></li>
-                            </ul>
-                            <div>
-                                <button class="home-navbar-button" @click="logOut">Log out</button>
-                            </div>
-                            <div class="home-navbar-profile">
-                                <a href="https://github.com/Psalm404/Hellometa" target="_blank">
-                                    <img src="../assets/github.jpg" alt="Join us">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
-                <div class="home-card-container">
-                    <el-carousel :interval="4000" type="card">
-                        <el-carousel-item v-for="(item, index) in picture" :key="index">
-                            <img :src="item" class="home-card-img" alt="">
-                        </el-carousel-item>
-                    </el-carousel>
-                </div>
-                <el-divider><i class="el-icon-s-promotion"></i></el-divider>
-                <div class="home-introduction">
-                    <h1>什么是工业互联网数据资产化？</h1>
-                    <div class="home-text-blocks-container">
-                        <div class="home-text-block" v-for="(block, index) in textBlocks" :key="index">
-                            <h3>{{ block.title }}</h3>
-                            <p>{{ block.description }}</p>
-                        </div>
+            <div v-show = "show">
+            <div class="home-card-container">
+                <el-carousel :interval="4000" type="card">
+                    <el-carousel-item v-for="(item, index) in picture" :key="index">
+                        <img :src="item" class="home-card-img" alt="">
+                    </el-carousel-item>
+                </el-carousel>
+            </div>
+            <el-divider><i class="el-icon-s-promotion"></i></el-divider>
+            <div class="home-introduction">
+                <h1>什么是工业互联网数据资产化？</h1>
+                <div class="home-text-blocks-container">
+                    <div class="home-text-block" v-for="(block, index) in textBlocks" :key="index">
+                        <h3>{{ block.title }}</h3>
+                        <p>{{ block.description }}</p>
                     </div>
                 </div>
-                <el-divider><i class="el-icon-menu"></i></el-divider>
-                <!-- 区块浏览器部分开始 -->
-                <div class="block-browser">
-                    <img src="../assets/logo.png" class="block-browser-logo">
-                    <p class="browser-passage1">为工业互联网数据资产存证、确权、溯源需求</p>
-                    <p class="browser-passage2">提供安全、高效、可信的区块链服务</p>
-                    <h1 style="color: rgb(196,196,196);">区块浏览器</h1>
-                </div>
-                <div class="block-browser-search-box">
-                    <input type="text" class="block-browser-search-input" placeholder="搜索地址/交易/区块"
-                        v-model="searchData" @keyup.enter="blockSearch">
-                    <button class="block-browser-search-button" @click="blockSearch">搜索</button>
-                </div>
-                <div v-if="show" class="block-result-card-box">
-                    <div v-for="(item, index) in searchResult" :key="index" class="block-result-card">
-                        <h2>区块{{ index }}</h2>
-                        <div class="block-result-card-content">
-                            <!-- <el-divider><i class="el-icon-bottom"></i></el-divider> -->
+            </div>
+            <el-divider><i class="el-icon-menu"></i></el-divider>
+            <!-- 区块浏览器部分开始 -->
+            <div class="block-browser">
+                <img src="../assets/logo.png" class="block-browser-logo">
+                <p class="browser-passage1">为工业互联网数据资产存证、确权、溯源需求</p>
+                <p class="browser-passage2">提供安全、高效、可信的区块链服务</p>
+                <h1 style="color: rgb(196,196,196);">区块浏览器</h1>
+            </div>
+            <div class="block-browser-search-box">
+                <input type="text" class="block-browser-search-input" placeholder="搜索地址/交易/区块" v-model="searchData" @keyup.enter="blockSearch">
+                <button class="block-browser-search-button" @click="blockSearch">搜索</button>
+            </div>
+            <div v-if="show" class="block-result-card-box">
+                <div v-for="(item, index) in searchResult" :key="index" class="block-result-card">
+                    <h2>区块{{ index }}</h2>
+                    <div class="block-result-card-content">
+                        <!-- <el-divider><i class="el-icon-bottom"></i></el-divider> -->
+                        <div>
+                            <div v-for="(title, n) in blockTitle" :key="n" class="result-card-context">
+                                <p v-if="(n === 18 || n === 19)"></p>
+                                <p v-else>{{ title }}: {{ item[title] }}</p>
+                            </div>
                             <div>
-                                <div v-for="(title, n) in blockTitle" :key="n" class="result-card-context">
-                                    <p v-if="(n === 18 || n === 19)"></p>
-                                    <p v-else>{{ title }}: {{ item[title] }}</p>
-                                </div>
-                                <div>
-                                    <!-- <el-collapse v-model="activeNames" @change="handleChange">
+                                <!-- <el-collapse v-model="activeNames" @change="handleChange">
                                         <el-collapse-item title="交易列表" :name="index" class="result-card-context">
                                             <p>transactions: {{ item['transactions'] }}</p>
                                             <p class="transaction-Tx-link" @click="showTransactionDetail(index)">
@@ -88,30 +89,31 @@
                                             </p>
                                         </el-collapse-item>
                                     </el-collapse> -->
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div v-else class="block-result-card-box">
-                    <div class="block-result-card">
-                        <h2>查询结果</h2>
-                        <div class="block-result-card-content">
-                            <el-divider><i class="el-icon-bottom"></i></el-divider>
-                            <div>
-                                <p v-for="(item, index) in transactions_detail_title" :key="index"
-                                    class="result-card-context">{{ item }}: {{ transactionResult[index] }}</p>
-                                <!-- <div v-for="(item, index) in transactionResult" :key="index" class="result-card-context">
+            </div>
+            <div v-else class="block-result-card-box">
+                <div class="block-result-card">
+                    <h2>查询结果</h2>
+                    <div class="block-result-card-content">
+                        <el-divider><i class="el-icon-bottom"></i></el-divider>
+                        <div>
+                            <p v-for="(item, index) in transactions_detail_title" :key="index" class="result-card-context">{{ item }}: {{ transactionResult[index] }}</p>
+                            <!-- <div v-for="(item, index) in transactionResult" :key="index" class="result-card-context">
                                     <p v-for="(item, index) in transactionResult" :key="index">{{ index }}: {{ item }}</p>
                                 </div> -->
-                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- 区块浏览器部分结束 -->
             </div>
-        </transition>
+        </div>
+</transition>
+        <!-- 区块浏览器部分结束 -->
     </div>
+
+</div>
 </template>
 
 <script>
@@ -127,66 +129,71 @@ export default {
         this.blockSearch = debounce(this.blockSearch, 300);
     },
     mounted() {
+        setTimeout(() => {
+            this.show = true;
+        }, 150)
         this.searchData = this.$route.query.bkSearchQuery ? this.$route.query.bkSearchQuery.toString() : '';
-        this.activeNames = Array.from({ length: 100 }, (_, index) => index);
+        this.activeNames = Array.from({
+            length: 100
+        }, (_, index) => index);
         this.blockSearch();
     },
     data() {
         return {
             // 区块浏览器数据
-            show: true,
+            show: false,
             searchData: '',
             activeNames: [],
             searchResult: [],
             showDetail: false,
             blockTitle: [
-                'BlockNumber',         // 对应原来的 'number'
-                'Difficulty',          // 对应原来的 'difficulty'
-                'ExtraData',           // 对应原来的 'extraData'
-                'GasLimit',            // 对应原来的 'gasLimit'
-                'GasUsed',             // 对应原来的 'gasUsed'
-                'Hash',                // 对应原来的 'hash'
-                'LogsBloom',           // 对应原来的 'logsBloom'
-                'Miner',               // 对应原来的 'miner'
-                'Nonce',               // 对应原来的 'nonce'
-                'ParentHash',          // 对应原来的 'parentHash'
-                'ReceiptsRoot',        // 对应原来的 'receiptsRoot'
-                'Sha3Uncles',          // 对应原来的 'sha3Uncles'
-                'Size',                // 对应原来的 'size'
-                'StateRoot',           // 对应原来的 'stateRoot'
-                'Timestamp',           // 对应原来的 'timestamp'
-                'TotalDifficulty',     // 对应原来的 'totalDifficulty'
-                'Transactions',        // 对应原来的 'transactions'
-                'TransactionsRoot',    // 对应原来的 'transactionsRoot'
-                'Uncles'               // 对应原来的 'uncles'
+                'BlockNumber', // 对应原来的 'number'
+                'Difficulty', // 对应原来的 'difficulty'
+                'ExtraData', // 对应原来的 'extraData'
+                'GasLimit', // 对应原来的 'gasLimit'
+                'GasUsed', // 对应原来的 'gasUsed'
+                'Hash', // 对应原来的 'hash'
+                'LogsBloom', // 对应原来的 'logsBloom'
+                'Miner', // 对应原来的 'miner'
+                'Nonce', // 对应原来的 'nonce'
+                'ParentHash', // 对应原来的 'parentHash'
+                'ReceiptsRoot', // 对应原来的 'receiptsRoot'
+                'Sha3Uncles', // 对应原来的 'sha3Uncles'
+                'Size', // 对应原来的 'size'
+                'StateRoot', // 对应原来的 'stateRoot'
+                'Timestamp', // 对应原来的 'timestamp'
+                'TotalDifficulty', // 对应原来的 'totalDifficulty'
+                'Transactions', // 对应原来的 'transactions'
+                'TransactionsRoot', // 对应原来的 'transactionsRoot'
+                'Uncles' // 对应原来的 'uncles'
             ],
             transactionResult: [],
             transactions_detail_title: [
-            'BlockNumber',         // 对应原来的 'number'
-                'Difficulty',          // 对应原来的 'difficulty'
-                'ExtraData',           // 对应原来的 'extraData'
-                'GasLimit',            // 对应原来的 'gasLimit'
-                'GasUsed',             // 对应原来的 'gasUsed'
-                'Hash',                // 对应原来的 'hash'
-                'LogsBloom',           // 对应原来的 'logsBloom'
-                'Miner',               // 对应原来的 'miner'
-                'Nonce',               // 对应原来的 'nonce'
-                'ParentHash',          // 对应原来的 'parentHash'
-                'ReceiptsRoot',        // 对应原来的 'receiptsRoot'
-                'Sha3Uncles',          // 对应原来的 'sha3Uncles'
-                'Size',                // 对应原来的 'size'
-                'StateRoot',           // 对应原来的 'stateRoot'
-                'Timestamp',           // 对应原来的 'timestamp'
-                'TotalDifficulty',     // 对应原来的 'totalDifficulty'
-                'Transactions',        // 对应原来的 'transactions'
-                'TransactionsRoot',    // 对应原来的 'transactionsRoot'
-                'Uncles'               // 对应原来的 'uncles'
+                'BlockNumber', // 对应原来的 'number'
+                'Difficulty', // 对应原来的 'difficulty'
+                'ExtraData', // 对应原来的 'extraData'
+                'GasLimit', // 对应原来的 'gasLimit'
+                'GasUsed', // 对应原来的 'gasUsed'
+                'Hash', // 对应原来的 'hash'
+                'LogsBloom', // 对应原来的 'logsBloom'
+                'Miner', // 对应原来的 'miner'
+                'Nonce', // 对应原来的 'nonce'
+                'ParentHash', // 对应原来的 'parentHash'
+                'ReceiptsRoot', // 对应原来的 'receiptsRoot'
+                'Sha3Uncles', // 对应原来的 'sha3Uncles'
+                'Size', // 对应原来的 'size'
+                'StateRoot', // 对应原来的 'stateRoot'
+                'Timestamp', // 对应原来的 'timestamp'
+                'TotalDifficulty', // 对应原来的 'totalDifficulty'
+                'Transactions', // 对应原来的 'transactions'
+                'TransactionsRoot', // 对应原来的 'transactionsRoot'
+                'Uncles' // 对应原来的 'uncles'
             ],
             // 走马灯图片
             picture: [
-                require("@/assets/680aa819c894e632d3ce71e1ef533ea.png"),
-                require("@/assets/PixPin_2024-05-25_17-46-05.jpg"),
-                require("@/assets/d7dfc57d557f18490d2d00ba5f9f8af.png"),
+                require("@/assets/6.png"),
+                // require("@/assets/PixPin_2024-05-25_17-46-05.jpg"),
+                require("@/assets/7.png"),
                 require("@/assets/1.jpg"),
                 require("@/assets/2.jpg"),
                 require("@/assets/3.jpg"),
@@ -194,19 +201,21 @@ export default {
                 require("@/assets/5.jpg"),
             ],
             // 介绍文字
-            textBlocks: [
-                {
-                    title: '工业互联网 ', description: '"工业互联网"（Industrial Internet）是指在工业领域应用物联网技术，'
-                        + '通过设备、传感器和软件系统的互联互通，实现数据的收集、交换和分析，以优化制造流程、提高生产效率和减少维护' +
+            textBlocks: [{
+                    title: '工业互联网 ',
+                    description: '"工业互联网"（Industrial Internet）是指在工业领域应用物联网技术，' +
+                        '通过设备、传感器和软件系统的互联互通，实现数据的收集、交换和分析，以优化制造流程、提高生产效率和减少维护' +
                         '成本的概念。它通常涉及到智能制造、自动化技术、大数据分析和云计算等领域。'
                 },
                 {
-                    title: '无币公链', description: '"无币公链"是指一种公共区块链技术的实现，其中不发行任何原生加密货币或代币。' +
+                    title: '无币公链',
+                    description: '"无币公链"是指一种公共区块链技术的实现，其中不发行任何原生加密货币或代币。' +
                         '这与众多知名的区块链平台不同，后者通常都有自己的内置代币，如比特币、以太坊等。'
                 },
                 {
-                    title: '数据资产化', description: '"数据资产化"是一个涉及将数据转换成可量化的、有价值的资产的概念。'
-                        + '这一过程不仅包括数据的收集和存储，还包括对数据的管理、分析和利用，目的是从数据中提取价值，支持决策制定，' +
+                    title: '数据资产化',
+                    description: '"数据资产化"是一个涉及将数据转换成可量化的、有价值的资产的概念。' +
+                        '这一过程不仅包括数据的收集和存储，还包括对数据的管理、分析和利用，目的是从数据中提取价值，支持决策制定，' +
                         '创造商业机会，甚至直接作为产品或服务出售。'
                 },
             ],
@@ -227,7 +236,9 @@ export default {
                 // 使用API请求前100个区块
                 const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
                 axios.get(`${apiBaseUrl}/getBlocksAndTransactions`, {
-                    params: { n: 100 } // 获取前100个区块
+                    params: {
+                        n: 100
+                    } // 获取前100个区块
                 }).then(response => {
                     if (response.data.code === 200) {
                         const blocks = response.data.blocksWithTransactions;
@@ -294,11 +305,13 @@ export default {
             return true
         },
         showTransactionDetail(index) {
-            console.log('index::'+index);
+            console.log('index::' + index);
             let tmp = this.searchResult[index]['transactions'];
             this.$router.push({
                 path: '/blockBrowse/transactionDetail',
-                query: { hash: tmp }
+                query: {
+                    hash: tmp
+                }
             });
         },
         handleChange(val) {
@@ -325,8 +338,8 @@ export default {
 
 h3 {
     font-size: 1.3em;
-    color:  #c64500;
-    text-align:justify;
+    color: #c64500;
+    text-align: justify;
 }
 
 .page-titile {
@@ -338,59 +351,85 @@ h3 {
 .home-navbar {
     margin-top: 20px;
     margin-left: calc(50% - 48vw);
-    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
-    border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* 设置为半透明 */
+    border-bottom: 1px solid rgba(230, 232, 236, 0);
+    /* 去掉底部边框 */
     padding: 10px 20px;
     position: fixed;
     top: 0;
     width: 90%;
     height: auto;
     z-index: 1000;
-    border-radius: 25px; /* 设置圆角 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+    border-radius: 25px;
+    /* 设置圆角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    backdrop-filter: blur(30px);
+    /* 添加背景模糊效果 */
+}
+
+/* Recharge */
+.guide-item {
+    position: relative;
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -110px;
+    /* 根据需要调整位置 */
 }
 
 /* Recharge */
 .recharge-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -100px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -100px;
+    /* 根据需要调整位置 */
 }
 
 /* Browser */
 .intro-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -90px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -90px;
+    /* 根据需要调整位置 */
 }
 
 /* Explore */
 .explore-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -80px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -80px;
+    /* 根据需要调整位置 */
 }
 
 /* Upload */
 .upload-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -70px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -70px;
+    /* 根据需要调整位置 */
 }
 
 /* Records */
 .records-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -60px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -60px;
+    /* 根据需要调整位置 */
 }
 
 /* Home */
 .home-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -50px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -50px;
+    /* 根据需要调整位置 */
 }
 
 .home-navbar-container {
@@ -402,9 +441,11 @@ h3 {
 
 .want-to-be-left {
     display: flex;
-    justify-content: flex-start; /* 左对齐 */
+    justify-content: flex-start;
+    /* 左对齐 */
     align-items: center;
-    flex-grow: 1; /* 使其占据剩余空间 */
+    flex-grow: 1;
+    /* 使其占据剩余空间 */
 }
 
 .want-to-be-right {
@@ -455,11 +496,11 @@ h3 {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color:  #ff5900;
+    color: #ff5900;
 }
 
 .home-navbar-menu li a:hover {
-    color:  #ff5900;
+    color: #ff5900;
 }
 
 .home-navbar-actions {
@@ -468,21 +509,29 @@ h3 {
 }
 
 .home-navbar-button {
-    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* 设置为半透明 */
     color: #4d3535;
-    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
+    border: 1px solid #4d3535;
+    /* 添加2px的边框，颜色与原背景色一致 */
     padding: 10px 10px;
-    border-radius: 20px; /* 设置圆角 */
+    border-radius: 20px;
+    /* 设置圆角 */
     cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
-    margin-right: 10px; /* 增加一个右边距 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+    transition: background-color 0.3s, border-color 0.3s;
+    /* 添加边框颜色过渡 */
+    margin-right: 10px;
+    /* 增加一个右边距 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    backdrop-filter: blur(30px);
+    /* 添加背景模糊效果 */
 }
 
 .home-navbar-button:hover {
     background-color: #ff5900;
-    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+    border-color: #ff5900;
+    /* 修改hover状态下的边框颜色 */
 }
 
 .home-navbar-profile img {
@@ -502,17 +551,22 @@ h3 {
     left: 5%;
     margin-top: 100px;
     height: auto;
-    padding: 0; /* 移除任何内边距 */
-    width: 90%; /* 确保容器宽度为100% */
-    box-sizing: border-box; /* 确保padding和border包含在宽度内 */
+    padding: 0;
+    /* 移除任何内边距 */
+    width: 90%;
+    /* 确保容器宽度为100% */
+    box-sizing: border-box;
+    /* 确保padding和border包含在宽度内 */
 }
 
 .home-card-img {
-    width: 100%; /* 图片宽度填充整个容器 */
-    height: 100%; /* 图片高度填充整个容器 */
-    object-fit: cover; /* 保持图片比例，同时填充整个容器 */
+    width: 100%;
+    /* 图片宽度填充整个容器 */
+    height: 100%;
+    /* 图片高度填充整个容器 */
+    object-fit: cover;
+    /* 保持图片比例，同时填充整个容器 */
 }
-
 
 .home-introduction {
     margin-left: calc(50% - 50vw);
@@ -549,8 +603,10 @@ h3 {
 
 .home-block-browser {
     margin-left: calc(50% - 50vw);
-    display: inline-block; /* 使标题与搜索框在同一行 */
-    vertical-align: left; /* 垂直对齐 */
+    display: inline-block;
+    /* 使标题与搜索框在同一行 */
+    vertical-align: left;
+    /* 垂直对齐 */
     color: aliceblue;
 }
 
@@ -559,7 +615,7 @@ h3 {
     max-width: 600px;
     margin: 0px auto;
     position: relative;
-    right:5%;
+    right: 5%;
 }
 
 .chain-search-box {
@@ -668,14 +724,14 @@ h3 {
     align-items: center;
 }
 
-h2{
-    color:#333;
+h2 {
+    color: #333;
     margin-top: 1%;
     margin-bottom: 0%;
 }
 
 .block-result-card {
-    color:#333;
+    color: #333;
     font-size: 1em;
     max-width: 80%;
     margin-bottom: 50px;

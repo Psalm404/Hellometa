@@ -14,6 +14,7 @@
                     </div>
                     <div class="want-to-be-right">
                         <ul class="home-navbar-menu">
+                            <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
                             <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                             <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
                             <li class="explore-item"><a href="#/exhibitWorks">交易市场</a></li>
@@ -22,7 +23,7 @@
                             <li class="home-item"><a href="#/home">个人中心</a></li>
                         </ul>
                         <div>
-                            <button class="home-navbar-button" @click="logOut">Log out</button>
+                            <button class="home-navbar-button" @click="logOut">退出登录</button>
                         </div>
                         <div class="home-navbar-profile">
                             <a href="https://github.com/Psalm404/Hellometa" target="_blank">
@@ -209,6 +210,16 @@ export default {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
     backdrop-filter: blur(30px); /* 添加背景模糊效果 */
 }
+
+/* Recharge */
+.guide-item {
+    position: relative;
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -110px;
+    /* 根据需要调整位置 */
+}
+
 
 /* Recharge */
 .recharge-item {

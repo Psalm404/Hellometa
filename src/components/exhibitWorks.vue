@@ -1,7 +1,7 @@
 <template>
 <div class="container">
-    <transition name="el-fade-in-linear">
-        <div class="content" v-show="show">
+
+        <div class="content">
             <nav class="home-navbar">
                 <div class="home-navbar-container">
                     <div class="want-to-be-left">
@@ -14,15 +14,17 @@
                     </div>
                     <div class="want-to-be-right">
                         <ul class="home-navbar-menu">
+                            <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
                             <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                             <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
                             <li class="explore-item active"><a href="#/exhibitWorks">交易市场</a></li>
                             <li class="upload-item"><a href="#/uploadWorks">凭证上传</a></li>
                             <li class="records-item"><a href="#/recordWorks">我的凭证</a></li>
                             <li class="home-item"><a href="#/home">个人中心</a></li>
+                           
                         </ul>
                         <div>
-                            <button class="home-navbar-button" @click="logOut">Log out</button>
+                            <button class="home-navbar-button" @click="logOut">退出登录</button>
                         </div>
                         <div class="home-navbar-profile">
                             <a href="https://github.com/Psalm404/Hellometa" target="_blank">
@@ -32,6 +34,7 @@
                     </div>
                 </div>
             </nav>
+
             <!-- 将 DISPLAY 和搜索框包裹在一个新的容器中 -->
             <div class="display-container">
                 <div class="profile-title">
@@ -45,13 +48,15 @@
                     </el-select>
                 </div>
             </div>
+            <transition name="el-fade-in-linear">
             <div class="grid-box">
                 <div v-for="(item, index) in gridData" :key="index" class="grid-item">
                     <subInfo :fileURL="item" :source="source" />
                 </div>
             </div>
+        </transition>
         </div>
-    </transition>
+  
 </div>
 </template>
 
@@ -67,12 +72,12 @@ export default {
     mounted() {
         setTimeout(() => {
                 this.show = true;
-            }, 0),
+            }, 150),
             this.getURLs();
     },
     data() {
         return {
-            show: true,
+            show: false,
             searchName: '',
             searchType: '',
             source: "exhibit",
@@ -260,6 +265,15 @@ export default {
     /* 添加阴影效果 */
     backdrop-filter: blur(30px);
     /* 添加背景模糊效果 */
+}
+
+/* Recharge */
+.guide-item {
+    position: relative;
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -110px;
+    /* 根据需要调整位置 */
 }
 
 /* Recharge */

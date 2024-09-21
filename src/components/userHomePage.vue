@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <transition name="el-fade-in-linear">
+
             <div class="content">
                 <div class="profile-titile">
                     <h2>Profile</h2>
@@ -17,6 +17,7 @@
                         </div>
                         <div class="want-to-be-right">
                             <ul class="home-navbar-menu">
+                                <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
                                 <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                                 <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
                                 <li class="explore-item">
@@ -31,7 +32,7 @@
                                 <li class="home-item active"><a>个人中心</a></li>
                             </ul>
                             <div>
-                                <button class="home-navbar-button" @click="logOut">Log out</button>
+                                <button class="home-navbar-button" @click="logOut">退出登录</button>
                             </div>                 
                             <div class="home-navbar-profile">
                                 <a href="https://github.com/Psalm404/Hellometa" target="_blank">
@@ -41,7 +42,8 @@
                         </div>
                     </div>
                 </nav>              
-                <div class="sidebar-wallet-container">
+                <transition name="el-fade-in-linear">
+                <div class="sidebar-wallet-container" v-show = "show">
                     <div class="sidebar">
                         <img :src="this.user.avatar" alt="未成功加载头像" class="avatar">
                         <!-- <img v-else alt="未成功加载头像" class="avatar"> -->
@@ -69,6 +71,7 @@
                         </div>
                     </div>
                 </div>
+                </transition>
                 <!-- 关键：myAccount.vue的内容合并到这里 -->
                 <div v-if="isAccountManagementVisible" class="myAccount-container" style="background-color: #708090;">
                     <div class="content" style="height:100vh">
@@ -210,7 +213,6 @@
                     </el-drawer>
                 </div>
             </div>
-        </transition>
     </div>
 </template>
 
@@ -225,6 +227,7 @@ export default {
             account: null,
             drawer: false,
             name: '',
+            show:false,
             address: '',
             search: '',
             listData: [
@@ -238,6 +241,9 @@ export default {
         // this.loadAvatar();
     },
     mounted() {
+        setTimeout(() => {
+            this.show = true;
+        }, 150)
         this.account = localStorage.getItem('account');
         this.connectWallet();
         
@@ -526,6 +532,16 @@ h4 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
     backdrop-filter: blur(30px); /* 添加背景模糊效果 */
 }
+
+/* Recharge */
+.guide-item {
+    position: relative;
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -110px;
+    /* 根据需要调整位置 */
+}
+
 
 /* Recharge */
 .recharge-item {

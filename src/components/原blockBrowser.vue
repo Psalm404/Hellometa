@@ -276,6 +276,15 @@ h4 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
     backdrop-filter: blur(30px); /* 添加背景模糊效果 */
 }
+/* Recharge */
+.guide-item {
+    position: relative;
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -110px;
+    /* 根据需要调整位置 */
+}
+
 
 /* Recharge */
 .recharge-item {

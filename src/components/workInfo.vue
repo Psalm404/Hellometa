@@ -6,7 +6,7 @@
                 <div class="detail-box-top">
                     <div class="detail-box-top-left">
                         <div class="record-picture">
-                            <el-avatar shape="square" :size="220" :src="picUrl"></el-avatar>
+                            <el-avatar shape="square" :size="220" :src="workPic"></el-avatar>
                         </div>
                         <div class="price-box">
                             售价：{{workPrice}} eth
@@ -104,6 +104,7 @@ export default {
             workTokenID: '',
             workIsOnMarket: 0,
             workPrice: null,
+            workPic: "",
         }
     },
     methods: {
@@ -140,14 +141,14 @@ export default {
                 this.picUrl = jsonData.image
                 if (jsonData.type == 'txt') {
                     this.workType = '文本'
-                    this.picUrl = require('@/assets/text.png')
-                }else{
-                     this.workType = '图片'
+                    this.workPic = require('@/assets/text.png')
+                } else {
+                    this.workType = '图片'
+                    this.workPic = this.picUrl
                 }
             } catch (e) {
                 console.log(e)
             }
-           
 
         },
         backToRecord() {
@@ -165,12 +166,20 @@ export default {
                 this.workType = nftData.type === 'txt' ? '文本' : '图片';
                 this.workDesc = nftData.desc;
                 this.workCreator = nftData.creator;
+                if (this.workType == '文本') {
+                    this.workPic = require('@/assets/text.png');
+                } else {
+                    this.workPic = this.picUrl;
+                }
+
                 this.workPrice = await getTokenPrice(this.workTokenID);
 
-                console.log('this.fileURL:'+this.fileURL);
+                console.log('this.fileURL:' + this.fileURL);
                 const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
                 const response = await axios.get(`${apiBaseUrl}/getTxHashByTokenURI`, {
-                    params: { tokenURI: this.fileURL }
+                    params: {
+                        tokenURI: this.fileURL
+                    }
                 });
 
                 if (response.data.code === 200) {

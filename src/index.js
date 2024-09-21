@@ -16,7 +16,7 @@ import registerPage from './components/registerPage.vue'
 import userIntroPage from './components/userIntroPage.vue'
 import guestIntroPage from './components/guestIntroPage.vue'
 import editProfile from './components/editProfile.vue'
-
+import guidePage from './components/guidePage.vue'
 import myGas from './components/myGas.vue'
 import gasRecharge from './components/gasRecharge.vue'
 
@@ -96,6 +96,10 @@ const router = new VueRouter({
       {
         path:'/myGas/gasRecharge',
         component:gasRecharge,
+      },
+      {
+        path:'/guidePage',
+        component:guidePage,
       }
  ]
 })

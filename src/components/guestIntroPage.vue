@@ -54,9 +54,9 @@ export default {
         return {
             // 走马灯图片
             picture: [
-                require("@/assets/680aa819c894e632d3ce71e1ef533ea.png"),
-                require("@/assets/PixPin_2024-05-25_17-46-05.jpg"),
-                require("@/assets/d7dfc57d557f18490d2d00ba5f9f8af.png"),
+                require("@/assets/6.png"),
+                // require("@/assets/PixPin_2024-05-25_17-46-05.jpg"),
+                require("@/assets/7.png"),
                 require("@/assets/1.jpg"),
                 require("@/assets/2.jpg"),
                 require("@/assets/3.jpg"),
