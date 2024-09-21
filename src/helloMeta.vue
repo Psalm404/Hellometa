@@ -11,9 +11,9 @@
                     <div v-if="!isLoggedIn || activeButton === 'login'" class="login-modal" v-show="showLogin">
                         <div class="login-box">
                             <!-- 关闭按钮 -->
-                            <button class="close-button" @click="closeLogin">close</button>
+                            <button class="close-button" @click="closeLogin" style = "font-size: medium">关闭</button>
                             <form @submit.prevent="login">
-                                <h2>Welcome👋</h2>
+                                <h2>欢迎！👋</h2>
                                 <h3>请先登录您的账号</h3>
                                 <div class="login-input">
                                     <span class="login-icon"></span>

@@ -55,7 +55,7 @@
                                 <button class="edit-profile-button" @click="editProfile">修改账号信息</button>
                             </div>
                             <div class="account-info">
-                                <p>剩余燃料: <span>{{ user.balance }}</span></p>
+                                <p>剩余燃料: <span>{{ user.balance }} ETH</span></p>
                                 <p>邮箱&电话: <span>{{ user.email }}   |   {{ user.phone }}</span></p>
                                 <p>连接到的钱包账户: <span>{{ selectedAccount ? selectedAccount : '未检测到钱包' }}</span></p>
                                 <p v-if="!isAccountMatched && selectedAccount" class="warning-message">

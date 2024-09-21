@@ -206,7 +206,7 @@ export default {
                     if (isNaN(numberValue)) {
                         return '请输入有效数字';
                     }
-                    if (numberValue > total * 0.9) {
+                    if (numberValue > total * 0.99) {
                         return '超过最大可分配额度 (' + (total * 0.99).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ')';
                     }
                     return true;
@@ -271,10 +271,11 @@ export default {
             }).then(res => {
                 if (res.data.code === 200) {
                     this.totalGas = res.data.balance;
-                    // 调用 Vuex action 更新余额
-                    this.$store.dispatch('updateUserBalance', res.data.balance);
-                    console.log('userBalance::' + res.data.balance)
                     this.totalGasETH = Web3.utils.fromWei(this.totalGas, 'ether');
+                    // 调用 Vuex action 更新余额
+                    this.$store.dispatch('updateUserBalance',  this.totalGasETH);
+                    console.log('userBalance::' +  this.totalGasETH)
+                    
                 }
             }).catch(e => {
                 console.log(e)

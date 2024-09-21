@@ -161,7 +161,8 @@ export default {
                 const nftData = await this.fetchFromPinata(this.fileURL);
 
                 this.picUrl = nftData.image;
-                this.workCreateTime = new Date().toLocaleString();
+                console.log(nftData)
+                this.workCreateTime = new Date(nftData.timestamp);
                 this.workName = nftData.name;
                 this.workType = nftData.type === 'txt' ? '文本' : '图片';
                 this.workDesc = nftData.desc;

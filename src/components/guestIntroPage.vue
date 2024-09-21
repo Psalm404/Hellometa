@@ -8,14 +8,14 @@
                             <a href="#/intro" class="home-navbar-logo">
                                 <img src="../assets/logo.png" alt="Logo" class="home-logo-image">
                             </a>
-                            <h3 class="home-navbar-title">guest mode</h3>
+                            <h3 class="home-navbar-title">游客模式</h3>
                         </div>
                         <ul class="home-navbar-menu">
                             <!-- 游客模式下的信息浏览 -->
                             <!-- <li><a href="#/intro">Explore</a></li> -->
                         </ul>
                         <div class="home-navbar-actions">
-                            <button class="home-navbar-button" @click="triggerLogin">Login</button>
+                            <button class="home-navbar-button" @click="triggerLogin">登录</button>
                             <a href="https://github.com/Psalm404/Hellometa" target="_blank" class="home-navbar-profile">
                                 <img src="../assets/github.jpg" alt="Join us">
                             </a>
