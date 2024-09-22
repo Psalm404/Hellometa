@@ -120,7 +120,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const isLoggedIn = store.state.isLoggedIn;
 
-  if (!isLoggedIn && to.path !== '/intro') {
+  if (!isLoggedIn && to.path !== '/intro' && to.path !=='/register') {
     next('/intro');
   } else {
     // 如果目标路由需要账户匹配验证
