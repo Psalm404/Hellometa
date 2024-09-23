@@ -105,7 +105,7 @@ export default {
     /* eslint-disable */
     mounted() {
         console.log('account:', localStorage.getItem('account'))
-        this.getExchangeRate();
+        // this.getExchangeRate();
     },
     data() {
         return {

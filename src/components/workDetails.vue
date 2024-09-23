@@ -167,7 +167,7 @@ export default {
                 } = await this.$prompt('请输入售价(单位:eth)', '修改售价', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
-                    inputPattern: /^(([1-9][0-9]*)|([^0]))$/,
+                    inputPattern: /^(?=.+)([1-9][0-9]*(\.[0-9]+)?|0\.[0-9]+)$/,
                     inputErrorMessage: '请检查售价格式（只能为数字且不得为0或空）'
                 });
 
@@ -195,7 +195,7 @@ export default {
                 } = await this.$prompt('请输入售价(单位:eth)', '上架作品', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
-                    inputPattern: /^(([1-9][0-9]*)|([^0]))$/,
+                    inputPattern: /^(?=.+)([1-9][0-9]*(\.[0-9]+)?|0\.[0-9]+)$/,
                     inputErrorMessage: '请检查售价格式（只能为数字且不得为0或空）'
                 });
 

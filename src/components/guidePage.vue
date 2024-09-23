@@ -47,12 +47,39 @@
                     <div> <a style=" color:#ff5900; font-size:large" class="el-icon-s-opportunity" @click="drawer2 = true;"> 我该如何使用链上账户管理？ </a> </div>
                     <div> <a style=" color:#ff5900; font-size:large" class="el-icon-s-opportunity" @click="drawer3 = true;"> 我该如何使用燃料管理？ </a> </div>
                     <div> <a style=" color:#ff5900; font-size:large" class="el-icon-s-opportunity" @click="drawer4 = true;"> 我该如何使用燃料充值？ </a> </div>
-                    <div> <a style=" color:#ff5900; font-size:large" class="el-icon-s-opportunity" @click="drawer5 = true;"> 我在使用系统的时候出现了问题，该如何解决？ </a> </div>
+                    <!-- <div> <a style=" color:#ff5900; font-size:large" class="el-icon-s-opportunity" @click="drawer5 = true;"> 我在使用系统的时候出现了问题，该如何解决？ </a> </div> -->
                 </div>
             </div>
         </transition>
     </div>
-
+    <el-drawer size="40%" :visible.sync="drawer1" :with-header="false">
+        <div style="font-size:22px; font-weight:bold; color:black; margin-top:10px;">我想快速了解HelloMeta</div>
+        <div style="margin:20px">
+            <div style="display:flex; flex-direction: column; align-items: flex-start; gap:10px;">
+                <div style="font-weight:bold">一、项目简介 </div>
+                <div style="font-weight:bold">二、使用方式 </div>
+                <div style="font-weight:bold">三、代码仓库</div>
+            </div>
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 一、项目简介 </div>
+            <br />
+            <div style="text-align: start;">&emsp;&emsp;随着数字经济的发展，将作为数字经济关键要素的数据看作一类新型资产已经获得共识。哪些数据可以作为数据资产、如何将一个数据集转化为数据资产是当前数据产业、数字经济亟须解决的问题。</div>
+            <br/>
+            <div style="text-align: start;">&emsp;&emsp;基于此，我们提出了基于区块链的企业关键数据资产化平台。利用区块链去中心化、不可篡改的特性，企业可以根据自身需求，将数据转化为可交易的资产上传交易市场，也可以仅铸造权属凭证。本项目基于以太坊私链搭建，连接MetaMask以太坊钱包用于链上交易和账户管理，采用Pinata分布式数据库储存数据，保证数据安全可追溯。</div>
+            <br />
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 二、使用方式 </div>
+            <br />
+            <div style="text-align: start;">&emsp;&emsp;按照如下流程使用系统，具体方式可参考其他指南项：</div>
+            <br />
+            <div style="text-align: start;">&emsp;&emsp;下载并注册MetaMask->导入MetaMask账户->使用支付宝沙箱进行充值->为钱包账户分配燃料->上传作品->交易市场/我的凭证中查看作品。</div>
+            <br />
+            <div style="text-align: start;">&emsp;&emsp;此外，系统还提供了作品交易和区块浏览器功能，用户可根据需求使用。</div>
+            <div style="margin-top:20px; font-weight:bold; font-size:large; text-align: start;"> 三、代码仓库 </div>
+            <br />
+            <div style="text-align: start;">&emsp;&emsp;前端仓库：<a href="https://github.com/Psalm404/Hellometa " target="_blank">https://github.com/Psalm404/Hellometa</a></div>
+            <br />
+            <div style="text-align: start;">&emsp;&emsp;后端仓库：<a href="https://github.com/Psalm404/Hellometa-backend " target="_blank">https://github.com/Psalm404/Hellometa-backend </a></div>
+        </div>
+    </el-drawer>
     <el-drawer size="40%" :visible.sync="drawer2" :with-header="false">
         <div style="font-size:22px; font-weight:bold; color:black; margin-top:20px;">我该如何使用链账户管理?</div>
         <div style="margin:20px">
@@ -486,5 +513,10 @@ h2 {
     font-size: 6em;
     color: #c64500;
     text-align: center;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
 }
 </style>
