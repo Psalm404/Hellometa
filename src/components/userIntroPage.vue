@@ -38,49 +38,48 @@
                 </div>
             </div>
         </nav>
-        <transition name="el-fade-in-linear">
-            <div v-show = "show">
-            <div class="home-card-container">
-                <el-carousel :interval="4000" type="card">
-                    <el-carousel-item v-for="(item, index) in picture" :key="index">
-                        <img :src="item" class="home-card-img" alt="">
-                    </el-carousel-item>
-                </el-carousel>
-            </div>
-            <el-divider><i class="el-icon-s-promotion"></i></el-divider>
-            <div class="home-introduction">
-                <h1>什么是工业互联网数据资产化？</h1>
-                <div class="home-text-blocks-container">
-                    <div class="home-text-block" v-for="(block, index) in textBlocks" :key="index">
-                        <h3>{{ block.title }}</h3>
-                        <p>{{ block.description }}</p>
-                    </div>
+
+        <div class="home-card-container">
+            <el-carousel :interval="4000" type="card">
+                <el-carousel-item v-for="(item, index) in picture" :key="index">
+                    <img :src="item" class="home-card-img" alt="">
+                </el-carousel-item>
+            </el-carousel>
+        </div>
+        <el-divider><i class="el-icon-s-promotion"></i></el-divider>
+        <div class="home-introduction">
+            <h1>什么是工业互联网数据资产化？</h1>
+            <div class="home-text-blocks-container">
+                <div class="home-text-block" v-for="(block, index) in textBlocks" :key="index">
+                    <h3>{{ block.title }}</h3>
+                    <p>{{ block.description }}</p>
                 </div>
             </div>
-            <el-divider><i class="el-icon-menu"></i></el-divider>
-            <!-- 区块浏览器部分开始 -->
-            <div class="block-browser">
-                <img src="../assets/logo.png" class="block-browser-logo">
-                <p class="browser-passage1">为工业互联网数据资产存证、确权、溯源需求</p>
-                <p class="browser-passage2">提供安全、高效、可信的区块链服务</p>
-                <h1 style="color: rgb(196,196,196);">区块浏览器</h1>
-            </div>
-            <div class="block-browser-search-box">
-                <input type="text" class="block-browser-search-input" placeholder="搜索地址/交易/区块" v-model="searchData" @keyup.enter="blockSearch">
-                <button class="block-browser-search-button" @click="blockSearch">搜索</button>
-            </div>
-            <div v-if="show" class="block-result-card-box">
-                <div v-for="(item, index) in searchResult" :key="index" class="block-result-card">
-                    <h2>区块{{ index }}</h2>
-                    <div class="block-result-card-content">
-                        <!-- <el-divider><i class="el-icon-bottom"></i></el-divider> -->
+        </div>
+        <el-divider><i class="el-icon-menu"></i></el-divider>
+        <!-- 区块浏览器部分开始 -->
+        <div class="block-browser">
+            <img src="../assets/logo.png" class="block-browser-logo">
+            <p class="browser-passage1">为工业互联网数据资产存证、确权、溯源需求</p>
+            <p class="browser-passage2">提供安全、高效、可信的区块链服务</p>
+            <h1 style="color: rgb(196,196,196);">区块浏览器</h1>
+        </div>
+        <div class="block-browser-search-box">
+            <input type="text" class="block-browser-search-input" placeholder="搜索地址/交易/区块" v-model="searchData" @keyup.enter="blockSearch">
+            <button class="block-browser-search-button" @click="blockSearch">搜索</button>
+        </div>
+        <div v-if="show" class="block-result-card-box">
+            <div v-for="(item, index) in searchResult" :key="index" class="block-result-card">
+                <h2>区块{{ index }}</h2>
+                <div class="block-result-card-content">
+                    <!-- <el-divider><i class="el-icon-bottom"></i></el-divider> -->
+                    <div>
+                        <div v-for="(title, n) in blockTitle" :key="n" class="result-card-context">
+                            <p v-if="(n === 18 || n === 19)"></p>
+                            <p v-else>{{ title }}: {{ item[title] }}</p>
+                        </div>
                         <div>
-                            <div v-for="(title, n) in blockTitle" :key="n" class="result-card-context">
-                                <p v-if="(n === 18 || n === 19)"></p>
-                                <p v-else>{{ title }}: {{ item[title] }}</p>
-                            </div>
-                            <div>
-                                <!-- <el-collapse v-model="activeNames" @change="handleChange">
+                            <!-- <el-collapse v-model="activeNames" @change="handleChange">
                                         <el-collapse-item title="交易列表" :name="index" class="result-card-context">
                                             <p>transactions: {{ item['transactions'] }}</p>
                                             <p class="transaction-Tx-link" @click="showTransactionDetail(index)">
@@ -89,27 +88,26 @@
                                             </p>
                                         </el-collapse-item>
                                     </el-collapse> -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div v-else class="block-result-card-box">
-                <div class="block-result-card">
-                    <h2>查询结果</h2>
-                    <div class="block-result-card-content">
-                        <el-divider><i class="el-icon-bottom"></i></el-divider>
-                        <div>
-                            <p v-for="(item, index) in transactions_detail_title" :key="index" class="result-card-context">{{ item }}: {{ transactionResult[index] }}</p>
-                            <!-- <div v-for="(item, index) in transactionResult" :key="index" class="result-card-context">
-                                    <p v-for="(item, index) in transactionResult" :key="index">{{ index }}: {{ item }}</p>
-                                </div> -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-</transition>
+        <div v-else class="block-result-card-box">
+            <div class="block-result-card">
+                <h2>查询结果</h2>
+                <div class="block-result-card-content">
+                    <el-divider><i class="el-icon-bottom"></i></el-divider>
+                    <div>
+                        <p v-for="(item, index) in transactions_detail_title" :key="index" class="result-card-context">{{ item }}: {{ transactionResult[index] }}</p>
+                        <!-- <div v-for="(item, index) in transactionResult" :key="index" class="result-card-context">
+                                    <p v-for="(item, index) in transactionResult" :key="index">{{ index }}: {{ item }}</p>
+                                </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 区块浏览器部分结束 -->
     </div>
 
