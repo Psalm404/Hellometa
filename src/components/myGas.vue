@@ -165,6 +165,7 @@ export default {
             listData: [],
             rechargeRecord: null,
             distributeRecord: null,
+            totalGasETH:null,
         }
     },
     methods: {

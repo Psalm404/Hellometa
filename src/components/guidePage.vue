@@ -247,9 +247,11 @@ export default {
 
         logOut() {
             this.$store.dispatch('logout');
-            setTimeout(() => {
-                this.$router.push('/intro');
-            }, 200);
+            if (this.$route.path !== '/intro') {
+                setTimeout(() => {
+                    this.$router.push('/intro');
+                }, 100);
+            }
         },
     },
 

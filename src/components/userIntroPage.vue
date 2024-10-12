@@ -223,7 +223,7 @@ export default {
         logOut() {
             this.$store.dispatch('logout');
             setTimeout(() => {
-                this.$router.push('/intro');
+                this.$router.replace('/intro');
             }, 200);
         },
         blockSearch() {

@@ -146,7 +146,7 @@ export default {
                 type: 'warning'
             }).then(() => {
                 const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
-                    axios.post(`${apiBaseUrl}/removeAddress`, row).then(res => {
+                axios.post(`${apiBaseUrl}/removeAddress`, row).then(res => {
                     console.log(res);
                     if (res.data.code === 200) {
                         this.$message({
@@ -202,7 +202,7 @@ export default {
                     name: this.name,
                 };
                 const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
-                    axios.post(`${apiBaseUrl}/addSmallAccount`, data).then(response => {
+                axios.post(`${apiBaseUrl}/addSmallAccount`, data).then(response => {
                     console.log('response', response)
                     if (response.data.code === 200) {
                         this.$message.success('导入成功');
@@ -242,11 +242,25 @@ export default {
                 console.log('listData', this.listData)
             }).catch(e => {
                 console.log(e)
+                if (e.response && e.response.status === 401) {
+                    console.log('token验证未通过，跳转回登录');
+                    this.logOut();
+                } else {
+                    console.log(e); // 处理其他错误
+                }
             })
 
         }
     },
-
+    logOut() {
+        console.log('logOut');
+            this.$store.dispatch('logout');
+            if (this.$route.path !== '/intro') {
+                setTimeout(() => {
+                    this.$router.push('/intro');
+                }, 100);
+            }
+        },
 }
 </script>
 

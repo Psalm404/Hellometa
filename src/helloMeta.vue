@@ -1,58 +1,43 @@
 <template>
-    <div id="app">
-        <div :class="{ 'guide-text-hidden':show  }" class="guide-text" :style="{ color: textColor }">{{ guideText }}</div>
-        <transition name="el-fade-in-linear">
-            <div v-show="show" class="main-page">
-                <div>
-                    <router-view @trigger-login="showLoginModal"></router-view>
-                </div>
-                <!-- login -->
-                <transition name="el-fade-in-linear">
-                    <div v-if="!isLoggedIn || activeButton === 'login'" class="login-modal" v-show="showLogin">
-                        <div class="login-box">
-                            <!-- 关闭按钮 -->
-                            <button class="close-button" @click="closeLogin" style = "font-size: medium">关闭</button>
-                            <form @submit.prevent="login">
-                                <h2>欢迎！👋</h2>
-                                <h3>请先登录您的账号</h3>
-                                <div class="login-input">
-                                    <span class="login-icon"></span>
-                                    <input 
-                                        class="login-username" 
-                                        v-model="username" 
-                                        required 
-                                        placeholder=" " 
-                                        @invalid="this.setCustomValidity('请填写您的账号id')"
-                                        @input="this.setCustomValidity('')"
-                                    >
-                                    <label> <strong>用户名:</strong></label>
-                                </div>
-                                <div class="login-input">
-                                    <span class="login-icon"></span>
-                                    <input 
-                                        class="login-password" 
-                                        type="password" 
-                                        v-model="password" 
-                                        required 
-                                        placeholder=" " 
-                                        @invalid="this.setCustomValidity('请输入您的密码')"
-                                        @input="this.setCustomValidity('')"
-                                    >
-                                    <label><strong>密码:</strong></label>
-                                </div>
-                                <div v-if="error" class="error-message">{{ error }}</div>
-                                <button class="login-submit" type="submit">登录</button>
-                            </form>
-                            <a class="registerBT" @click="register">没有账号?注册一个👇</a>
-                        </div>
-                    </div>
-                </transition>
-                <!-- login -->
+<div id="app">
+    <div :class="{ 'guide-text-hidden':show  }" class="guide-text" :style="{ color: textColor }">{{ guideText }}</div>
+    <transition name="el-fade-in-linear">
+        <div v-show="show" class="main-page">
+            <div>
+                <router-view @trigger-login="showLoginModal"></router-view>
             </div>
-        </transition>
-    </div>
+            <!-- login -->
+            <transition name="el-fade-in-linear">
+                <div v-if="!isLoggedIn || activeButton === 'login'" class="login-modal" v-show="showLogin">
+                    <div class="login-box">
+                        <!-- 关闭按钮 -->
+                        <button class="close-button" @click="closeLogin" style="font-size: medium">关闭</button>
+                        <form @submit.prevent="login">
+                            <h2>欢迎！👋</h2>
+                            <h3>请先登录您的账号</h3>
+                            <div class="login-input">
+                                <span class="login-icon"></span>
+                                <input class="login-username" v-model="username" required placeholder=" " @invalid="this.setCustomValidity('请填写您的账号id')" @input="this.setCustomValidity('')">
+                                <label> <strong>用户名:</strong></label>
+                            </div>
+                            <div class="login-input">
+                                <span class="login-icon"></span>
+                                <input class="login-password" type="password" v-model="password" required placeholder=" " @invalid="this.setCustomValidity('请输入您的密码')" @input="this.setCustomValidity('')">
+                                <label><strong>密码:</strong></label>
+                            </div>
+                            <div v-if="error" class="error-message">{{ error }}</div>
+                            <button class="login-submit" type="submit">登录</button>
+                        </form>
+                        <a class="registerBT" @click="register">没有账号?注册一个👇</a>
+                    </div>
+                </div>
+            </transition>
+            <!-- login -->
+        </div>
+    </transition>
+</div>
 </template>
-    
+
 <script>
 import axios from 'axios';
 
@@ -89,6 +74,7 @@ export default {
     mounted() {
         // 每次加载组件时检查登录状态
         this.$store.dispatch('checkLoginStatus');
+        console.log(this.isLoggedIn)
         if (!this.isLoggedIn) {
             if (this.$route.path !== '/intro') {
                 this.$router.push('/intro');
@@ -104,27 +90,36 @@ export default {
     },
     methods: {
         login() {
+            console.log('正在执行登录事件');
             const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
-            console.log('apiBaseUrl::'+apiBaseUrl);
+            console.log('apiBaseUrl::' + apiBaseUrl);
             axios.post(`${apiBaseUrl}/login`, {
-                account: this.username,
-                password: this.password
-            })
-            .then(response => {
-                if (response.data.code === 200) {
-                    this.$store.dispatch('login', {
-                        token: response.data.token,
-                        user: response.data.user
-                    });
-                    this.error = ''; // 清除错误信息
-                } else {
-                    this.error = response.data.status || '登录失败，请检查您的账号和密码';
-                }
-            })
-            .catch(error => {
-                console.error('Login error:', error);
-                this.error = '登录失败，请稍后再试';
-            });
+                    account: this.username,
+                    password: this.password
+                })
+                .then(response => {
+                    if (response.data.code === 200) {
+                        // 将返回的 balance 转换为 ETH
+                        const balanceInETH = response.data.user.balance / 1e18;
+
+                        // 更新 user 对象中的 balance
+                        const userWithETH = {
+                            ...response.data.user,
+                            balance: balanceInETH // 修改 balance 为以太币单位
+                        };
+                        this.$store.dispatch('login', {
+                            token: response.data.token,
+                            user: userWithETH
+                        });
+                        this.error = ''; // 清除错误信息
+                    } else {
+                        this.error = response.data.status || '登录失败，请检查您的账号和密码';
+                    }
+                })
+                .catch(error => {
+                    console.error('Login error:', error);
+                    this.error = '登录失败，请稍后再试';
+                });
         },
         register() {
             this.showLogin = false;
@@ -141,11 +136,12 @@ export default {
         },
         showLoginModal() {
             this.showLogin = true; // 显示登录框
+            console.log(this.showLogin)
         }
     }
 };
 </script>
-    
+
 <style scoped>
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -159,15 +155,20 @@ export default {
     background-color: #292929;
 }
 
-
 .main-page {
-    min-height: 100vh; /* 确保主页面至少占满整个视口高度 */
-    max-width: 100vw; /* 使主页面宽度占满整个视口宽度 */
+    min-height: 100vh;
+    /* 确保主页面至少占满整个视口高度 */
+    max-width: 100vw;
+    /* 使主页面宽度占满整个视口宽度 */
     display: flex;
-    flex-direction: column; /* 将内容垂直排列 */
-    margin: 0; /* 移除任何默认外边距 */
-    padding: 0; /* 移除任何默认内边距 */
-    box-sizing: border-box; /* 确保内边距和边框不会影响元素的总宽度 */
+    flex-direction: column;
+    /* 将内容垂直排列 */
+    margin: 0;
+    /* 移除任何默认外边距 */
+    padding: 0;
+    /* 移除任何默认内边距 */
+    box-sizing: border-box;
+    /* 确保内边距和边框不会影响元素的总宽度 */
     background-color: #292929;
 }
 
@@ -182,7 +183,8 @@ export default {
     justify-content: center;
     align-items: center;
     z-index: 10000;
-    transition: background-color 0.5s ease; /* 添加渐变效果 */
+    transition: background-color 0.5s ease;
+    /* 添加渐变效果 */
 }
 
 .login-box {
@@ -212,7 +214,7 @@ export default {
 }
 
 .close-button:hover {
-    color:  #c64500;
+    color: #c64500;
 }
 
 h2 {
@@ -224,8 +226,8 @@ h2 {
 
 h3 {
     font-size: 1.3em;
-    color:  #c64500;
-    text-align:center;
+    color: #c64500;
+    text-align: center;
 }
 
 .login-input {
@@ -354,4 +356,3 @@ input:-webkit-autofill {
     border-color: #ff5733;
 }
 </style>
-    
