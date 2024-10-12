@@ -88,6 +88,7 @@ export default {
     watch: {
     },
     methods: {
+        
         triggerLogin() {
             console.log('click-login')
             this.$emit('trigger-login'); // 触发登录事件

@@ -126,6 +126,15 @@ export default {
             this.tip = " 交易中，请稍后......"
             this.showBackButton = true;
         },
+        logOut() {
+        console.log('logOut');
+            this.$store.dispatch('logout');
+            if (this.$route.path !== '/intro') {
+                setTimeout(() => {
+                    this.$router.push('/intro');
+                }, 100);
+            }
+        },
         getExchangeRate() {
             const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
             axios.get(`${apiBaseUrl}/getExchangeRate`).then(res => {

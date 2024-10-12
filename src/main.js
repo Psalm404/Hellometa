@@ -31,6 +31,26 @@ axios.interceptors.request.use(
   }
 );
 
+// 设置 Axios 响应拦截器
+axios.interceptors.response.use(
+  response => {
+    // 正常返回
+    return response;
+  },
+  error => {
+    if (error.response && error.response.status === 401) {
+      console.log('logOut');
+      store.dispatch('logout'); // 触发 Vuex 的 logout 动作
+      if (router.currentRoute.path !== '/intro') { // 直接使用 router.currentRoute
+        setTimeout(() => {
+          router.push('/intro'); // 跳转到登录页或介绍页
+        }, 100);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // 重写 Router 的 push 方法, 重复跳转时报错而非崩溃
 const originalPush = VueRouter.prototype.push; // 正确引用 VueRouter.prototype
 VueRouter.prototype.push = function push(location) {

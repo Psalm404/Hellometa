@@ -221,10 +221,13 @@ export default {
     },
     methods: {
         logOut() {
+        console.log('logOut');
             this.$store.dispatch('logout');
-            setTimeout(() => {
-                this.$router.replace('/intro');
-            }, 200);
+            if (this.$route.path !== '/intro') {
+                setTimeout(() => {
+                    this.$router.push('/intro');
+                }, 100);
+            }
         },
         blockSearch() {
             if (this.searchData === '') {

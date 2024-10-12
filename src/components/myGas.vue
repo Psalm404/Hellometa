@@ -170,10 +170,13 @@ export default {
     },
     methods: {
         logOut() {
+        console.log('logOut');
             this.$store.dispatch('logout');
-            setTimeout(() => {
-                this.$router.push('/intro');
-            }, 200);
+            if (this.$route.path !== '/intro') {
+                setTimeout(() => {
+                    this.$router.push('/intro');
+                }, 100);
+            }
         },
         async getAccountList() {
             const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
