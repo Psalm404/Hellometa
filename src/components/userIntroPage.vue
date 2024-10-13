@@ -65,7 +65,7 @@
             <h1 style="color: rgb(196,196,196);">区块浏览器</h1>
         </div>
         <div class="block-browser-search-box">
-            <input type="text" class="block-browser-search-input" placeholder="搜索地址/交易/区块" v-model="searchData" @keyup.enter="blockSearch">
+            <input type="text" class="block-browser-search-input" placeholder="可输入交易哈希/区块哈希/发送方地址/tokenID搜索区块" v-model="searchData" @keyup.enter="blockSearch">
             <button class="block-browser-search-button" @click="blockSearch">搜索</button>
         </div>
         <div v-if="show" class="block-result-card-box">
@@ -78,31 +78,41 @@
                             <p v-if="(n === 18 || n === 19)"></p>
                             <p v-else>{{ title }}: {{ item[title] }}</p>
                         </div>
-                        <div>
-                            <!-- <el-collapse v-model="activeNames" @change="handleChange">
-                                        <el-collapse-item title="交易列表" :name="index" class="result-card-context">
-                                            <p>transactions: {{ item['transactions'] }}</p>
-                                            <p class="transaction-Tx-link" @click="showTransactionDetail(index)">
-                                                transactionsRoot: {{
-                                                    item['transactionsRoot'] }}
-                                            </p>
-                                        </el-collapse-item>
-                                    </el-collapse> -->
-                        </div>
                     </div>
+                    <button class="details-button" @click="searchByTH(item['Hash'])">详情</button>
                 </div>
             </div>
         </div>
         <div v-else class="block-result-card-box">
+            
             <div class="block-result-card">
-                <h2>查询结果</h2>
+                <!-- 左上角返回箭头 -->
+                <div class="back-arrow" @click="blockSearch">
+                    &larr; 返回
+                </div>
+                <h2>区块详情</h2>
                 <div class="block-result-card-content">
-                    <el-divider><i class="el-icon-bottom"></i></el-divider>
                     <div>
-                        <p v-for="(item, index) in transactions_detail_title" :key="index" class="result-card-context">{{ item }}: {{ transactionResult[index] }}</p>
-                        <!-- <div v-for="(item, index) in transactionResult" :key="index" class="result-card-context">
-                                    <p v-for="(item, index) in transactionResult" :key="index">{{ index }}: {{ item }}</p>
-                                </div> -->
+                        <!-- 循环显示每个区块的基本信息 -->
+                        <p v-for="(item, index) in transactions_detail_title" :key="index" class="result-card-context">{{ item }}: {{ transactionResult[item] }}</p>
+                        
+                        <p class="result-card-context">ExtraData⬇️---------------------------------------------------------------</p>
+                        <div v-for="(value, key) in transactionResult['ExtraData']" :key="key" class="result-card-context">
+                            <p>{{ key }}: {{ value }}</p>
+                        </div>
+
+                        <!-- 展示 Transactions 列表 -->
+                        <p class="result-card-context">Transactions⬇️---------------------------------------------------------------</p>
+                        <div v-if="transactionResult['Transactions'] && transactionResult['Transactions'].length" class="result-card-context">
+                            <div v-for="(tx, txIndex) in transactionResult['Transactions']" :key="txIndex">
+                                <p>TxHash: {{ tx.TxHash }}</p>
+                                <p>From: {{ tx.FromAddress }}</p>
+                                <p>To: {{ tx.ToAddress }}</p>
+                                <p>Value: {{ tx.Value }}</p>
+                                <p>Gas: {{ tx.Gas }}</p>
+                                <p>Nonce: {{ tx.Nonce }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -116,7 +126,7 @@
 
 <script>
 // import getRecentBlocks from '@/commons/getRecentBlocks';
-import getTransaction from '@/commons/getTransaction';
+// import getTransaction from '@/commons/getTransaction';
 import getTransactionHash from '@/commons/getTransactionHash';
 import getURLbyTokenId from '@/commons/getURLbyTokenId';
 import debounce from 'lodash/debounce';
@@ -145,47 +155,44 @@ export default {
             searchResult: [],
             showDetail: false,
             blockTitle: [
-                'BlockNumber', // 对应原来的 'number'
-                'Difficulty', // 对应原来的 'difficulty'
-                'ExtraData', // 对应原来的 'extraData'
-                'GasLimit', // 对应原来的 'gasLimit'
-                'GasUsed', // 对应原来的 'gasUsed'
-                'Hash', // 对应原来的 'hash'
-                'LogsBloom', // 对应原来的 'logsBloom'
-                'Miner', // 对应原来的 'miner'
-                'Nonce', // 对应原来的 'nonce'
-                'ParentHash', // 对应原来的 'parentHash'
-                'ReceiptsRoot', // 对应原来的 'receiptsRoot'
-                'Sha3Uncles', // 对应原来的 'sha3Uncles'
-                'Size', // 对应原来的 'size'
-                'StateRoot', // 对应原来的 'stateRoot'
-                'Timestamp', // 对应原来的 'timestamp'
-                'TotalDifficulty', // 对应原来的 'totalDifficulty'
-                'Transactions', // 对应原来的 'transactions'
-                'TransactionsRoot', // 对应原来的 'transactionsRoot'
-                'Uncles' // 对应原来的 'uncles'
+                'BlockNumber', 
+                'Difficulty', 
+                // 'ExtraData', 
+                'GasLimit', 
+                'GasUsed', 
+                'Hash', 
+                'LogsBloom', 
+                'Miner', 
+                'Nonce', 
+                'ParentHash', 
+                'ReceiptsRoot', 
+                'Sha3Uncles', 
+                'Size', 
+                'StateRoot', 
+                'Timestamp', 
+                'TotalDifficulty', 
+                // 'Transactions', 
+                'TransactionsRoot', 
+                // 'Uncles' 
             ],
             transactionResult: [],
             transactions_detail_title: [
-                'BlockNumber', // 对应原来的 'number'
-                'Difficulty', // 对应原来的 'difficulty'
-                'ExtraData', // 对应原来的 'extraData'
-                'GasLimit', // 对应原来的 'gasLimit'
-                'GasUsed', // 对应原来的 'gasUsed'
-                'Hash', // 对应原来的 'hash'
-                'LogsBloom', // 对应原来的 'logsBloom'
-                'Miner', // 对应原来的 'miner'
-                'Nonce', // 对应原来的 'nonce'
-                'ParentHash', // 对应原来的 'parentHash'
-                'ReceiptsRoot', // 对应原来的 'receiptsRoot'
-                'Sha3Uncles', // 对应原来的 'sha3Uncles'
-                'Size', // 对应原来的 'size'
-                'StateRoot', // 对应原来的 'stateRoot'
-                'Timestamp', // 对应原来的 'timestamp'
-                'TotalDifficulty', // 对应原来的 'totalDifficulty'
-                'Transactions', // 对应原来的 'transactions'
-                'TransactionsRoot', // 对应原来的 'transactionsRoot'
-                'Uncles' // 对应原来的 'uncles'
+                'BlockNumber', 
+                'Difficulty', 
+                'GasLimit', 
+                'GasUsed', 
+                'Hash', 
+                'LogsBloom', 
+                'Miner', 
+                'Nonce', 
+                'ParentHash', 
+                'ReceiptsRoot', 
+                'Sha3Uncles',
+                'Size', 
+                'StateRoot', 
+                'Timestamp', 
+                'TotalDifficulty', 
+                'TransactionsRoot', 
             ],
             // 走马灯图片
             picture: [
@@ -290,30 +297,46 @@ export default {
             return this.searchByUrl(url);
         },
         async searchByTH(hash) {
-            let res = await getTransaction(hash)
-            if (res === 'error') return false;
+            this.show = false;
+            const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
 
-            // 后续处理
-            console.log(this.transactionResult)
-            if (this.transactionResult.length > 0) {
-                this.transactionResult = []
-            }
-            console.log(this.transactionResult)
-            for (let i = 0; i < this.transactions_detail_title.length; i++) {
-                this.transactionResult.push(res[this.transactions_detail_title[i]]);
-            }
-            console.log(this.transactionResult);
-            return true
-        },
-        showTransactionDetail(index) {
-            console.log('index::' + index);
-            let tmp = this.searchResult[index]['transactions'];
-            this.$router.push({
-                path: '/blockBrowse/transactionDetail',
-                query: {
-                    hash: tmp
+            try {
+                const res = await axios.get(`${apiBaseUrl}/blockSearch`, {
+                    params: {
+                        query: hash
+                    }
+                });
+
+                if (res && res.data && res.data.Block) {
+                    console.log("Transaction data:", res.data);
+
+                    // 清空transactionResult避免数据重复
+                    this.transactionResult = {};
+
+                    // 查询结果推入transactionResult数组，展示区块的基本信息
+                    for (let i = 0; i < this.transactions_detail_title.length; i++) {
+                        let title = this.transactions_detail_title[i];
+                        this.$set(this.transactionResult, title, res.data.Block[title] ? res.data.Block[title].toString() : ''); 
+                    }
+
+                    // 展示ExtraData字段，确保它是JSON格式
+                    this.$set(this.transactionResult, 'ExtraData', res.data.Block['ExtraData'] ? res.data.Block['ExtraData'] : {});
+
+                    // 将Transactions字段数据加入到transactionResult中，如果存在交易
+                    if (res.data.Transactions && res.data.Transactions.length) {
+                        this.$set(this.transactionResult, 'Transactions', res.data.Transactions);
+                    } else {
+                        this.$set(this.transactionResult, 'Transactions', []);
+                    }
+
+                } else {
+                    console.error('Unexpected response structure:', res);
                 }
-            });
+            } catch (error) {
+                console.error('Error fetching transaction data:', error);
+            }
+
+            return true;
         },
         handleChange(val) {
             console.log(val);
@@ -535,6 +558,28 @@ h3 {
     /* 修改hover状态下的边框颜色 */
 }
 
+.details-button{
+    position: relative;
+    margin-top: 10px;
+    margin-bottom: -5px;
+    left: 48%;
+    background-color: rgba(255, 255, 255, 0.216);
+    /* 设置为半透明 */
+    color: #4d3535;
+    border: 1px solid #4d3535;
+    /* 添加2px的边框，颜色与原背景色一致 */
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.details-button:hover {
+    background-color: #ff5900;
+    border-color: #ff5900;
+    /* 修改hover状态下的边框颜色 */
+}
+
 .home-navbar-profile img {
     width: 35px;
     height: 35px;
@@ -715,8 +760,22 @@ h3 {
 }
 
 .block-browser-search-button:hover {
-    background-color: #ffc02d;
+    background-color: #f4bc80;
     color: #ffffff94;
+}
+
+.block-result-card {
+    color: #333;
+    font-size: 1em;
+    max-width: 80%;
+    margin-bottom: 50px;
+    background-color: #ffffffdc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    width: 80%;
+    align-self: center;
+    height:fit-content; /* 添加这行，确保卡片高度自适应内容 */
 }
 
 .block-result-card-box {
@@ -756,10 +815,10 @@ h2 {
     text-align: left;
     padding-left: 30px;
     padding-right: 30px;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    overflow: hidden;
+    overflow-wrap: break-word; /* 处理长词换行 */
+    word-wrap: break-word; /* 处理长词换行 */
+    white-space: normal; /* 正常换行 */
+    overflow: visible; /* 允许超出内容正常显示 */
 }
 
 .transaction-Tx-link {
@@ -773,5 +832,20 @@ h2 {
 .disabled {
     pointer-events: none;
     opacity: 0.5;
+}
+
+.back-arrow {
+    position: absolute;
+    top: 25px; /* 调整箭头的顶部间距 */
+    left: 20px; /* 调整箭头的左侧间距，靠近区块详情 */
+    cursor: pointer;
+    color: rgb(118, 93, 93);
+    font-size: 16px;
+    z-index: 10000;
+    transition: color 0.3s ease;
+}
+
+.back-arrow:hover {
+    color: rgb(209, 100, 37);
 }
 </style>
