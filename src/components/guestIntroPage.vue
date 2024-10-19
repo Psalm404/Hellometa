@@ -275,7 +275,7 @@ h3 {
 .home-text-block {
     flex: 1;
     margin: 0 10px;
-    background-color: rgb(41, 41, 41);
+    background-color: transparent;
     border-radius: 4px;
     padding: 20px;
     text-align: center;

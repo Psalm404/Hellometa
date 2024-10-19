@@ -12,8 +12,12 @@
                     </div>
                 </div>
                 <div class="want-to-be-right">
-                    <ul class="home-navbar-menu">
-                        <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
+                    <ul class="home-navbar-menu" :style = "{color: buttonColor}">
+                        <li class="mode-item">
+                            <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
+                            </el-switch>
+                        </li>
+                        <li class="guide-item" ><a href="#/guidePage">用户指南</a></li>
                         <li class="recharge-item  active"><a>燃料管理</a></li>
                         <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
                         <li class="explore-item">
@@ -43,17 +47,17 @@
 
         </div>
         <transition name="el-fade-in-linear">
-            <div class="myGas-info" v-show="show">
-                <a class="myGas-howtouse" @click="drawer = true" style="align-self:self-start;">
+            <div class="myGas-info" v-show="show" :style = "{borderColor : buttonColor}">
+                <a class="myGas-howtouse" @click="drawer = true" :style="{ alignSelf: 'self-start', color: buttonColor}" > 
                     <i class="el-icon-question" style="display:contents;"></i>
                     我该如何使用燃料管理？</a>
                 <div style="align-self: self-start; font-weight:bold; font-size:17px"> 待分配燃料 </div>
                 <div style="font-size:2em; align-self: self-start;">{{totalGasETH}} ETH</div>
                 <div style="display: flex; gap:10px">
-                    <el-button class="custom-button" size="mini" @click="toGasRecharge()">燃料充值</el-button>
+                    <el-button class="custom-button" size="mini" @click="toGasRecharge()" :style = "{color: buttonColor, borderColor:buttonColor}">燃料充值</el-button>
                     <!-- <el-button class="custom-button" size="mini" @click="distributeGas()">分配燃料</el-button> -->
-                    <el-button class="custom-button" size="mini" @click="drawer2 = true; getRecord()">收支明细</el-button>
-                    <el-button class="custom-button" size="mini" @click="drawer3 = true; getRecord()">分配记录</el-button>
+                    <el-button class="custom-button" size="mini" @click="drawer2 = true; getRecord()" :style = "{color: buttonColor, borderColor:buttonColor}">收支明细</el-button>
+                    <el-button class="custom-button" size="mini" @click="drawer3 = true; getRecord()" :style = "{color: buttonColor, borderColor:buttonColor}">分配记录</el-button>
                 </div>
             </div>
         </transition>
@@ -72,7 +76,7 @@
                             </template>
                             <!-- eslint-disable-next-line -->
                             <template slot-scope="scope">
-                                <el-button class="custom-button2" size="mini" @click="distributeGas(scope.$index, scope.row)">分配燃料</el-button>
+                                <el-button class="custom-button2" size="mini" @click="distributeGas(scope.$index, scope.row)" :style = "{color: buttonColor, borderColor: buttonColor}">分配燃料</el-button>
                             </template>
                         </el-table-column>
 
@@ -143,6 +147,11 @@ import Web3 from 'web3';
 import axios from 'axios';
 export default {
     mounted() {
+        this.wordColor = this.$store.state.textColor;
+        this.buttonColor = this.$store.state.buttonColor;
+        console.log(this.buttonColor)
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue =  this.$store.state.modeValue;
         setTimeout(() => {
             this.show = true;
         }, 150)
@@ -152,7 +161,7 @@ export default {
     },
     data() {
         return {
-            show:false,
+            show: false,
             account: null,
             myGas: null,
             drawer: false,
@@ -165,18 +174,55 @@ export default {
             listData: [],
             rechargeRecord: null,
             distributeRecord: null,
-            totalGasETH:null,
+            totalGasETH: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
+            modeValue: null,
+        }
+    },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
+    },
+    watch: {
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
         }
     },
     methods: {
         logOut() {
-        console.log('logOut');
+            console.log('logOut');
             this.$store.dispatch('logout');
             if (this.$route.path !== '/intro') {
                 setTimeout(() => {
                     this.$router.push('/intro');
                 }, 100);
             }
+        },
+        changeBgc() {
+            console.log('切换背景颜色')
+            if (!this.modeValue)
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#f5f5f5',
+                    buttonColor: '#409eff',
+                    textColor: 'black'
+                });
+            else
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#292929',
+                    buttonColor: '#ff5900',
+                    textColor: '#edebeb'
+                });
         },
         async getAccountList() {
             const apiBaseUrl = process.env.VUE_APP_BACKEND_BASE_URL;
@@ -277,9 +323,9 @@ export default {
                     this.totalGas = res.data.balance;
                     this.totalGasETH = Web3.utils.fromWei(this.totalGas, 'ether');
                     // 调用 Vuex action 更新余额
-                    this.$store.dispatch('updateUserBalance',  this.totalGasETH);
-                    console.log('userBalance::' +  this.totalGasETH)
-                    
+                    this.$store.dispatch('updateUserBalance', this.totalGasETH);
+                    console.log('userBalance::' + this.totalGasETH)
+
                 }
             }).catch(e => {
                 console.log(e)
@@ -322,7 +368,7 @@ export default {
     align-items: center;
     min-height: 100vh;
     max-width: 100vw;
-    background-color: #292929;
+    /* background-color: #292929; */
     ;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
     /* background-image: linear-gradient(to top, #1e0e09 0%, rgba(255, 115, 22, 0.901) 100%); */
@@ -342,7 +388,7 @@ export default {
 }
 
 .myGas-howtouse {
-    color: #ff5900;
+    color: var(--buttonColor);
 }
 
 .myGas-title {
@@ -360,7 +406,7 @@ export default {
     margin-top: 60px;
     width: 90%;
     /*侧边栏删除记得改*/
-    border-color: #ff5900;
+    border-color: var(--buttonColor);
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
@@ -483,6 +529,13 @@ export default {
     /* 添加阴影效果 */
     backdrop-filter: blur(30px);
     /* 添加背景模糊效果 */
+}
+.mode-item {
+    position: relative;
+    top: 12px;
+    /* 根据需要调整位置 */
+    left: -115px;
+    /* 根据需要调整位置 */
 }
 
 /* Recharge */
@@ -612,11 +665,11 @@ export default {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color: #ff5900;
+    color: var(--buttonColor);
 }
 
 .home-navbar-menu li a:hover {
-    color: #ff5900;
+    color:  var(--buttonColor);
 }
 
 .home-navbar-actions {
@@ -645,8 +698,8 @@ export default {
 }
 
 .home-navbar-button:hover {
-    background-color: #ff5900;
-    border-color: #ff5900;
+    background-color: var(--buttonColor);
+    border-color: var(--buttonColor);
     /* 修改hover状态下的边框颜色 */
 }
 
@@ -667,13 +720,13 @@ h2 {
     left: 12%;
     top: 23px;
     font-size: 6em;
-    color: #c64500;
+    color: var(--buttonColor);
     text-align: center;
 }
 
 /* 自定义按钮样式 */
 ::v-deep .custom-button {
-    background-color: #ff5900;
+    background-color: var(--buttonColor);
     /* 默认橙色背景 */
     color: white;
     /* 白色文字 */
@@ -683,7 +736,7 @@ h2 {
     /* 无边框 */
     transition: background-color 0.3s, color 0.3s;
     /* 添加过渡效果 */
-    border: 1px solid #ff5900;
+    border: 1px solid black;
     /* 添加橙色边框 */
 }
 
@@ -691,39 +744,39 @@ h2 {
     /* background-color: #e65000; 悬停时稍微加深橙色 */
     background-color: white;
     /* 按下时背景变为白色 */
-    color: #ff5900;
+    color: var(--buttonColor);
     /* 文字变为橙色 */
-    border: 1px solid #ff5900;
+    border: 1px solid black;
     /* 添加橙色边框 */
 }
 
 ::v-deep .custom-button:active {
     background-color: white;
     /* 按下时背景变为白色 */
-    color: #ff5900;
+    color: var(--buttonColor);
     /* 文字变为橙色 */
-    border: 1px solid #ff5900;
+    border: 1px solid black;
     /* 添加橙色边框 */
 }
 
 ::v-deep .custom-button2 {
-    background-color: #f6894f;
+    background-color: var(--buttonColor);
     color: white;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
-    border: 1px solid #f6894f;
+    border: 1px solid black;
 }
 
 ::v-deep .custom-button2:hover {
     background-color: white;
-    color: #f6894f;
-    border: 1px solid #f6894f;
+    color: var(--buttonColor);
+    border: 1px solid black;
 }
 
 ::v-deep .custom-button2:active {
     background-color: white;
-    color: #f6894f;
-    border: 1px solid#f6894f;
+    color: var(--buttonColor);
+    border: 1px solidblack;
 }
 
 ::v-deep .custom-input .el-input__inner {
@@ -733,7 +786,7 @@ h2 {
 }
 
 ::v-deep .custom-input .el-input__inner:focus {
-    border-color: #e65000;
+    border-color:var(--buttonColor);
     /* 聚焦时边框颜色变深 */
     box-shadow: 0 0 5px rgba(230, 80, 0, 0.5);
     /* 添加阴影效果 */

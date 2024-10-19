@@ -18,7 +18,11 @@
                         </div>
                     </div>
                     <div class="want-to-be-right">
-                        <ul class="home-navbar-menu">
+                        <ul class="home-navbar-menu" :style = "{color: buttonColor}">
+                            <li class="mode-item">
+                            <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
+                            </el-switch>
+                        </li>
                             <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
                             <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                             <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
@@ -237,13 +241,39 @@ import mint from '@/commons/mint';
 
 export default {
     mounted() {
+        this.wordColor = this.$store.state.textColor;
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue =  this.$store.state.modeValue;
         setTimeout(() => {
             this.$set(this.show, 1, true);
             console.log('show1', this.show[1])
         }, 200)
     },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
+    },
+    watch: {
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
+        }
+    },
     data() {
         return {
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             currentStep: 0, // 初始化为第一个步骤
             show: [false, false, false, false, false],
             form: {
@@ -321,6 +351,21 @@ export default {
                     this.$router.push('/intro');
                 }, 100);
             }
+        },
+        changeBgc() {
+            console.log('切换背景颜色')
+            if (!this.modeValue)
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#f5f5f5',
+                    buttonColor: '#409eff',
+                    textColor: 'black'
+                });
+            else
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#292929',
+                    buttonColor: '#ff5900',
+                    textColor: '#edebeb'
+                });
         },
         toUpload(from, to, field) {
             let isPass = false;
@@ -594,6 +639,13 @@ export default {
 .data-type {
     width: 30%;
 }
+.mode-item {
+    position: relative;
+    top: 12px;
+    /* 根据需要调整位置 */
+    left: -115px;
+    /* 根据需要调整位置 */
+}
 
 .el-input input,
 .el-textarea textarea {
@@ -823,11 +875,11 @@ span {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color: #ff5900;
+    color:  var(--buttonColor);;
 }
 
 .home-navbar-menu li a:hover {
-    color: #ff5900;
+    color:  var(--buttonColor);
 }
 
 .home-navbar-actions {

@@ -12,8 +12,12 @@
                     </div>
                 </div>
                 <div class="want-to-be-right">
-                    <ul class="home-navbar-menu">
-                        <li class="guide-item active"><a href="#/guidePage">用户指南</a></li>
+                    <ul class="home-navbar-menu" :style = "{color: buttonColor}" >
+                        <li class="mode-item">
+                            <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
+                            </el-switch>
+                        </li>
+                        <li class="guide-item active" ><a href="#/guidePage">用户指南</a></li>
                         <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                         <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
                         <li class="explore-item">
@@ -40,13 +44,13 @@
         </nav>
         <transition name="el-fade-in-linear">
             <div class="guide-box" v-show="show">
-                <div style="font-size:3em; color:#edebeb">欢迎来到HelloMeta! </div>
-                <div style=" color:#edebeb;font-size:large">这些指南可以帮助您快速入门系统。</div>
+                <div :style="{fontSize:'3em', color:wordColor}">欢迎来到HelloMeta! </div>
+                <div :style="{color:wordColor,fontSize:'large'}">这些指南可以帮助您快速入门系统。</div>
                 <div class="guide-item-box">
-                    <div> <a style=" color:#ff5900; font-size:large " class="el-icon-s-opportunity" @click="drawer1 = true;"> 我想快速了解HelloMeta。 </a> </div>
-                    <div> <a style=" color:#ff5900; font-size:large" class="el-icon-s-opportunity" @click="drawer2 = true;"> 我该如何使用链上账户管理？ </a> </div>
-                    <div> <a style=" color:#ff5900; font-size:large" class="el-icon-s-opportunity" @click="drawer3 = true;"> 我该如何使用燃料管理？ </a> </div>
-                    <div> <a style=" color:#ff5900; font-size:large" class="el-icon-s-opportunity" @click="drawer4 = true;"> 我该如何使用燃料充值？ </a> </div>
+                    <div> <a  :style="{ color: buttonColor, fontSize: 'large' }" class="el-icon-s-opportunity" @click="drawer1 = true;"> 我想快速了解HelloMeta。 </a> </div>
+                    <div> <a :style="{ color: buttonColor, fontSize: 'large' }" class="el-icon-s-opportunity" @click="drawer2 = true;"> 我该如何使用链上账户管理？ </a> </div>
+                    <div> <a :style="{ color: buttonColor, fontSize: 'large' }" class="el-icon-s-opportunity" @click="drawer3 = true;"> 我该如何使用燃料管理？ </a> </div>
+                    <div> <a :style="{ color: buttonColor, fontSize: 'large' }" class="el-icon-s-opportunity" @click="drawer4 = true;"> 我该如何使用燃料充值？ </a> </div>
                     <!-- <div> <a style=" color:#ff5900; font-size:large" class="el-icon-s-opportunity" @click="drawer5 = true;"> 我在使用系统的时候出现了问题，该如何解决？ </a> </div> -->
                 </div>
             </div>
@@ -229,6 +233,10 @@
 export default {
     data() {
         return {
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             drawer1: false,
             drawer2: false,
             drawer3: false,
@@ -237,14 +245,49 @@ export default {
             show: false,
         }
     },
-
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
+    },
+    watch: {
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
+        }
+    },
     mounted() {
+        this.wordColor = this.$store.state.textColor;
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue =  this.$store.state.modeValue;
         setTimeout(() => {
             this.show = true;
         }, 150)
     },
     methods: {
-
+        changeBgc() {
+            console.log('切换背景颜色')
+            if (!this.modeValue)
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#f5f5f5',
+                    buttonColor: '#409eff',
+                    textColor: 'black'
+                });
+            else
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#292929',
+                    buttonColor: '#ff5900',
+                    textColor: '#edebeb'
+                });
+        },
         logOut() {
             this.$store.dispatch('logout');
             if (this.$route.path !== '/intro') {
@@ -329,6 +372,14 @@ export default {
     /* 添加阴影效果 */
     backdrop-filter: blur(30px);
     /* 添加背景模糊效果 */
+}
+
+.mode-item {
+    position: relative;
+    top: 12px;
+    /* 根据需要调整位置 */
+    left: -115px;
+    /* 根据需要调整位置 */
 }
 
 /* Recharge */
@@ -441,6 +492,7 @@ export default {
     margin: 0 15px;
 }
 
+
 .home-navbar-menu {
     list-style: none;
     display: flex;
@@ -458,11 +510,11 @@ export default {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color: #ff5900;
+    color:  var(--buttonColor);;
 }
 
 .home-navbar-menu li a:hover {
-    color: #ff5900;
+    color:  var(--buttonColor);
 }
 
 .home-navbar-actions {

@@ -17,6 +17,10 @@
                 </div>
                 <div class="want-to-be-right">
                     <ul class="home-navbar-menu">
+                        <!-- <li class="mode-item">
+                            <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
+                            </el-switch>
+                        </li> -->
                         <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
                         <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                         <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
@@ -251,7 +255,7 @@ export default {
             console.log(this.$route.path)
             if (this.$route.path !== '/intro') {
                 setTimeout(() => {
-                  this.$router.push('/intro');
+                    this.$router.push('/intro');
                 }, 100);
             }
         },
@@ -544,6 +548,14 @@ h4 {
     /* 添加阴影效果 */
     backdrop-filter: blur(30px);
     /* 添加背景模糊效果 */
+}
+
+.mode-item {
+    position: relative;
+    top: 12px;
+    /* 根据需要调整位置 */
+    left: -115px;
+    /* 根据需要调整位置 */
 }
 
 /* Recharge */

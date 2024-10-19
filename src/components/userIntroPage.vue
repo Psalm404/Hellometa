@@ -12,7 +12,11 @@
                     </div>
                 </div>
                 <div class="want-to-be-right">
-                    <ul class="home-navbar-menu">
+                    <ul class="home-navbar-menu" :style = "{color: buttonColor}">
+                        <li class="mode-item">
+                            <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
+                            </el-switch>
+                        </li>
                         <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
                         <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                         <li class="intro-item  active"><a>区块浏览器</a></li>
@@ -47,11 +51,11 @@
             </el-carousel>
         </div>
         <el-divider><i class="el-icon-s-promotion"></i></el-divider>
-        <div class="home-introduction">
+        <div class="home-introduction" :style="{ color: wordColor }">
             <h1>什么是工业互联网数据资产化？</h1>
             <div class="home-text-blocks-container">
                 <div class="home-text-block" v-for="(block, index) in textBlocks" :key="index">
-                    <h3>{{ block.title }}</h3>
+                    <h3  :style="{ color: buttonColor }">{{ block.title }}</h3>
                     <p>{{ block.description }}</p>
                 </div>
             </div>
@@ -60,13 +64,13 @@
         <!-- 区块浏览器部分开始 -->
         <div class="block-browser">
             <img src="../assets/logo.png" class="block-browser-logo">
-            <p class="browser-passage1">为工业互联网数据资产存证、确权、溯源需求</p>
-            <p class="browser-passage2">提供安全、高效、可信的区块链服务</p>
-            <h1 style="color: rgb(196,196,196);">区块浏览器</h1>
+            <p class="browser-passage1"  :style="{ color: wordColor }" >为工业互联网数据资产存证、确权、溯源需求</p>
+            <p class="browser-passage2" :style="{ color: wordColor }" >提供安全、高效、可信的区块链服务</p>
+            <h1 style="color: rgb(196,196,196);" :style="{ color: wordColor }" >区块浏览器</h1>
         </div>
         <div class="block-browser-search-box">
             <input type="text" class="block-browser-search-input" placeholder="可输入交易哈希/区块哈希/发送方地址/tokenID搜索区块" v-model="searchData" @keyup.enter="blockSearch">
-            <button class="block-browser-search-button" @click="blockSearch">搜索</button>
+            <button class="block-browser-search-button" :style = "{backgroundColor: buttonColor}" @click="blockSearch">搜索</button>
         </div>
         <div v-if="show" class="block-result-card-box">
             <div v-for="(item, index) in searchResult" :key="index" class="block-result-card">
@@ -79,12 +83,12 @@
                             <p v-else>{{ title }}: {{ item[title] }}</p>
                         </div>
                     </div>
-                    <button class="details-button" @click="searchByTH(item['Hash'])">详情</button>
+                    <button class="details-button" @click="searchByTH(item['Hash'])" :style = "{'--hover-color': buttonColor}">详情</button>
                 </div>
             </div>
         </div>
         <div v-else class="block-result-card-box">
-            
+
             <div class="block-result-card">
                 <!-- 左上角返回箭头 -->
                 <div class="back-arrow" @click="blockSearch">
@@ -95,7 +99,7 @@
                     <div>
                         <!-- 循环显示每个区块的基本信息 -->
                         <p v-for="(item, index) in transactions_detail_title" :key="index" class="result-card-context">{{ item }}: {{ transactionResult[item] }}</p>
-                        
+
                         <p class="result-card-context">ExtraData⬇️---------------------------------------------------------------</p>
                         <div v-for="(value, key) in transactionResult['ExtraData']" :key="key" class="result-card-context">
                             <p>{{ key }}: {{ value }}</p>
@@ -137,6 +141,10 @@ export default {
         this.blockSearch = debounce(this.blockSearch, 300);
     },
     mounted() {
+        this.wordColor = this.$store.state.textColor;
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue =  this.$store.state.modeValue;
         setTimeout(() => {
             this.show = true;
         }, 150)
@@ -150,49 +158,53 @@ export default {
         return {
             // 区块浏览器数据
             show: false,
+            modeValue: null,
             searchData: '',
             activeNames: [],
             searchResult: [],
             showDetail: false,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             blockTitle: [
-                'BlockNumber', 
-                'Difficulty', 
+                'BlockNumber',
+                'Difficulty',
                 // 'ExtraData', 
-                'GasLimit', 
-                'GasUsed', 
-                'Hash', 
-                'LogsBloom', 
-                'Miner', 
-                'Nonce', 
-                'ParentHash', 
-                'ReceiptsRoot', 
-                'Sha3Uncles', 
-                'Size', 
-                'StateRoot', 
-                'Timestamp', 
-                'TotalDifficulty', 
+                'GasLimit',
+                'GasUsed',
+                'Hash',
+                'LogsBloom',
+                'Miner',
+                'Nonce',
+                'ParentHash',
+                'ReceiptsRoot',
+                'Sha3Uncles',
+                'Size',
+                'StateRoot',
+                'Timestamp',
+                'TotalDifficulty',
                 // 'Transactions', 
-                'TransactionsRoot', 
+                'TransactionsRoot',
                 // 'Uncles' 
             ],
             transactionResult: [],
             transactions_detail_title: [
-                'BlockNumber', 
-                'Difficulty', 
-                'GasLimit', 
-                'GasUsed', 
-                'Hash', 
-                'LogsBloom', 
-                'Miner', 
-                'Nonce', 
-                'ParentHash', 
-                'ReceiptsRoot', 
+                'BlockNumber',
+                'Difficulty',
+                'GasLimit',
+                'GasUsed',
+                'Hash',
+                'LogsBloom',
+                'Miner',
+                'Nonce',
+                'ParentHash',
+                'ReceiptsRoot',
                 'Sha3Uncles',
-                'Size', 
-                'StateRoot', 
-                'Timestamp', 
-                'TotalDifficulty', 
-                'TransactionsRoot', 
+                'Size',
+                'StateRoot',
+                'Timestamp',
+                'TotalDifficulty',
+                'TransactionsRoot',
             ],
             // 走马灯图片
             picture: [
@@ -226,15 +238,48 @@ export default {
             ],
         };
     },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
+    },
+    watch: {
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
+        }
+    },
     methods: {
         logOut() {
-        console.log('logOut');
+            console.log('logOut');
             this.$store.dispatch('logout');
             if (this.$route.path !== '/intro') {
                 setTimeout(() => {
                     this.$router.push('/intro');
                 }, 100);
             }
+        },
+        changeBgc() {
+            console.log('切换背景颜色')
+            if (!this.modeValue)
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#f5f5f5',
+                    buttonColor: '#409eff',
+                    textColor: 'black'
+                });
+            else
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#292929',
+                    buttonColor: '#ff5900',
+                    textColor: '#edebeb'
+                });
         },
         blockSearch() {
             if (this.searchData === '') {
@@ -316,7 +361,7 @@ export default {
                     // 查询结果推入transactionResult数组，展示区块的基本信息
                     for (let i = 0; i < this.transactions_detail_title.length; i++) {
                         let title = this.transactions_detail_title[i];
-                        this.$set(this.transactionResult, title, res.data.Block[title] ? res.data.Block[title].toString() : ''); 
+                        this.$set(this.transactionResult, title, res.data.Block[title] ? res.data.Block[title].toString() : '');
                     }
 
                     // 展示ExtraData字段，确保它是JSON格式
@@ -391,6 +436,14 @@ h3 {
     /* 添加阴影效果 */
     backdrop-filter: blur(30px);
     /* 添加背景模糊效果 */
+}
+
+.mode-item {
+    position: relative;
+    top: 12px;
+    /* 根据需要调整位置 */
+    left: -115px;
+    /* 根据需要调整位置 */
 }
 
 /* Recharge */
@@ -520,11 +573,11 @@ h3 {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color: #ff5900;
+    color:  var(--buttonColor);;
 }
 
 .home-navbar-menu li a:hover {
-    color: #ff5900;
+    color:  var(--buttonColor);
 }
 
 .home-navbar-actions {
@@ -553,12 +606,12 @@ h3 {
 }
 
 .home-navbar-button:hover {
-    background-color: #ff5900;
-    border-color: #ff5900;
+    background-color:  var(--buttonColor);
+    border-color:  var(--buttonColor);
     /* 修改hover状态下的边框颜色 */
 }
 
-.details-button{
+.details-button {
     position: relative;
     margin-top: 10px;
     margin-bottom: -5px;
@@ -575,8 +628,8 @@ h3 {
 }
 
 .details-button:hover {
-    background-color: #ff5900;
-    border-color: #ff5900;
+    background-color: var(--hover-color);
+    background-color: var(--hover-color);
     /* 修改hover状态下的边框颜色 */
 }
 
@@ -631,7 +684,7 @@ h3 {
 .home-text-block {
     flex: 1;
     margin: 0 10px;
-    background-color: rgb(41, 41, 41);
+    background-color: transparent;
     border-radius: 4px;
     padding: 20px;
     text-align: center;
@@ -775,7 +828,8 @@ h3 {
     transition: transform 0.3s;
     width: 80%;
     align-self: center;
-    height:fit-content; /* 添加这行，确保卡片高度自适应内容 */
+    height: fit-content;
+    /* 添加这行，确保卡片高度自适应内容 */
 }
 
 .block-result-card-box {
@@ -815,10 +869,14 @@ h2 {
     text-align: left;
     padding-left: 30px;
     padding-right: 30px;
-    overflow-wrap: break-word; /* 处理长词换行 */
-    word-wrap: break-word; /* 处理长词换行 */
-    white-space: normal; /* 正常换行 */
-    overflow: visible; /* 允许超出内容正常显示 */
+    overflow-wrap: break-word;
+    /* 处理长词换行 */
+    word-wrap: break-word;
+    /* 处理长词换行 */
+    white-space: normal;
+    /* 正常换行 */
+    overflow: visible;
+    /* 允许超出内容正常显示 */
 }
 
 .transaction-Tx-link {
@@ -836,8 +894,10 @@ h2 {
 
 .back-arrow {
     position: absolute;
-    top: 25px; /* 调整箭头的顶部间距 */
-    left: 20px; /* 调整箭头的左侧间距，靠近区块详情 */
+    top: 25px;
+    /* 调整箭头的顶部间距 */
+    left: 20px;
+    /* 调整箭头的左侧间距，靠近区块详情 */
     cursor: pointer;
     color: rgb(118, 93, 93);
     font-size: 16px;

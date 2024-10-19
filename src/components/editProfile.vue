@@ -329,14 +329,14 @@ export default {
 
 /* 容器样式 */
 .container {
-    width: 100%;
-    height: 100%;
-    background-color: #8c8c8c;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
 }
 
 /* 内容样式 */
 .content {
-    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -356,8 +356,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
-    min-width: 100vw;
+ 
 }
 
 .edit-profile-box {
@@ -386,7 +385,7 @@ export default {
 .user-id {
     font-size: medium;
     margin-left: 20px;
-    color: #ffd700;
+    color:white;
 }
 
 .edit-profile-input {
@@ -473,7 +472,7 @@ input:-webkit-autofill {
     top: -268%;
     margin-top: 10px;
     margin-right: 350px;
-    color: rgb(255, 244, 94);
+    color: white;
     cursor: pointer;
 }
 
