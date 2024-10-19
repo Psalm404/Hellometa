@@ -1,5 +1,5 @@
 <template>
-<div class="container">
+<div class="container" :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor,'--background': mainBackgroundColor}">
     <transition name="el-fade-in-linear">
         <div class="content" v-show="show">
             <nav class="home-navbar">
@@ -13,7 +13,11 @@
                         </div>
                     </div>
                     <div class="want-to-be-right">
-                        <ul class="home-navbar-menu">
+                        <ul class="home-navbar-menu" :style="{color: buttonColor}">
+                            <li class="mode-item">
+                                <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
+                                </el-switch>
+                            </li>
                             <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
                             <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                             <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
@@ -47,7 +51,7 @@
             </div>
             <div class="grid-box">
                 <div v-for="(item, index) in gridData" :key="index" class="grid-item">
-                    <subInfo :fileURL="item" :source="source"/>
+                    <subInfo :fileURL="item" :source="source" />
                 </div>
             </div>
         </div>
@@ -65,19 +69,37 @@ export default {
         subInfo
     },
     mounted() {
+        this.wordColor = this.$store.state.textColor;
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue = this.$store.state.modeValue;
         setTimeout(() => {
             this.show = true;
         }, 0)
         this.getURLs()
     },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
+    },
     data() {
         return {
             show: true,
             searchName: '',
+            modeValue: null,
             searchType: '',
             gridData: [],
-            allData:[],
-            source:"record",
+            allData: [],
+            source: "record",
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             options: [{
                     value: 'pic',
                     label: '图片'
@@ -93,6 +115,12 @@ export default {
         };
     },
     watch: {
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
+        },
         searchName(newValue) {
             this.filterData(newValue);
         },
@@ -108,6 +136,21 @@ export default {
                     this.$router.push('/intro');
                 }, 100);
             }
+        },
+        changeBgc() {
+            console.log('切换背景颜色')
+            if (!this.modeValue)
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#f5f5f5',
+                    buttonColor: '#409eff',
+                    textColor: 'black'
+                });
+            else
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#292929',
+                    buttonColor: '#ff5900',
+                    textColor: '#edebeb'
+                });
         },
         async filterData() {
             console.log('searchName', this.searchName);
@@ -167,7 +210,7 @@ export default {
 .container {
     width: 100%;
     height: auto;
-    max-height:100%;
+    max-height: 100%;
     /* display: flex;
     flex-direction: column;
     max-height: 100vh;
@@ -194,23 +237,36 @@ export default {
     font-size: 4.5em;
     top: 0;
     left: 75px;
-    color: rgba(255, 87, 51, 0.8);
+
 }
 
 .home-navbar {
     margin-top: 20px;
     margin-left: calc(50% - 48vw);
-    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
-    border-bottom: 1px solid rgba(230, 232, 236, 0); /* 去掉底部边框 */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* 设置为半透明 */
+    border-bottom: 1px solid rgba(230, 232, 236, 0);
+    /* 去掉底部边框 */
     padding: 10px 20px;
     position: fixed;
     top: 0;
     width: 90%;
     height: auto;
     z-index: 1000;
-    border-radius: 25px; /* 设置圆角 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+    border-radius: 25px;
+    /* 设置圆角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    backdrop-filter: blur(30px);
+    /* 添加背景模糊效果 */
+}
+
+.mode-item {
+    position: relative;
+    top: 12px;
+    /* 根据需要调整位置 */
+    left: -115px;
+    /* 根据需要调整位置 */
 }
 
 /* Recharge */
@@ -222,47 +278,58 @@ export default {
     /* 根据需要调整位置 */
 }
 
-
 /* Recharge */
 .recharge-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -100px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -100px;
+    /* 根据需要调整位置 */
 }
 
 /* Browser */
 .intro-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -90px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -90px;
+    /* 根据需要调整位置 */
 }
 
 /* Explore */
 .explore-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -80px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -80px;
+    /* 根据需要调整位置 */
 }
 
 /* Upload */
 .upload-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -70px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -70px;
+    /* 根据需要调整位置 */
 }
 
 /* Records */
 .records-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -60px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -60px;
+    /* 根据需要调整位置 */
 }
 
 /* Home */
 .home-item {
     position: relative;
-    top: 10px; /* 根据需要调整位置 */
-    left: -50px; /* 根据需要调整位置 */
+    top: 10px;
+    /* 根据需要调整位置 */
+    left: -50px;
+    /* 根据需要调整位置 */
 }
 
 .home-navbar-container {
@@ -274,9 +341,11 @@ export default {
 
 .want-to-be-left {
     display: flex;
-    justify-content: flex-start; /* 左对齐 */
+    justify-content: flex-start;
+    /* 左对齐 */
     align-items: center;
-    flex-grow: 1; /* 使其占据剩余空间 */
+    flex-grow: 1;
+    /* 使其占据剩余空间 */
 }
 
 .want-to-be-right {
@@ -327,11 +396,12 @@ export default {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color:  #ff5900;
+    color: var(--buttonColor);
+    ;
 }
 
 .home-navbar-menu li a:hover {
-    color:  #ff5900;
+    color: var(--buttonColor);
 }
 
 .home-navbar-actions {
@@ -340,21 +410,29 @@ export default {
 }
 
 .home-navbar-button {
-    background-color: rgba(255, 255, 255, 0.6); /* 设置为半透明 */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* 设置为半透明 */
     color: #4d3535;
-    border: 1px solid #4d3535; /* 添加2px的边框，颜色与原背景色一致 */
+    border: 1px solid #4d3535;
+    /* 添加2px的边框，颜色与原背景色一致 */
     padding: 10px 10px;
-    border-radius: 20px; /* 设置圆角 */
+    border-radius: 20px;
+    /* 设置圆角 */
     cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s; /* 添加边框颜色过渡 */
-    margin-right: 10px; /* 增加一个右边距 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    backdrop-filter: blur(30px); /* 添加背景模糊效果 */
+    transition: background-color 0.3s, border-color 0.3s;
+    /* 添加边框颜色过渡 */
+    margin-right: 10px;
+    /* 增加一个右边距 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    backdrop-filter: blur(30px);
+    /* 添加背景模糊效果 */
 }
 
 .home-navbar-button:hover {
-    background-color: #ff5900;
-    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+    background-color: var(--buttonColor);
+    border-color: var(--buttonColor);
+    /* 修改hover状态下的边框颜色 */
 }
 
 .home-navbar-profile img {
@@ -364,8 +442,9 @@ export default {
     cursor: pointer;
 }
 
-.profile-titile{
-    z-index: 00; /* 设置一个较高的 z-index 使其在页面顶层 */
+.profile-titile {
+    z-index: 00;
+    /* 设置一个较高的 z-index 使其在页面顶层 */
 }
 
 h2 {
@@ -373,31 +452,33 @@ h2 {
     left: 12%;
     top: 23px;
     font-size: 6em;
-    color:  #c64500;
+    color: var(--buttonColor);
     text-align: center;
 }
 
 /* 新增的样式 */
 .display-container {
     display: flex;
-    align-items: center; /* 垂直居中对齐 */
-    justify-content: space-between; /* 在两端对齐 */
-    margin-top: 70px; /* 根据需要调整间距 */
-    padding: 0 15px; /* 根据需要调整内边距 */
+    align-items: center;
+    /* 垂直居中对齐 */
+    justify-content: space-between;
+    /* 在两端对齐 */
+    margin-top: 70px;
+    /* 根据需要调整间距 */
+    padding: 0 15px;
+    /* 根据需要调整内边距 */
 }
-
 
 .search-box {
     position: relative;
-    top:0%;
+    top: 0%;
     left: -28%;
     z-index: 10;
     text-align: left;
     color: #9c9c9c;
-    padding: 10px 15px;
+    padding: 15px 15px;
     width: 500px;
-    box-shadow: 2px 4px 15px #171717;
-    background-color: rgb(48, 48, 48);
+    border: 1px solid gray;
     border-radius: 5px;
     margin: 0px 60px;
     margin-left: 10%;
@@ -411,18 +492,18 @@ h2 {
     grid-template-columns: repeat(4, 1fr);
     gap: 25px;
     margin: 20px 60px;
+
 }
 
 .grid-item {
-    color: white;
-    background-color: rgb(48, 48, 48);
+    color: var(--wordColor);
+    background-color: rgba(111, 111, 111, 0.1);
     height: 330px;
     text-align: center;
     border-radius: 7px;
-    box-shadow: 2px 4px 15px #171717;
     display: flex;
     flex-direction: column;
-    border: 1px solid #ccc; /* 添加灰白色边框 */
+    border: 1px solid gray;
+    /* 添加灰白色边框 */
 }
-
 </style>

@@ -1,5 +1,5 @@
 <template>
-<div class="upload-container">
+<div class="upload-container" :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor}">
     <div id="loading-overlay" style="display: none;">
         <div class="spinner"></div>
         <div class="loading-message">正在上传文件，请稍候...</div>
@@ -18,11 +18,11 @@
                         </div>
                     </div>
                     <div class="want-to-be-right">
-                        <ul class="home-navbar-menu" :style = "{color: buttonColor}">
+                        <ul class="home-navbar-menu" :style="{color: buttonColor}">
                             <li class="mode-item">
-                            <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
-                            </el-switch>
-                        </li>
+                                <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
+                                </el-switch>
+                            </li>
                             <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
                             <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                             <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
@@ -32,7 +32,7 @@
                             <li class="home-item"><a href="#/home">个人中心</a></li>
                         </ul>
                         <div>
-                            <button class="home-navbar-button" @click="logOut">退出登录</button>
+                            <button class="home-navbar-button" :style="{ '--buttonColor': buttonColor }" @click="logOut">退出登录</button>
                         </div>
                         <div class="home-navbar-profile">
                             <a href="https://github.com/Psalm404/Hellometa" target="_blank">
@@ -51,7 +51,7 @@
                         <el-step title="步骤3" description="填写资产信息"></el-step>
                         <el-step title="步骤4" description="上传资产"></el-step>
                     </el-steps>
-                    <div class="upload-text1">请填写公司名称:</div>
+                    <div class="upload-text1" :style="{color:wordColor}">请填写公司名称:</div>
                     <div class="data-creator">
                         <el-form-item prop="creator">
                             <el-input v-model="form.creator" resize="none"></el-input>
@@ -72,7 +72,7 @@
                         <el-step title="步骤3" description="填写资产信息"></el-step>
                         <el-step title="步骤4" description="上传资产"></el-step>
                     </el-steps>
-                    <div class="upload-text1">请选择资产类别:</div>
+                    <div class="upload-text1" :style="{color:wordColor}">请选择资产类别:</div>
                     <div class="data-type">
                         <el-form-item prop="type" required>
                             <Select style="width: 100%;" size="large" v-model="form.type">
@@ -82,11 +82,11 @@
                         </el-form-item>
                     </div>
                     <div style="display:flex; gap: 25px;">
-                        <div class="upload-text1">是否上架市场:</div>
+                        <div class="upload-text1" :style="{color:wordColor}">是否上架市场:</div>
                         <div class="data-sell">
                             <el-form-item required>
-                                <el-radio v-model="form.radio" label="1">是</el-radio>
-                                <el-radio v-model="form.radio" label="2">否</el-radio>
+                                <el-radio v-model="form.radio" label="1" :style="{color:wordColor}">是</el-radio>
+                                <el-radio v-model="form.radio" label="2" :style="{color:wordColor}">否</el-radio>
                             </el-form-item>
                         </div>
                     </div>
@@ -114,7 +114,7 @@
                         <el-step title="步骤3" description="填写资产信息"></el-step>
                         <el-step title="步骤4" description="上传资产"></el-step>
                     </el-steps>
-                    <div class="upload-text1">请填写资产信息:</div>
+                    <div class="upload-text1" :style="{color:wordColor}">请填写资产信息:</div>
                     <div class="data-message" style="width:70%;height:100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                         <div class="data-creator">
                             <el-form-item label="资产名称" prop="name">
@@ -142,7 +142,7 @@
                         <el-step title="步骤3" description="填写资产信息"></el-step>
                         <el-step title="步骤4" description="上传资产"></el-step>
                     </el-steps>
-                    <div class="upload-text1">请上传资产:</div>
+                    <div class="upload-text1" :style="{color:wordColor}">请上传资产:</div>
                     <div class="data-select">
                         <el-upload class="upload-demo" ref="upload" multiple:false limit:1 :auto-upload="false" :on-change="onChangeFile" :before-remove="() => false">
                             <button slot="trigger" size="small" id="list-button" @click.prevent type="primary" style="color:#9C9C9C">选取文件</button>
@@ -151,7 +151,7 @@
                     <div class="arrow-box">
                         <a class="el-icon-back disabled" style="color:transparent"></a>
                         <div style="width:90%; display:inline-block"> </div>
-                        <a style="font-size:17px" @click="mintNFT()">铸造 </a>
+                        <a style="font-size:17px" @click="mintNFT()" :style="{color:wordColor}">铸造 </a>
 
                     </div>
                 </div>
@@ -226,7 +226,7 @@
 </div> -->
 </template>
 
-<script>
+<script scoped>
 import {
     uploadFileToIPFS,
     uploadJSONToIPFS,
@@ -242,9 +242,10 @@ import mint from '@/commons/mint';
 export default {
     mounted() {
         this.wordColor = this.$store.state.textColor;
+        console.log('wordColor:', this.wordColor)
         this.buttonColor = this.$store.state.buttonColor;
         this.mainBackgroundColor = this.$store.state.backgroundColor;
-        this.modeValue =  this.$store.state.modeValue;
+        this.modeValue = this.$store.state.modeValue;
         setTimeout(() => {
             this.$set(this.show, 1, true);
             console.log('show1', this.show[1])
@@ -270,6 +271,7 @@ export default {
     },
     data() {
         return {
+
             modeValue: null,
             mainBackgroundColor: '#ffffff',
             wordColor: 'white',
@@ -308,7 +310,7 @@ export default {
                     },
                     {
                         validator: (rule, value, callback) => {
-                            if (value === 0 ) {
+                            if (value === 0) {
                                 callback(new Error('定价不能为0'));
                             } else {
                                 callback(); // 验证通过
@@ -591,15 +593,15 @@ export default {
 .el-step__head.is-finish,
 .el-step__title.is-finish,
 .el-step__description.is-finish {
-    color: rgba(255, 87, 51, 1);
-    border-color: rgba(255, 87, 51, 1);
+    color: var(--buttonColor);
+    border-color: var(--buttonColor);
 }
 
 .el-step__head.is-process,
 .el-step__title.is-process,
 .el-step__description.is-process {
-    color: rgba(255, 87, 51, 1);
-    border-color: rgba(255, 87, 51, 1);
+    color: var(--buttonColor);
+    border-color: var(--buttonColor);
 }
 
 .el-step__icon.is-text {
@@ -622,7 +624,7 @@ export default {
 
 .arrow-box a:hover {
     font-size: 40px;
-    color: rgba(255, 87, 51, 1);
+    color: var(--buttonColor);
 }
 
 .arrow-box a.disabled {
@@ -639,6 +641,7 @@ export default {
 .data-type {
     width: 30%;
 }
+
 .mode-item {
     position: relative;
     top: 12px;
@@ -677,13 +680,13 @@ span {
 :focus,
 .el-input input:hover,
 .el-textarea textarea:hover {
-    border-color: rgba(255, 87, 51, 1);
+    border-color: var(--buttonColor);
 }
 
 .el-input input:focus,
 .el-textarea textarea:focus {
     color: #9C9C9C;
-    border: 1px solid rgba(255, 87, 51, 1);
+    border: 1px solid var(--buttonColor);
     border-radius: 5px;
 }
 
@@ -693,7 +696,7 @@ span {
     font-size: 4.5em;
     top: 0;
     left: 75px;
-    color: rgba(255, 87, 51, 0.8);
+    color: var(--buttonColor);
 }
 
 .upload-box {
@@ -755,7 +758,6 @@ span {
     left: -110px;
     /* 根据需要调整位置 */
 }
-
 
 /* Recharge */
 .recharge-item {
@@ -875,11 +877,12 @@ span {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color:  var(--buttonColor);;
+    color: var(--buttonColor);
+    ;
 }
 
 .home-navbar-menu li a:hover {
-    color:  var(--buttonColor);
+    color: var(--buttonColor);
 }
 
 .home-navbar-actions {
@@ -908,9 +911,8 @@ span {
 }
 
 .home-navbar-button:hover {
-    background-color: #ff5900;
-    border-color: #ff5900;
-    /* 修改hover状态下的边框颜色 */
+    background-color: var(--buttonColor);
+    border-color: var(--buttonColor);
 }
 
 .home-navbar-profile img {
@@ -930,33 +932,41 @@ h2 {
     left: 12%;
     top: 23px;
     font-size: 6em;
-    color: #c64500;
+    text-align: center;
+}
+
+h2 {
+    position: relative;
+    left: 12%;
+    top: 23px;
+    font-size: 6em;
+    color: var(--buttonColor);
     text-align: center;
 }
 
 /* 修改线条颜色为橙色 */
 ::v-deep .el-steps__line {
-    background-color: #ff5900;
+    background-color: var(--buttonColor);
 }
 
 /* 修改已完成和正在进行步骤的图标背景、边框和文字颜色 */
 ::v-deep .el-step__head.is-process .el-step__icon,
 ::v-deep .el-step__head.is-finish .el-step__icon {
-    background-color: #ff5900;
-    border-color: #ff5900;
-    color: white;
+    background-color: var(--buttonColor);
+    border-color: var(--buttonColor);
+    color: var(--woldColor);
 }
 
 /* 修改等待步骤的图标边框和文字颜色 */
 ::v-deep .el-step__head.is-wait .el-step__icon {
-    border-color: #ff5900;
-    color: #ff5900;
+    border-color: var(--buttonColor);
+    color: var(--buttonColor);
 }
 
 /* 修改步骤标题和描述文字颜色为白色 */
 ::v-deep .el-step__title,
 ::v-deep .el-step__description {
-    color: white;
+    color: var(--buttonColor);
 }
 
 /* 修改正在进行和已完成步骤的标题和描述文字颜色为白色 */
@@ -964,22 +974,22 @@ h2 {
 ::v-deep .el-step.is-process .el-step__description,
 ::v-deep .el-step.is-finish .el-step__title,
 ::v-deep .el-step.is-finish .el-step__description {
-    color: white;
+    color: var(--woldColor);
 }
 
 /* 修改等待步骤的标题和描述文字颜色为白色 */
 ::v-deep .el-step.is-wait .el-step__title,
 ::v-deep .el-step.is-wait .el-step__description {
-    color: white;
+    color: var(--woldColor);
 }
 
 /* 如果需要调整图标中的数字颜色 */
 ::v-deep .el-step__icon-inner {
-    color: white;
+    color: black;
 }
 
 /* 修改步骤之间的连接线颜色为橙色 */
 ::v-deep .el-steps__line-inner {
-    background-color: #ff5900 !important;
+    background-color: var(--buttonColor) !important;
 }
 </style>

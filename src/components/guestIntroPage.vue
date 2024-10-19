@@ -261,7 +261,7 @@ h3 {
 .home-introduction {
     margin-left: calc(50% - 54vw);
     font: "Microsoft YaHei";
-    color: #edebeb;
+    color: white;
 }
 
 .home-text-blocks-container {

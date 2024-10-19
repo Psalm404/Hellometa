@@ -1,7 +1,7 @@
 <!-- 文件展示细节封装成单独的文件，exhibit和record共用一套逻辑 -->
 <template>
-<div>
-    <div class="grid-subitem">
+<div :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor}">
+    <div class="grid-subitem"  >
         <div class="grid-item-top">
             <div class="grid-item-top-top">
                 <div class="grid-item-top-left">
@@ -53,14 +53,27 @@ export default {
         console.log('this.fileURL:', this.fileURL)
         console.log('this.source', this.source)
         this.fetchData();
+        this.wordColor = this.$store.state.textColor;
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue =  this.$store.state.modeValue;
     },
     watch: {
         fileURL() {
             this.fetchData();
         },
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
+        }
     },
     data() {
         return {
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             show: false,
             picUrl: "",
             searchName: '',
@@ -70,6 +83,16 @@ export default {
             recordPrice:null,
             tokenID:"",
         };
+    },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
     },
     methods: {
         async fetchData() {
@@ -176,10 +199,10 @@ export default {
 .grid-item-bottom button {
     margin-top: 10px;
     flex: 1;
-    border: 1px solid rgba(255, 87, 51, 1);
+    border: 1px solid var(--buttonColor);
     cursor: pointer;
     width: 150px;
-    color: rgba(255, 87, 51, 0.8);
+    color: var(--buttonColor);
     background-color: transparent;
     border-radius: 5px;
     height: 30px;

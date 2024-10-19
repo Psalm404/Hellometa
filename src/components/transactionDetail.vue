@@ -20,7 +20,7 @@
                             </div>
                         </div>
                         <div>
-                            <button class="home-navbar-button" @click="connWallet">Connect Wallet</button>
+                            <button class="home-navbar-button" :style="{ '--buttonColor': buttonColor }" @click="connWallet">Connect Wallet</button>
                         </div>
                         <div class="home-navbar-profile">
                             <a href="https://github.com/Psalm404/Hellometa" target="_blank">

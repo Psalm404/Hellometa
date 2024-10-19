@@ -32,7 +32,7 @@
                         <li class="home-item"><a href="#/home">个人中心</a></li>
                     </ul>
                     <div>
-                        <button class="home-navbar-button" @click="logOut">退出登录</button>
+                        <button class="home-navbar-button"  :style="{ '--buttonColor': buttonColor }" @click="logOut">退出登录</button>
                     </div>
                     <div class="home-navbar-profile">
                         <a href="https://github.com/Psalm404/Hellometa" target="_blank">
@@ -517,6 +517,10 @@ export default {
     color:  var(--buttonColor);
 }
 
+.home-navbar-button:hover {
+    background-color: var(--buttonColor);
+    border-color: var(--buttonColor);
+}
 .home-navbar-actions {
     display: flex;
     align-items: center;
@@ -542,11 +546,6 @@ export default {
     /* 添加背景模糊效果 */
 }
 
-.home-navbar-button:hover {
-    background-color: #ff5900;
-    border-color: #ff5900;
-    /* 修改hover状态下的边框颜色 */
-}
 
 .home-navbar-profile img {
     width: 35px;
