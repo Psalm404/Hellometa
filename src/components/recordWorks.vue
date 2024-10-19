@@ -470,6 +470,7 @@ h2 {
 }
 
 .search-box {
+
     position: relative;
     top: 0%;
     left: -28%;
@@ -497,7 +498,7 @@ h2 {
 
 .grid-item {
     color: var(--wordColor);
-    background-color: rgba(111, 111, 111, 0.1);
+    background-color: rgba(196, 196, 196, 0.1);
     height: 330px;
     text-align: center;
     border-radius: 7px;

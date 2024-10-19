@@ -1,5 +1,5 @@
 <template>
-<div class="container">
+<div class="container" :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor}">
     <transition name="el-fade-in-linear">
         <div class="content" v-show="show">
             <div class="detail-box">
@@ -83,6 +83,11 @@ import buyToken from '@/commons/buyToken';
 import updateTokenPrice from '@/commons/updateTokenPrice';
 export default {
     mounted() {
+        this.wordColor = this.$store.state.textColor;
+        console.log('wordColor:', this.wordColor)
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue = this.$store.state.modeValue;
         // 在组件创建时获取路由参数
         this.fileURL = this.$route.query.jsonURL;
         setTimeout(() => {
@@ -90,8 +95,22 @@ export default {
             this.fetchNFTData();
         }, 100)
     },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
+    },
     data() {
         return {
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             show: false,
             fileURL: "",
             picUrl: "", // 默认图片，加载完成后会被替换
@@ -220,8 +239,10 @@ export default {
 
 .detail-box {
     margin: 60px 60px;
-    background-color: #303030;
-    box-shadow: 0px 4px 15px #000000;
+    background-color: var(--background);
+    border: 1px solid var(--wordColor);
+    color:var(--wordColor);
+    /* box-shadow: 0px 4px 15px #cccccc; */
     height: 80vh;
     justify-content: center;
     align-items: center;
@@ -280,10 +301,18 @@ export default {
     height: 30px;
     line-height: 30px;
 }
+.cool-text {
+    position: absolute;
+    z-index: 0;
+    font-size: 4.5em;
+    top: 0;
+    left: 75px;
+    color: var(--buttonColor);
+}
 
 .work-download button:hover {
-    border: 1px solid rgba(255, 87, 51, 1);
-    color: rgba(255, 87, 51, 1);
+    border: 1px solid var(--buttonColor);
+    color: var(--buttonColor);
 }
 
 .detail-box-top-right {
@@ -321,10 +350,10 @@ export default {
 .detail-box-bottom button {
     margin: auto;
     flex: 1;
-    border: 1px solid rgba(255, 87, 51, 1);
+    border: 1px solid var(--buttonColor);
     cursor: pointer;
     width: 180px;
-    color: rgba(255, 87, 51, 0.8);
+    color:  var(--buttonColor);
     background-color: transparent;
     border-radius: 5px;
     height: 30px;

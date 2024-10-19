@@ -1,5 +1,5 @@
 <template>
-<div class="container">
+<div class="container"  :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor,'--background': mainBackgroundColor}">
 
         <div class="content">
             <nav class="home-navbar">
@@ -14,6 +14,10 @@
                     </div>
                     <div class="want-to-be-right">
                         <ul class="home-navbar-menu">
+                            <li class="mode-item">
+                                <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
+                                </el-switch>
+                            </li>
                             <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
                             <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                             <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
@@ -37,8 +41,8 @@
 
             <!-- 将 DISPLAY 和搜索框包裹在一个新的容器中 -->
             <div class="display-container">
-                <div class="profile-title">
-                    <h2>Display</h2>
+                <div class="profile-title" >
+                    <h2 :style = "{color:buttonColor}">Display</h2>
                 </div>
                 <div class="search-box">
                     <i class="el-icon-search" style="font-size: large; line-height:33px;"></i>
@@ -70,13 +74,32 @@ export default {
         subInfo
     },
     mounted() {
+        this.wordColor = this.$store.state.textColor;
+        console.log('wordColor:', this.wordColor)
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue = this.$store.state.modeValue;
         setTimeout(() => {
                 this.show = true;
             }, 150),
             this.getURLs();
     },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
+    },
     data() {
         return {
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             show: false,
             searchName: '',
             searchType: '',
@@ -98,6 +121,12 @@ export default {
         };
     },
     watch: {
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
+        },
         searchName(newValue) {
             this.filterData(newValue);
         },
@@ -107,6 +136,21 @@ export default {
         }
     },
     methods: {
+        changeBgc() {
+            console.log('切换背景颜色')
+            if (!this.modeValue)
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#f5f5f5',
+                    buttonColor: '#409eff',
+                    textColor: 'black'
+                });
+            else
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#292929',
+                    buttonColor: '#ff5900',
+                    textColor: '#edebeb'
+                });
+        },
         logOut() {
             this.$store.dispatch('logout');
             if (this.$route.path !== '/intro') {
@@ -209,23 +253,22 @@ export default {
 }
 
 .search-box {
+
     position: relative;
     top: 0%;
     left: -28%;
     z-index: 10;
     text-align: left;
     color: #9c9c9c;
-    padding: 10px 15px;
+    padding: 15px 15px;
     width: 500px;
-    box-shadow: 2px 4px 15px #171717;
-    background-color: rgb(48, 48, 48);
+    border: 1px solid gray;
     border-radius: 5px;
     margin: 0px 60px;
     margin-left: 10%;
     display: flex;
     gap: 15px;
 }
-
 .grid-box {
     z-index: 0;
     display: grid;
@@ -236,15 +279,14 @@ export default {
 }
 
 .grid-item {
-    color: white;
-    background-color: rgb(48, 48, 48);
+    color: var(--wordColor);
+    background-color: rgba(157, 157, 157, 0.1);
     height: 330px;
     text-align: center;
     border-radius: 7px;
-    box-shadow: 2px 4px 15px #171717;
     display: flex;
     flex-direction: column;
-    border: 1px solid #ccc;
+    border: 1px solid gray;
     /* 添加灰白色边框 */
 }
 
@@ -267,6 +309,13 @@ export default {
     /* 添加阴影效果 */
     backdrop-filter: blur(30px);
     /* 添加背景模糊效果 */
+}
+.mode-item {
+    position: relative;
+    top: 12px;
+    /* 根据需要调整位置 */
+    left: -115px;
+    /* 根据需要调整位置 */
 }
 
 /* Recharge */
@@ -396,12 +445,14 @@ export default {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color: #ff5900;
+    color: var(--buttonColor);
+    ;
 }
 
 .home-navbar-menu li a:hover {
-    color: #ff5900;
+    color: var(--buttonColor);
 }
+
 
 .home-navbar-actions {
     display: flex;
@@ -451,7 +502,7 @@ h2 {
     left: 12%;
     top: 23px;
     font-size: 6em;
-    color: #c64500;
+    color: var(--buttonColor);
     text-align: center;
 }
 </style>

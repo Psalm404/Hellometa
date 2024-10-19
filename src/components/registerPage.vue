@@ -1,9 +1,9 @@
 <template>
-    <div class="register-container">
+    <div class="register-container" :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor,'--background': mainBackgroundColor}">
         <div class="register-box">
             <div class="register-text">
-                <h2>👋欢迎来到HelloMeta!</h2>
-                <h3>注册账号，为您的作品进行数字确权:</h3>
+                <h2 style = "   color:var(--wordColor);">👋欢迎来到HelloMeta!</h2>
+                <h3 style = "   color:var(--wordColor);">注册账号，为您的作品进行数字确权:</h3>
                 ❕：标有 * 的为必填项
             </div>
             <el-form :model="formData" :rules="rules" ref="formData">
@@ -11,13 +11,13 @@
                     <!-- 第一列 -->
                     <div class="column">
                         <div class="register-input">
-                            <label>*设置用户id</label>
+                            <label>*设置用户名</label>
                             <el-form-item prop="account">
                                 <el-input type="text" v-model="formData.account"></el-input>
                             </el-form-item>
                         </div>
                         <div class="register-input">
-                            <label>*设置用户名</label>
+                            <label>*设置公司名称</label>
                             <el-form-item prop="name">
                                 <el-input type="text" v-model="formData.name"></el-input>
                             </el-form-item>
@@ -75,6 +75,10 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             formData: {
                 account: '',            // 绑定到后端的 account 字段
                 name: '',               // 绑定到后端的 name 字段
@@ -126,6 +130,30 @@ export default {
                 ]
             }
         };
+    },
+    mounted(){
+        this.wordColor = this.$store.state.textColor;
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue =  this.$store.state.modeValue;
+    },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
+    },
+    watch: {
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
+        }
     },
     methods: {
         async register(formName) {
@@ -213,7 +241,7 @@ export default {
     margin-top: 100px;
     width: 1200px;
     height: 700px;
-    color: white;
+    color:var(--wordColor);
     /* background-color:rgba(255, 255, 255, 0.05); */
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
@@ -225,6 +253,7 @@ export default {
 }
 
 .register-text {
+ 
     align-self:flex-start;
     font-size: large;
     text-align: left;
@@ -261,7 +290,7 @@ export default {
     margin-top: 10px;
     width: 160px;
     font-size: 15px;
-    color: white;
+    color: var(--wordColor);
 }
 
 .register-container .el-form-item {
@@ -270,13 +299,13 @@ export default {
 }
 
 .register-input input {
-    -webkit-text-fill-color: white;
+    -webkit-text-fill-color:  var(--wordColor);
     width: 100%;
     height: 40px;
     background-color: transparent;
     outline: none;
     font-size: 1em;
-    color: white;
+    color:  var(--wordColor);
 }
 
 input:-webkit-autofill {
@@ -297,7 +326,7 @@ input:-webkit-autofill {
 }
 
 .register-submit:hover {
-    background: #ff5733;
+    background:  var(--buttonColor);
     /* color: #ff5733; */
 }
 
@@ -316,11 +345,11 @@ input:-webkit-autofill {
     top:14%;
     margin-top: 10px;
     margin-right: 350px;
-    color: rgb(255, 244, 94);
+    color:  var(--buttonColor);
     cursor: pointer;
 }
 
 .back-guest:hover {
-    color: #ff5733;
+    color:  var(--buttonColor);
 }
 </style>

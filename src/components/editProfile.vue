@@ -1,5 +1,5 @@
 <template>
-    <div class="edit-profile-container">
+    <div class="edit-profile-container"  :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor,'--background': mainBackgroundColor}">
         <div class="edit-profile-box">
             <div class="edit-profile-text">
                 <button class="edit-profile-button" :class="{ active: isEditingInfo }" @click="editInfo" :disabled="isNavigating">编辑您的个人资料</button>
@@ -102,6 +102,10 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             isEditingInfo: true,  // 默认显示修改个人信息的表单
             isNavigating: false, // 控制遮罩层显示的状态
             formData: {
@@ -146,9 +150,22 @@ export default {
     computed: {
         ...mapState({
             user: state => state.user
-        })
+        }),
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
     },
     created() {
+        this.wordColor = this.$store.state.textColor;
+        console.log('wordColor:', this.wordColor)
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue = this.$store.state.modeValue;
         this.fetchUserInfo();
         if (this.user && this.user.avatar) {
             this.formData.avatar = this.user.avatar; // 设置初始头像路径
@@ -363,8 +380,8 @@ export default {
     margin-top: 70px;
     width: 1200px;
     height: 700px;
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: var(--wordColor);
+    border: 1px solid var(--wordColor);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -385,7 +402,7 @@ export default {
 .user-id {
     font-size: medium;
     margin-left: 20px;
-    color:white;
+    color:var(--wordColor);
 }
 
 .edit-profile-input {
@@ -424,7 +441,7 @@ export default {
     margin-top: 10px;
     width: 160px;
     font-size: 15px;
-    color: white;
+    color: var(--wordColor);
 }
 
 .edit-profile-container .el-form-item {
@@ -433,13 +450,13 @@ export default {
 }
 
 .edit-profile-input input {
-    -webkit-text-fill-color: white;
+    -webkit-text-fill-color: var(--wordColor);
     width: 100%;
     height: 40px;
     background-color: transparent;
     outline: none;
     font-size: 1em;
-    color: white;
+    color: var(--wordColor)
 }
 
 input:-webkit-autofill {
@@ -452,7 +469,7 @@ input:-webkit-autofill {
     width: 400px;
     height: 45px;
     margin-top: 3%;
-    background: #fff;
+    background: #e0e0e0;
     border: none;
     outline: none;
     border-radius: 40px;
@@ -463,7 +480,7 @@ input:-webkit-autofill {
 }
 
 .edit-profile-submit:hover {
-    background: #ff5733;
+    background: var(--buttonColor);
 }
 
 .back-guest {
@@ -472,20 +489,20 @@ input:-webkit-autofill {
     top: -268%;
     margin-top: 10px;
     margin-right: 350px;
-    color: white;
+    color: var(--wordColor);
     cursor: pointer;
 }
 
 .back-guest:hover {
-    color: #ff5733;
+    color: var(--buttonColor);
 }
 
 .edit-profile-button {
     position: relative;
     top:-100%;
     left: 3%;
-    background-color: rgba(255, 255, 255, 0.303); /* 设置为半透明 */
-    color:  #ffffffb0;
+    background-color: rgba(187, 187, 187, 0.5); /* 设置为半透明 */
+    color:  var(--wordColor);
     font-weight: 700; /* 设置字体粗细，500 为中等粗细 */
     border: 1px solid  #ffffff00; 
     border-radius: 10px; /* 设置圆角 */
@@ -502,8 +519,8 @@ input:-webkit-autofill {
     position: relative;
     top:-100%;
     left: 5%;
-    background-color: rgba(255, 255, 255, 0.303); /* 设置为半透明 */
-    color:  #ffffffb0;
+    background-color: rgba(187, 187, 187, 0.5); /* 设置为半透明 */
+    color:  var(--wordColor);
     font-weight: 700; /* 设置字体粗细，500 为中等粗细 */
     border: 1px solid  #ffffff00; 
     border-radius: 10px; /* 设置圆角 */
@@ -517,15 +534,15 @@ input:-webkit-autofill {
 }
 
 .edit-profile-button:hover, .edit-pwd-button:hover {
-    background-color: #f47f41;
-    border-color: #f47f41; /* 修改hover状态下的边框颜色 */
+    background-color: var(--buttonColor);
+    border-color: var(--buttonColor); /* 修改hover状态下的边框颜色 */
 }
 
 .edit-profile-button.active,
 .edit-pwd-button.active {
-    background-color: #ff5900; /* 保持激活状态的颜色 */
-    border-color: #ff5900;
-    color: #ffffff; /* 文字颜色 */
+    background-color: var(--buttonColor); /* 保持激活状态的颜色 */
+    border-color:  var(--buttonColor);
+    color:  var(--wordColor); /* 文字颜色 */
 }
 .avatar-uploader {
     display: flex;
@@ -533,7 +550,7 @@ input:-webkit-autofill {
     justify-content: center;
     width: 200px;
     height: 200px;
-    border: 1px dashed #d9d9d9;
+    border: 1px dashed var(--wordColor);
     border-radius: 50%;
     cursor: pointer;
     overflow: hidden;

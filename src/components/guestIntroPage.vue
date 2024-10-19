@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container"  :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor,'--background': mainBackgroundColor}">
         <transition name="el-fade-in-linear">
             <div class="content">
                 <nav class="home-navbar">
@@ -11,6 +11,10 @@
                             <h3 class="home-navbar-title">游客模式</h3>
                         </div>
                         <ul class="home-navbar-menu">
+                            <li class="mode-item">
+                            <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
+                            </el-switch>
+                        </li>
                             <!-- 游客模式下的信息浏览 -->
                             <!-- <li><a href="#/intro">Explore</a></li> -->
                         </ul>
@@ -49,9 +53,28 @@
 <script>
 export default {
     mounted() {
+        this.wordColor = this.$store.state.textColor;
+        console.log('wordColor:', this.wordColor)
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue = this.$store.state.modeValue;
+    },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
     },
     data() {
         return {
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             // 走马灯图片
             picture: [
                 require("@/assets/6.png"),
@@ -86,9 +109,29 @@ export default {
         };
     },
     watch: {
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
+        },
     },
     methods: {
-        
+        changeBgc() {
+            console.log('切换背景颜色')
+            if (!this.modeValue)
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#f5f5f5',
+                    buttonColor: '#409eff',
+                    textColor: 'black'
+                });
+            else
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#292929',
+                    buttonColor: '#ff5900',
+                    textColor: '#edebeb'
+                });
+        },
         triggerLogin() {
             console.log('click-login')
             this.$emit('trigger-login'); // 触发登录事件
@@ -114,7 +157,7 @@ export default {
 
 h3 {
     font-size: 1.2em;
-    color:  #c64500;
+    color:  var(--buttonColor);
     text-align: center;
 }
 
@@ -183,7 +226,7 @@ h3 {
 }
 
 .home-navbar-menu li a:hover {
-    color:  #ff5900;
+    color:  var(--buttonColor);
 }
 
 .home-navbar-actions {
@@ -206,11 +249,19 @@ h3 {
 
 .home-navbar-button:hover {
     background-color: rgba(255, 255, 255, 0.8); /* 修改hover背景色 */
-    border-color: #ff5900; /* 修改hover状态下的边框颜色 */
+    border-color: var(--buttonColor); /* 修改hover状态下的边框颜色 */
+}
+
+.mode-item {
+    position: relative;
+    top: 0px;
+    /* 根据需要调整位置 */
+    left: -350px;
+    /* 根据需要调整位置 */
 }
 
 .home-navbar-button:hover {
-    background-color: #ff5900;
+    background-color: var(--buttonColor);
 }
 
 .home-navbar-profile img {
@@ -261,7 +312,7 @@ h3 {
 .home-introduction {
     margin-left: calc(50% - 54vw);
     font: "Microsoft YaHei";
-    color: white;
+    color:var(--wordColor);
 }
 
 .home-text-blocks-container {

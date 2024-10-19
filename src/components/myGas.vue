@@ -234,7 +234,7 @@ export default {
                 console.log(e)
             })
 
-            if (res.data.status === "查询成功" && res.data.addresses) {
+            if (res.data && res.data.status === "查询成功" && res.data.addresses) {
                 this.listData = res.data.addresses.map(item => {
                     // 如果 address 属性不存在，给它一个默认值
                     return {

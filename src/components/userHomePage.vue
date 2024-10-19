@@ -1,5 +1,5 @@
 <template>
-<div class="container">
+<div class="container"   :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor}">
 
     <div class="content">
         <div class="profile-titile">
@@ -17,10 +17,10 @@
                 </div>
                 <div class="want-to-be-right">
                     <ul class="home-navbar-menu">
-                        <!-- <li class="mode-item">
-                            <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
-                            </el-switch>
-                        </li> -->
+                        <li class="mode-item">
+                                <el-switch v-model="modeValue" active-color="#ff5900" inactive-color='#409eff' @change="changeBgc">
+                                </el-switch>
+                            </li>
                         <li class="guide-item"><a href="#/guidePage">用户指南</a></li>
                         <li class="recharge-item"><a href="#/myGas">燃料管理</a></li>
                         <li class="intro-item"><a href="#/blockBrowse">区块浏览器</a></li>
@@ -73,7 +73,7 @@
             </div>
         </transition>
         <!-- 关键：myAccount.vue的内容合并到这里 -->
-        <div v-if="isAccountManagementVisible" class="myAccount-container" style="background-color: #708090;">
+        <div v-if="isAccountManagementVisible" class="myAccount-container">
             <div class="content" style="height:100vh">
                 <div class="myAccount-guideBox">
                     <div class="myAccount-title">链上账号管理</div>
@@ -205,6 +205,11 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             selectedAccount: null,
             isAccountManagementVisible: false, // 控制链账户管理部分的显示
             account: null,
@@ -223,6 +228,12 @@ export default {
         // this.loadAvatar();
     },
     mounted() {
+
+        this.wordColor = this.$store.state.textColor;
+        console.log('wordColor:', this.wordColor)
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue = this.$store.state.modeValue;
         setTimeout(() => {
             this.show = true;
         }, 150)
@@ -246,8 +257,32 @@ export default {
             if (!this.selectedAccount || !this.listData) return false;
             return this.listData.some(item => item.address.toLowerCase() === this.selectedAccount.toLowerCase());
         },
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
     },
+
     methods: {
+        changeBgc() {
+            console.log('切换背景颜色')
+            if (!this.modeValue)
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#f5f5f5',
+                    buttonColor: '#409eff',
+                    textColor: 'black'
+                });
+            else
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#292929',
+                    buttonColor: '#ff5900',
+                    textColor: '#edebeb'
+                });
+        },
         logOut() {
             console.log('登出');
             this.selectedAccount = null; // 注销时清空选中的钱包地址
@@ -451,6 +486,12 @@ export default {
         },
     },
     watch: {
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
+        },
         selectedAccount() {
             this.checkAccountMatch();
         },
@@ -488,8 +529,8 @@ export default {
 }
 
 .manage-account-button.active {
-    background-color: #f3a479;
-    border-color: #f3a479;
+    background-color: var(--buttonColor);
+    border-color: var(--buttonColor);
     color: #ffffff;
 }
 
@@ -505,13 +546,13 @@ h2 {
     position: relative;
     left: 2%;
     font-size: 6em;
-    color: #c64500;
+    color: var(--buttonColor);
     text-align: center;
 }
 
 h3 {
     font-size: 1.3em;
-    color: #c64500;
+    color: var(--buttonColor);
     text-align: center;
 }
 
@@ -519,7 +560,7 @@ h4 {
     position: absolute;
     left: 33%;
     font-size: 2em;
-    color: #c64500;
+    color:var(--buttonColor);
     text-align: left;
 }
 
@@ -685,11 +726,12 @@ h4 {
 
 .home-navbar-menu li.active a {
     font-size: 18px;
-    color: #ff5900;
+    color: var(--buttonColor);
+    ;
 }
 
 .home-navbar-menu li a:hover {
-    color: #ff5900;
+    color: var(--buttonColor);
 }
 
 .home-navbar-actions {
@@ -718,8 +760,8 @@ h4 {
 }
 
 .home-navbar-button:hover {
-    background-color: #ff5900;
-    border-color: #ff5900;
+    background-color: var(--buttonColor);
+    border-color:  var(--buttonColor);
     /* 修改hover状态下的边框颜色 */
 }
 
@@ -791,7 +833,7 @@ h4 {
     max-width: 600px;
     margin: 10px 0;
     text-align: center;
-    color: #ffffffb0;
+    color:  var(--wordColor);
 }
 
 .user-info p,
@@ -801,7 +843,7 @@ h4 {
 
 .user-info p span,
 .account-info p span {
-    color: #ff741d;
+    color:  var(--buttonColor);
     font-style: italic;
     font-size: 1em;
 }
@@ -809,8 +851,8 @@ h4 {
 /* 按钮样式 */
 .edit-profile-button,
 .manage-account-button {
-    background-color: rgba(255, 255, 255, 0.303);
-    color: #ffffffb0;
+    background-color: rgb(203, 203, 203, 0.5);
+    /* color: #ffffffb0; */
     font-weight: 700;
     border: 1px solid transparent;
     border-radius: 10px;
@@ -825,8 +867,8 @@ h4 {
 
 .edit-profile-button:hover,
 .manage-account-button:hover {
-    background-color: #ff5900;
-    border-color: #ff5900;
+    background-color:  var(--buttonColor);
+    border-color:  var(--buttonColor);
 }
 
 /* 响应式调整 */
@@ -849,7 +891,7 @@ h4 {
 
 .myAccount-container {
     position: relative;
-    background-color: #ffffff5b;
+    /* background-color: #ffffff5b; */
     display: flex;
     flex-direction: column;
     /* justify-content: center; */
@@ -857,7 +899,7 @@ h4 {
     min-height: 95vh;
     min-width: 95vw;
     /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
-    background-image: linear-gradient(to top, #333 0%, rgb(47, 43, 43) 100%);
+    /* background-image: linear-gradient(to top, #333 0%, rgb(47, 43, 43) 100%); */
     ;
 
 }
@@ -865,7 +907,7 @@ h4 {
 .myAccount-guideBox {
     margin-top: 50px;
     margin-left: 50px;
-    color: #ff5900;
+    color:  var(--buttonColor);
     /* border: 1px solid green; */
     display: flex;
     flex-direction: column;
@@ -875,7 +917,7 @@ h4 {
 .myAccount-title {
     flex: 1;
     align-self: flex-start;
-    color: rgb(229, 223, 223);
+    color: var(--wordColor);
     font-weight: bold;
     font-size: 2em;
 }
@@ -961,7 +1003,7 @@ h4 {
 .delete-accountBT:hover {
     background-color: rgba(255, 255, 255, 0.6);
     /* 设置为半透明 */
-    color: #f63900;
+    color: var(--buttonColor);
     border: 1px solid #4d3535;
     /* 添加2px的边框，颜色与原背景色一致 */
     padding: 5px 5px;
@@ -975,7 +1017,7 @@ h4 {
 }
 
 .myAccount-howtouse {
-    color: #fff5d7;
+    color: var(--buttonColor);
 }
 
 .disabled {
@@ -984,6 +1026,6 @@ h4 {
 }
 
 .warning-message {
-    color: #f63900;
+    color:var(--buttonColor);
 }
 </style>

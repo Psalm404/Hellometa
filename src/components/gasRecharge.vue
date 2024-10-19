@@ -109,6 +109,10 @@ export default {
     },
     data() {
         return {
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             tip: " 交易中，请稍后......",
             loading: true,
             rate: null,

@@ -1,5 +1,5 @@
 <template>
-<div class="container">
+<div class="container" :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor}">
     <!-- NFT原文件从Pinata删除的加载窗口 -->
     <div id="loading-overlay" style="display: none;">
         <div class="spinner"></div>
@@ -90,6 +90,11 @@ import updateTokenPrice from '@/commons/updateTokenPrice';
 
 export default {
     mounted() {
+        this.wordColor = this.$store.state.textColor;
+        console.log('wordColor:', this.wordColor)
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue = this.$store.state.modeValue;
         // 在组件创建时获取路由参数
         this.fileURL = this.$route.query.jsonURL;
         setTimeout(() => {
@@ -100,6 +105,10 @@ export default {
     },
     data() {
         return {
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             workPrice: null,
             radio: '1',
             fileURL: "",
@@ -112,6 +121,16 @@ export default {
             workType: "",
             workDesc: "",
             workPic:"",
+        }
+    },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
         }
     },
     methods: {
@@ -316,7 +335,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .container {
     max-height: 100vh;
     overflow: hidden;
@@ -338,14 +357,15 @@ export default {
     font-size: 4.5em;
     top: 0;
     left: 75px;
-    color: rgba(255, 87, 51, 0.8);
+    color: var(--buttonColor);
 }
 
 .detail-box {
     margin: 60px 60px;
-    color: #ffffff;
-    background-color: #303030;
-    box-shadow: 0px 4px 15px #000000;
+    color: var(--wordColor);
+    background-color: var(--background);
+    border: 1px solid gray;
+    /* box-shadow: 0px 4px 15px #000000; */
     height: 80vh;
     justify-content: center;
     align-items: center;
@@ -393,8 +413,8 @@ export default {
 }
 
 .work-download button:hover {
-    border: 1px solid rgba(255, 87, 51, 1);
-    color: rgba(255, 87, 51, 1);
+    border: 1px solid var(--buttonColor);
+    color: var(--buttonColor);
 }
 
 .detail-box-top-right {
@@ -431,10 +451,10 @@ export default {
 .modal-overlay button {
     margin: auto;
     flex: 1;
-    border: 1px solid rgba(255, 87, 51, 1);
+    border: 1px solid var(--buttonColor);
     cursor: pointer;
     width: 180px;
-    color: rgba(255, 87, 51, 0.8);
+    color: var(--buttonColor);
     background-color: transparent;
     border-radius: 5px;
     height: 30px;
@@ -472,7 +492,7 @@ export default {
 .delete-work a:hover,
 .modify-price a:hover,
 .inactive-work a:hover {
-    color: rgba(255, 87, 51, 1);
+    color: var(--buttonColor);
 }
 
 /* 加载窗口样式 */
@@ -482,7 +502,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    /* background: rgba(0, 0, 0, 0.5); */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -491,7 +511,7 @@ export default {
 
 .spinner {
     border: 8px solid rgba(255, 255, 255, 0.3);
-    border-top: 8px solid #fff;
+    border-top: 8px solid var(--wordColor);
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -501,7 +521,7 @@ export default {
 
 .loading-message {
     margin-top: 20px;
-    color: white;
+    color:  var(--wordColor);
     font-size: 18px;
 }
 
@@ -511,7 +531,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    /* background-color: rgba(0, 0, 0, 0.5); */
     /* 半透明背景 */
     display: flex;
     justify-content: center;
@@ -528,7 +548,7 @@ export default {
     border-radius: 8px;
     width: 400px;
     max-width: 80%;
-    box-shadow: 0 0px 10px rgba(0, 0, 0, 0.5);
+    /* box-shadow: 0 0px 10px rgba(0, 0, 0, 0.5); */
     position: relative;
     /* 为了定位关闭按钮 */
 }
@@ -546,7 +566,7 @@ export default {
 }
 
 .close-button:hover {
-    color: #f00;
+    color: var(--buttonColor)
 }
 
 @keyframes spin {

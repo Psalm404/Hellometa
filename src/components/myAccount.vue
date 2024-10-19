@@ -1,5 +1,5 @@
 <template>
-<div class="myAccount-container" style="background-color: #708090;">
+<div class="myAccount-container"  :style="{ '--buttonColor': buttonColor,'--wordColor': wordColor,'--background': mainBackgroundColor}">
     <div class="content" style="height:100vh">
         <div class="myAccount-guideBox">
             <div class="myAccount-title">链账户管理</div>
@@ -124,11 +124,38 @@
 import axios from 'axios';
 export default {
     mounted() {
+        this.wordColor = this.$store.state.textColor;
+        console.log('wordColor:', this.wordColor)
+        this.buttonColor = this.$store.state.buttonColor;
+        this.mainBackgroundColor = this.$store.state.backgroundColor;
+        this.modeValue = this.$store.state.modeValue;
         this.account = localStorage.getItem('account');
         this.getAccountList();
     },
+    computed: {
+        backgroundColor() {
+            console.log(this.$store.state.backgroundColor, this.$store.state.textColor)
+            return {
+                backgroundColor: this.$store.state.backgroundColor,
+                wordColor: this.$store.state.textColor,
+                buttonColor: this.$store.state.buttonColor
+            };
+        }
+    },
+    watch: {
+        backgroundColor(newColor) {
+            console.log('chamge')
+            this.mainBackgroundColor = newColor;
+            this.buttonColor = this.$store.state.buttonColor;
+            this.wordColor = this.$store.state.textColor;
+        }
+    },
     data() {
         return {
+            modeValue: null,
+            mainBackgroundColor: '#ffffff',
+            wordColor: 'white',
+            buttonColor: '409eff',
             account: null,
             drawer: false,
             name: '',
@@ -138,7 +165,21 @@ export default {
         }
     },
     methods: {
-
+        changeBgc() {
+            console.log('切换背景颜色')
+            if (!this.modeValue)
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#f5f5f5',
+                    buttonColor: '#409eff',
+                    textColor: 'black'
+                });
+            else
+                this.$store.dispatch('changeColor', {
+                    backgroundColor: '#292929',
+                    buttonColor: '#ff5900',
+                    textColor: '#edebeb'
+                });
+        },
         handleDelete(index, row) {
             this.$confirm('是否移除该账户？', '提示', {
                 confirmButtonText: '确定',
@@ -272,11 +313,10 @@ export default {
     /* justify-content: center; */
     align-items: center;
     min-height: 100vh;
+    background-color:black;
     min-width: 100vw;
-    /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%); */
-    background-image: linear-gradient(to top, #16181b 0%, rgb(47, 43, 43) 100%);
-    ;
-
+    /* background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 80%);
+    background-image: linear-gradient(to top, var 0%, rgb(47, 43, 43) 100%); */
 }
 
 .myAccount-guideBox {
@@ -290,7 +330,7 @@ export default {
 .myAccount-title {
     flex: 1;
     align-self: flex-start;
-    color: black;
+    color: var(--wordColor);
     font-weight: bold;
     font-size: 2em;
 }
