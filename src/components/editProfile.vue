@@ -305,25 +305,20 @@ export default {
             formData.append("account", this.formData.account); // Assumes formData.account has the account value
             formData.append("avatar", file, file.name);
 
-            // Setting headers
-            const headers = new Headers();
-            headers.append("User-Agent", "Apifox/1.0.0 (https://apifox.com)");
-            headers.append("Accept", "*/*");
-            headers.append("Host", "8.134.209.144:28888");
-            headers.append("Connection", "keep-alive");
-
-            // Fetch API for the upload
-            fetch("http://8.134.209.144:28888/api/uploadAvatar", {
-                method: 'POST',
-                headers: headers,
-                body: formData,
-                redirect: 'follow'
+            // Axios 发送 POST 请求
+            axios.post("http://8.134.209.144:28888/api/uploadAvatar", formData, {
+                headers: {
+                    "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+                    "Accept": "*/*",
+                    "Host": "8.134.209.144:28888",
+                    "Connection": "keep-alive",
+                    "Content-Type": "multipart/form-data"
+                }
             })
-            .then(response => response.json())
             .then(result => {
                 console.log(result);
-                if (result.code === 200) {
-                    onSuccess(result);
+                if (result.data.code === 200) {
+                    onSuccess(result.data);
                 } else {
                     onError(new Error('上传失败'));
                 }
